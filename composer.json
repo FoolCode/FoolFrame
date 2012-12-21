@@ -1,0 +1,13 @@
+{
+    "name": "foolz/foolframe",
+    "description": "Administration panel and some utilities",
+    "authors": [
+        {
+            "name": "Foolz",
+            "email": "support@foolz.us"
+        }
+    ],
+    "require": {
+
+    }
+}
