@@ -3,7 +3,14 @@
 \Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
 
 // TODO convert this into "use" references
+class_alias('Foolz\\Foolframe\\Model\\DoctrineConnection', 'DoctrineConnection');
+class_alias('Foolz\\Foolframe\\Model\\Plugins', 'Plugins');
 class_alias('Foolz\\Foolframe\\Model\\Preferences', 'Preferences');
+class_alias('Foolz\\Foolframe\\Model\\SchemaManager', 'SchemaManager');
+class_alias('Foolz\\Foolframe\\Model\\Theme', 'Theme');
+class_alias('Foolz\\Foolframe\\Model\\Notices', 'Notices');
+class_alias('Foolz\\Foolframe\\Model\\User', 'User');
+class_alias('Foolz\\Foolframe\\Model\\Users', 'Users');
 
 // check if FoolFrame is installed and in case it's not, allow reaching install
 if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'package', 'install.installed'))
@@ -19,7 +26,7 @@ else
 		// foolframe is already loaded
 		if ($module !== 'foolz/foolframe')
 		{
-			\Module::load($module, PKGPATH.$module.'/');
+			\Module::load($module, VENDPATH.$module.'/');
 		}
 
 		// load the module routing
@@ -34,7 +41,7 @@ else
 	{
 		if ($module !== 'foolz/foolframe')
 		{
-			require PKGPATH.$module.'/bootstrap.php';
+			require VENDPATH.$module.'/bootstrap.php';
 		}
 	}
 
@@ -67,5 +74,5 @@ else
 	bind_textdomain_codeset($lang, 'UTF-8');
 	textdomain($lang);
 
-	\Plugins::initialize();
+	\Foolz\Foolframe\Model\Plugins::initialize();
 }

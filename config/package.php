@@ -70,8 +70,8 @@ return array(
 	 * Locations of the data out of the module folder
 	 */
 	'directories' => array(
-		'themes' => DOCROOT.'foolframe/themes/',
-		'plugins' => DOCROOT.'foolframe/plugins/'
+		'themes' => 'public/themes/',
+		'plugins' => 'public/plugins/'
 	),
 
 	/**

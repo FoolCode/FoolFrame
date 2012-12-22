@@ -118,7 +118,7 @@ class Theme extends \Model
 	public static function forge($name = 'default')
 	{
 		static::$_set_instance = $name;
-		return static::$_instances[$name] = new \Theme();
+		return static::$_instances[$name] = new static();
 	}
 
 	public static function instance($name = null)
@@ -134,7 +134,8 @@ class Theme extends \Model
 
 	public function getMod()
 	{
-		return str_replace('foolz/', '', $this->_selected_module);
+		//return str_replace('foolz/', '', $this->_selected_module);
+		return $this->_selected_module;
 	}
 
 	/**
@@ -296,14 +297,14 @@ class Theme extends \Model
 
 		$array = array();
 
-		if ($handle = opendir(DOCROOT.$this->getMod().'/themes/'))
+		if ($handle = opendir(VENDPATH.$this->getMod().'/public/themes/'))
 		{
 			while (false !== ($file = readdir($handle)))
 			{
 				if (in_array($file, array('..', '.')))
 					continue;
 
-				if (is_dir(DOCROOT.$this->getMod().'/themes/'.$file))
+				if (is_dir(VENDPATH.$this->getMod().'/public/themes/'.$file))
 				{
 					$array[] = $file;
 				}
@@ -329,7 +330,7 @@ class Theme extends \Model
 		\Profiler::mark('Start Theme::load_config');
 		\Profiler::mark_memory($this, 'Start Theme::load_config');
 
-		return \Fuel::load(DOCROOT.$this->getMod().'/themes/'.$name.'/config.php');
+		return \Fuel::load(VENDPATH.$this->getMod().'/public/themes/'.$name.'/config.php');
 
 		\Profiler::mark('End Theme::load_config');
 		\Profiler::mark_memory($this, 'End Theme::load_config');
@@ -374,7 +375,7 @@ class Theme extends \Model
 		$this->_selected_theme_version = $result['version'];
 
 		// load the theme bootstrap file if present
-		\Fuel::load(DOCROOT.$this->getMod().'/themes/'.$theme.'/bootstrap.php');
+		\Fuel::load(VENDPATH.$this->getMod().'/public/themes/'.$theme.'/bootstrap.php');
 
 		\Profiler::mark('End Theme::load_config');
 		\Profiler::mark_memory($this, 'End Theme::load_config');
@@ -523,11 +524,11 @@ class Theme extends \Model
 
 		$version = $this->_selected_theme_version;
 		$result = array();
-		if (file_exists(DOCROOT.$this->getMod().'/themes/'.$this->get_config('extends').'/'.$asset))
+		if (file_exists(VENDPATH.$this->getMod().'/public/themes/'.$this->get_config('extends').'/'.$asset))
 			$result[] = $this->getMod().'/themes/'.$this->get_config('extends').'/'.$asset.'?v='.$version;
 
-		if (file_exists(DOCROOT.$this->getMod().'/themes/'.$this->_selected_theme.'/'.$asset))
-			$result[] = $this->getMod().'/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
+		if (file_exists(VENDPATH.$this->getMod().'/public/themes/'.$this->_selected_theme.'/'.$asset))
+			$result[] = $this->getMod().'/public/themes/'.$this->_selected_theme.'/'.$asset.'?v='.$version;
 
 		// we want first extended theme and then the override
 		return $result;
@@ -621,16 +622,16 @@ class Theme extends \Model
 			switch ($_type)
 			{
 				case 'layout':
-					if (file_exists(DOCROOT.$this->getMod().'/themes/'.$_directory.'/views/layouts/'.$_file.'.php'))
+					if (file_exists(VENDPATH.$this->getMod().'/public/themes/'.$_directory.'/views/layouts/'.$_file.'.php'))
 					{
-						$_location = DOCROOT.$this->getMod().'/themes/'.$_directory.'/views/layouts/'.$_file.'.php';
+						$_location = VENDPATH.$this->getMod().'/public/themes/'.$_directory.'/views/layouts/'.$_file.'.php';
 					}
 					break;
 				case 'content':
 				case 'partial':
-					if (file_exists(DOCROOT.$this->getMod().'/themes/'.$_directory.'/views/'.$_file.'.php'))
+					if (file_exists(VENDPATH.$this->getMod().'/public/themes/'.$_directory.'/views/'.$_file.'.php'))
 					{
-						$_location = DOCROOT.$this->getMod().'/themes/'.$_directory.'/views/'.$_file.'.php';
+						$_location = VENDPATH.$this->getMod().'/public/themes/'.$_directory.'/views/'.$_file.'.php';
 					}
 					break;
 			}

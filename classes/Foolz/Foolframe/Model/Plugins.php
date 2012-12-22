@@ -35,7 +35,7 @@ class Plugins
 		// store all the relevant data from the modules
 		foreach (\Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
 		{
-			$dir = \Foolz\Config\Config::get($module, 'package', 'directories.plugins');
+			$dir = VENDPATH.$module.'/'.\Foolz\Config\Config::get($module, 'package', 'directories.plugins');
 			static::$_identifiers[$module] = $dir;
 			static::$loader->addDir($module, $dir);
 		}
