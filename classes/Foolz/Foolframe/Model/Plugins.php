@@ -3,6 +3,7 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Plugin\Loader;
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
 class PluginException extends \FuelException {}
 
@@ -71,9 +72,9 @@ class Plugins
 		}
 		catch (\CacheNotFoundException $e)
 		{
-			$result = \DC::qb()
+			$result = DC::qb()
 				->select('*')
-				->from(\DC::p('plugins'), 'p')
+				->from(DC::p('plugins'), 'p')
 				->where('enabled = :enabled')
 				->setParameter(':enabled', true)
 				->execute()
@@ -101,9 +102,9 @@ class Plugins
 	{
 		$plugin = static::$loader->get($module, $slug);
 
-		$count = \DC::qb()
+		$count = DC::qb()
 			->select('COUNT(*) as count')
-			->from(\DC::p('plugins'), 'p')
+			->from(DC::p('plugins'), 'p')
 			->where('identifier = :identifier')
 			->andWhere('slug = :slug')
 			->setParameters([':identifier' => $module, ':slug' => $slug])
@@ -116,8 +117,8 @@ class Plugins
 			return static::install($module, $slug);
 		}
 
-		\DC::qb()
-			->update(\DC::p('plugins'))
+		DC::qb()
+			->update(DC::p('plugins'))
 			->set('enabled', ':enabled')
 			->where('identifier = :identifier')
 			->andWhere('slug = :slug')
@@ -140,8 +141,8 @@ class Plugins
 			\Fuel::load($dir.'disable.php');
 		}
 
-		\DC::qb()
-			->update(\DC::p('plugins'))
+		DC::qb()
+			->update(DC::p('plugins'))
 			->set('enabled', ':enabled')
 			->where('identifier = :identifier')
 			->andWhere('slug = :slug')
@@ -165,10 +166,10 @@ class Plugins
 
 		$plugin->install();
 
-		\DC::forge()->insert(\DC::p('plugins'), ['identifier' => $module, 'slug' => $slug, 'enabled' => true]);
+		DC::forge()->insert(DC::p('plugins'), ['identifier' => $module, 'slug' => $slug, 'enabled' => true]);
 
 		// run the schema update
-		$sm = \Foolz\Foolframe\Model\SchemaManager::forge(\DC::forge(), \DC::getPrefix().'plugin_');
+		$sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix().'plugin_');
 		\Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate')
 			->setParam('schema', $sm->getCodedSchema())
 			->execute();
@@ -187,8 +188,8 @@ class Plugins
 			\Fuel::load($dir.'uninstall.php');
 		}
 
-		\DC::qb()
-			->delete(\DC::p('plugins'))
+		DC::qb()
+			->delete(DC::p('plugins'))
 			->where('identifier = :identifier')
 			->andWhere('slug = :slug')
 			->setParameters([':identifier' => $identifier, ':slug' => $slug])

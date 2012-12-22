@@ -3,11 +3,6 @@
 namespace Foolz\Foolframe\Model;
 
 /**
- * Shorthand
- */
-class DC extends DoctrineConnection {}
-
-/**
  * Doctrine connection manager for FuelPHP 1.x that uses config/db.php
  */
 class DoctrineConnection

@@ -2,6 +2,8 @@
 
 namespace Foolz\Foolframe\Model;
 
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+
 class Schema
 {
 	public static function load(SchemaManager $sm)
@@ -11,8 +13,8 @@ class Schema
 
 		$schema = $sm->getCodedSchema();
 
-		$sessions = $schema->createTable(\DC::p('sessions'));
-		if (\DC::forge()->getDriver()->getName() == 'pdo_mysql')
+		$sessions = $schema->createTable(DC::p('sessions'));
+		if (DC::forge()->getDriver()->getName() == 'pdo_mysql')
 		{
 			$sessions->addOption('charset', $charset);
 			$sessions->addOption('collate', $collation);
@@ -27,7 +29,7 @@ class Schema
 		$sessions->setPrimaryKey(['session_id']);
 		$sessions->addUniqueIndex(['previous_id'], 'previous_id_index');
 
-		$plugins = $schema->createTable(\DC::p('plugins'));
+		$plugins = $schema->createTable(DC::p('plugins'));
 		$plugins->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
 		$plugins->addColumn('identifier', 'string', ['length' => 16]);
 		$plugins->addColumn('slug', 'string', ['length' => 65]);
@@ -36,8 +38,8 @@ class Schema
 		$plugins->setPrimaryKey(['id']);
 		$plugins->addUniqueIndex(['identifier', 'slug'], 'identifier_slug_index');
 
-		$preferences = $schema->createTable(\DC::p('preferences'));
-		if (\DC::forge()->getDriver()->getName() == 'pdo_mysql')
+		$preferences = $schema->createTable(DC::p('preferences'));
+		if (DC::forge()->getDriver()->getName() == 'pdo_mysql')
 		{
 			$sessions->addOption('charset', $charset);
 			$sessions->addOption('collate', $collation);
@@ -46,8 +48,8 @@ class Schema
 		$preferences->addColumn('value', 'text', ['length' => 65532, 'notnull' => false]);
 		$preferences->setPrimaryKey(['name']);
 
-		$users = $schema->createTable(\DC::p('users'));
-		if (\DC::forge()->getDriver()->getName() == 'pdo_mysql')
+		$users = $schema->createTable(DC::p('users'));
+		if (DC::forge()->getDriver()->getName() == 'pdo_mysql')
 		{
 			$users->addOption('charset', $charset);
 			$users->addOption('collate', $collation);
@@ -75,7 +77,7 @@ class Schema
 		$users->setPrimaryKey(['id']);
 		$users->addUniqueIndex(['username', 'email'], 'username_email_index');
 
-		$user_autologin = $schema->createTable(\DC::p('user_autologin'));
+		$user_autologin = $schema->createTable(DC::p('user_autologin'));
 		$user_autologin->addColumn('user_id', 'integer', ['unsigned' => true]);
 		$user_autologin->addColumn('login_hash', 'string', ['length' => 255]);
 		$user_autologin->addColumn('expiration', 'integer', ['unsigned' => true]);
@@ -85,7 +87,7 @@ class Schema
 		$user_autologin->setPrimaryKey(['login_hash']);
 		$user_autologin->addIndex(['user_id'], 'user_id_index');
 
-		$user_login_attempts = $schema->createTable(\DC::p('user_login_attempts'));
+		$user_login_attempts = $schema->createTable(DC::p('user_login_attempts'));
 		$user_login_attempts->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
 		$user_login_attempts->addColumn('username', 'string', ['length' => 32]);
 		$user_login_attempts->addColumn('time', 'integer', ['unsigned' => true]);

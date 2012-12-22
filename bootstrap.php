@@ -2,10 +2,8 @@
 
 \Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
 
-Autoloader::add_core_namespace('Foolz\Foolframe\Model');
-
-// load Inet class for decimal use: \Inet::ptod($ip)
-Autoloader::alias_to_namespace('Foolz\Inet\Inet');
+// TODO convert this into "use" references
+class_alias('Foolz\\Foolframe\\Model\\Preferences', 'Preferences');
 
 // check if FoolFrame is installed and in case it's not, allow reaching install
 if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'package', 'install.installed'))

@@ -2,6 +2,8 @@
 
 namespace Foolz\Foolframe\Model;
 
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+
 class User extends \Model
 {
 
@@ -89,14 +91,14 @@ class User extends \Model
 		else
 			unset($set['password']);
 
-		$query = \DC::qb()
-			->update(\DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+		$query = DC::qb()
+			->update(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')))
 			->where('id = :id')
 			->setParameter(':id', $this->id);
 
 		foreach ($set as $key => $item)
 		{
-			$query->set(\DC::forge()->quoteIdentifier($key), \DC::forge()->quote($item));
+			$query->set(DC::forge()->quoteIdentifier($key), DC::forge()->quote($item));
 		}
 
 		$query->execute();

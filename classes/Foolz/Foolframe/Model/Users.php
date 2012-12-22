@@ -2,7 +2,9 @@
 
 namespace Foolz\Foolframe\Model;
 
-class UsersWrongIdException extends \FuelException {}
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+
+class UsersWrongIdException extends \Exception {}
 
 class Users
 {
@@ -17,9 +19,9 @@ class Users
 		$id = \Auth::get_user_id();
 		$id = $id[1];
 
-		$result = \DC::qb()
+		$result = DC::qb()
 			->select('*')
-			->from(\DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+			->from(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
 			->where('t.id = :id')
 			->setParameter(':id', $id)
 			->execute()
@@ -42,10 +44,10 @@ class Users
 	 */
 	public static function get_user_by($field, $id)
 	{
-		$result = \DC::qb()
+		$result = DC::qb()
 			->select('*')
-			->from(\DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
-			->where($field.' = '.\DC::forge()->quote($id))
+			->from(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+			->where($field.' = '.DC::forge()->quote($id))
 			->execute()
 			->fetch();
 
@@ -67,9 +69,9 @@ class Users
 	 */
 	public static function get_all($page = 1, $limit = 40)
 	{
-		$users = \DC::qb()
+		$users = DC::qb()
 			->select('*')
-			->from(\DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+			->from(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
 			->setMaxResults($limit)
 			->setFirstResult(($page * $limit) - $limit)
 			->execute()
@@ -77,9 +79,9 @@ class Users
 
 		$users = User::forge($users);
 
-		$count = \DC::qb()
+		$count = DC::qb()
 			->select('COUNT(*) as count')
-			->from(\DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+			->from(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
 			->execute()
 			->fetch();
 

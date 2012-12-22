@@ -2,18 +2,15 @@
 
 namespace Foolz\Foolframe\Model;
 
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
-class Preferences extends \Model
+class Preferences
 {
+	protected static $_preferences = array();
 
-	private static $_preferences = array();
-	private static $_module_identifiers = array();
+	protected static $_module_identifiers = array();
 
-
-	public static function _init()
-	{
-		static::load_settings();
-	}
+	protected static $loaded = false;
 
 
 	public static function load_settings($reload = false)
@@ -33,9 +30,9 @@ class Preferences extends \Model
 		}
 		catch (\CacheNotFoundException $e)
 		{
-			$preferences = \DC::qb()
+			$preferences = DC::qb()
 				->select('*')
-				->from(\DC::p('preferences'), 'p')
+				->from(DC::p('preferences'), 'p')
 				->execute()
 				->fetchAll();
 
@@ -50,12 +47,20 @@ class Preferences extends \Model
 
 		\Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');
 		\Profiler::mark('Preferences::load_settings End');
+
+		static::$loaded = true;
+
 		return static::$_preferences;
 	}
 
 
 	public static function get($setting, $fallback = null)
 	{
+		if ( ! static::$loaded)
+		{
+			static::load_settings();
+		}
+
 		if (isset(static::$_preferences[$setting]) && static::$_preferences[$setting] !== '')
 		{
 			return static::$_preferences[$setting];
@@ -82,9 +87,9 @@ class Preferences extends \Model
 			$value = serialize($value);
 		}
 
-		$count = \DC::qb()
+		$count = DC::qb()
 			->select('COUNT(*) as count')
-			->from(\DC::p('preferences'), 'p')
+			->from(DC::p('preferences'), 'p')
 			->where('p.name = :name')
 			->setParameter(':name', $setting)
 			->execute()
@@ -92,8 +97,8 @@ class Preferences extends \Model
 
 		if ($count['count'])
 		{
-			\DC::qb()
-				->update(\DC::p('preferences'))
+			DC::qb()
+				->update(DC::p('preferences'))
 				->set('value', ':value')
 				->where('name', ':name')
 				->setParameters([':value' => $value, ':name' => $setting])
@@ -101,7 +106,7 @@ class Preferences extends \Model
 		}
 		else
 		{
-			\DC::forge()->insert(\DC::p('preferences'), ['name' => $setting, 'value' => $value]);
+			DC::forge()->insert(DC::p('preferences'), ['name' => $setting, 'value' => $value]);
 		}
 
 		if ($reload)
