@@ -7,13 +7,12 @@ class_alias('Foolz\\Foolframe\\Model\\DoctrineConnection', 'DoctrineConnection')
 class_alias('Foolz\\Foolframe\\Model\\Plugins', 'Plugins');
 class_alias('Foolz\\Foolframe\\Model\\Preferences', 'Preferences');
 class_alias('Foolz\\Foolframe\\Model\\SchemaManager', 'SchemaManager');
-class_alias('Foolz\\Foolframe\\Model\\Theme', 'Theme');
 class_alias('Foolz\\Foolframe\\Model\\Notices', 'Notices');
 class_alias('Foolz\\Foolframe\\Model\\User', 'User');
 class_alias('Foolz\\Foolframe\\Model\\Users', 'Users');
 
 // check if FoolFrame is installed and in case it's not, allow reaching install
-if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'package', 'install.installed'))
+if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'config', 'install.installed'))
 {
 	\Module::load('install', PKGPATH.'foolz/install/');
 	require PKGPATH.'foolz/install/bootstrap.php';
@@ -21,7 +20,7 @@ if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'package', 'install.installe
 else
 {
 	// load each FoolFrame module, bootstrap and config
-	foreach(\Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
+	foreach(\Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 	{
 		// foolframe is already loaded
 		if ($module !== 'foolz/foolframe')
@@ -37,7 +36,7 @@ else
 	}
 
 	// run the bootstrap for each module
-	foreach(\Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
+	foreach(\Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 	{
 		if ($module !== 'foolz/foolframe')
 		{

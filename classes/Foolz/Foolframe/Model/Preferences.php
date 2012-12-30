@@ -22,7 +22,7 @@ class Preferences
 		}
 
 		// we need to know the identifiers of the modules, like ff => foolfuuka, fu => foolfuuka, fs => foolslide
-		static::$_module_identifiers = \Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed');
+		static::$_module_identifiers = \Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed');
 
 		try
 		{

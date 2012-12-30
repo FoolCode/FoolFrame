@@ -66,7 +66,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		$themes = array();
 		$theme_obj = new \Theme();
 
-		foreach (Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
+		foreach (Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 		{
 			if ($module === 'foolz/foolframe')
 			{

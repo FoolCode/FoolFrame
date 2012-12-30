@@ -59,7 +59,7 @@ class Admin extends Common
 		$sidebar = [];
 
 		// load sidebars from modules and leave FoolFrame sidebar on bottom
-		foreach(\Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed') as $module)
+		foreach(\Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 		{
 			$module_sidebar = \Foolz\Config\Config::get($module, 'sidebar');
 			if(is_array($module_sidebar))

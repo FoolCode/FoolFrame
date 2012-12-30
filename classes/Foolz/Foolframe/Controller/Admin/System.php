@@ -21,7 +21,7 @@ class System extends \Foolz\Foolframe\Controller\Admin
 
 	public function action_upgrade_modules()
 	{
-		$modules = \Foolz\Config\Config::get('foolz/foolframe', 'package', 'modules.installed');
+		$modules = \Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed');
 
 		foreach ($modules as $module)
 		{
