@@ -63,8 +63,9 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'separator'
 		);
 
+
+
 		$themes = array();
-		$theme_obj = new \Theme();
 
 		foreach (Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 		{
@@ -73,21 +74,22 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 				continue;
 			}
 
-			$theme_obj->set_module($module);
+			$theme_loader = new \Foolz\Theme\Loader();
+			$theme_loader->addDir('default', VENDPATH.$module.'/'.Config::get($module, 'package', 'directories.themes'));
+			$themes = $theme_loader->getAll();
 
 			$identifier = Config::get($module, 'package', 'main.identifier');
 			$module_name = Config::get($module, 'package', 'main.name');
 
-			foreach($theme_obj->get_all() as $name => $theme)
+			$theme_checkboxes = [];
+			foreach($themes['default'] as $name => $theme)
 			{
-				$themes[] = array(
+				$theme_checkboxes[] = array(
 					'type' => 'checkbox',
-					'label' => $theme['name'] . ' theme',
-					'help' => sprintf(__('Enable %s theme'), $theme['name']),
-					'array_key' => $name,
-					'preferences' => TRUE,
-					'checked' => defined('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED') ?
-						constant('FOOL_PREF_THEMES_THEME_' . strtoupper($name) . '_ENABLED') : 0
+					'label' => $theme->getConfig('name'),
+					'help' => sprintf(__('Enable %s theme'), $theme->getConfig('name')),
+					'array_key' => $theme->getConfig('name'),
+					'preferences' => TRUE
 				);
 			}
 
@@ -95,14 +97,14 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 				'type' => 'checkbox_array',
 				'label' => __('Active themes'),
 				'help' => \Str::tr(__('Choose the themes to make available to the users for :module. Admins are able to access any of them even if disabled.'), array('module' => '<strong>'.$module_name.'</strong>')),
-				'checkboxes' => $themes
+				'checkboxes' => $theme_checkboxes
 			);
 
 			$themes_default = array();
 
-			foreach($theme_obj->get_all() as $name => $theme)
+			foreach($themes['default'] as $name => $theme)
 			{
-				$themes_default[$name] = $theme['name'];
+				$themes_default[$name] = $theme->getConfig('name');
 			}
 
 			$form[$identifier.'.theme.default'] = array(
