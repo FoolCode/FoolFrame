@@ -1,22 +1,19 @@
 <?php
 
-namespace Foolframe\Plugins\Ssl_Tools;
+namespace Foolz\Foolframe\Controller\Admin\Plugins;
 
-if (!defined('DOCROOT'))
-	exit('No direct script access allowed');
-
-class Controller_Plugin_Ff_Ssl_Tools_Admin_Ssl_Tools extends \Controller_Admin
+class SslTools extends \Foolz\Foolframe\Controller\Admin
 {
-	
+
 	public function before()
 	{
 		if ( ! \Auth::has_access('maccess.admin'))
 		{
 			\Response::redirect('admin');
 		}
-		
+
 		parent::before();
-		
+
 		$this->_views['controller_title'] = __('SSL Tools');
 	}
 
@@ -82,8 +79,8 @@ class Controller_Plugin_Ff_Ssl_Tools_Admin_Ssl_Tools extends \Controller_Admin
 		$data['form'] = $form;
 
 		// create a form
-		$this->_views["main_content_view"] = \View::forge("admin/form_creator", $data);
-		return \Response::forge(\View::forge("admin/default", $this->_views));
+		$this->_views["main_content_view"] = \View::forge("foolz/foolframe::admin/form_creator", $data);
+		return \Response::forge(\View::forge("foolz/foolframe::admin/default", $this->_views));
 	}
 
 }

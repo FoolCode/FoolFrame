@@ -3,6 +3,7 @@
 namespace Foolz\Foolframe\Model;
 
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use \Foolz\Cache\Cache;
 
 class Preferences
 {
@@ -26,9 +27,9 @@ class Preferences
 
 		try
 		{
-			static::$_preferences = \Cache::get('ff.model.preferences.settings');
+			static::$_preferences = Cache::item('ff.model.preferences.settings')->get();
 		}
-		catch (\CacheNotFoundException $e)
+		catch (\OutOfBoundsException $e)
 		{
 			$preferences = DC::qb()
 				->select('*')
@@ -42,7 +43,7 @@ class Preferences
 				static::$_preferences[$pref['name']] = $pref['value'];
 			}
 
-			\Cache::set('ff.model.preferences.settings', static::$_preferences, 3600);
+			Cache::item('ff.model.preferences.settings')->set(static::$_preferences, 3600);
 		}
 
 		\Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');

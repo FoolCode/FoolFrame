@@ -1,23 +1,23 @@
 <?php
 
-namespace Foolframe\Plugins\Articles;
+namespace Foolz\Foolframe\Plugins\Articles\Model;
 
-if (!defined('DOCROOT'))
-	exit('No direct script access allowed');
-
+use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use \Foolz\Cache\Cache;
 
 class ArticlesArticleNotFoundException extends \Exception {};
 
-
-class Articles extends \Plugins
+class Articles
 {
 	public static function remove($id)
 	{
 		// this might throw ArticlesArticleNotFound, catch in controller
 		static::get_by_id($id);
 
-		\DB::delete('plugin_ff-articles')
-			->where('id', $id)
+		DC::qb()
+			->delete(DC::p('plugin_ff_articles'))
+			->where('id = :id')
+			->setParameter(':id', $id)
 			->execute();
 
 		static::clear_cache();
@@ -26,8 +26,8 @@ class Articles extends \Plugins
 
 	public static function clear_cache()
 	{
-		\Cache::delete('ff.plugin.articles.model.get_nav_top');
-		\Cache::delete('ff.plugin.articles.model.get_nav_bottom');
+		Cache::item('ff.plugin.articles.model.get_nav_top')->delete();
+		Cache::item('ff.plugin.articles.model.get_nav_bottom')->delete();
 	}
 
 
@@ -36,18 +36,18 @@ class Articles extends \Plugins
 	 */
 	public static function get_all()
 	{
-		$query = \DB::select()
-			->from('plugin_ff-articles');
+		$query = DC::qb()
+			->select('*')
+			->from(DC::p('plugin_ff_articles'), 'a');
 
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
 			$query->where('top', 1)
-				->or_where('bottom', 1);
+				->orWhere('bottom', 1);
 		}
 
-		$result = $query->as_object()
-			->execute()
-			->as_array();
+		$result = $query->execute()
+			->fetchAll();
 
 		return $result;
 	}
@@ -55,28 +55,29 @@ class Articles extends \Plugins
 
 	public static function get_by_slug($slug)
 	{
-		$query = \DB::select()
-			->from('plugin_ff-articles')
-			->where('slug', $slug);
+		$query = DC::qb()
+			->select('*')
+			->from(DC::p('plugin_ff_articles'), 'a')
+			->where('slug = :slug')
+			->setParameter(':slug', $slug);
+
 
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
-			$query->where_open()
-				->where('top', 1)
-				->or_where('bottom', 1)
-				->where_close();
+			$query
+				->where('top = 1')
+				->orWhere('bottom = 1');
 		}
 
-		$result = $query->as_object()
-			->execute()
-			->as_array();
+		$result = $query->execute()
+			->fetch();
 
-		if ( ! count($result))
+		if ( ! $result)
 		{
 			throw new ArticlesArticleNotFoundException(__('The article you were looking for does not exist.'));
 		}
 
-		return $result[0];
+		return $result;
 	}
 
 
@@ -185,16 +186,22 @@ class Articles extends \Plugins
 	{
 		if (isset($data['id']))
 		{
-			\DB::update('plugin_ff-articles')
-				->where('id', $data['id'])
-				->set($data)
-				->execute();
+			$query = DC::qb()
+				->update(DC::p('plugin_ff_articles'))
+				->where('id', ':id')
+				->setParameter(':id', $data['id']);
+
+			foreach ($data as $k => $i)
+			{
+				$query->set(':'.$k, DC::forge()->quote($i));
+			}
+
+			$query->execute();
 		}
 		else
 		{
-			\DB::insert('plugin_ff-articles')
-				->set($data)
-				->execute();
+			DC::forge()
+				->insert(DC::p('plugin_ff_articles'), $data);
 		}
 
 		static::clear_cache();

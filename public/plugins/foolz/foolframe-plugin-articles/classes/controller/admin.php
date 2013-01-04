@@ -1,13 +1,14 @@
 <?php
 
-namespace Foolframe\Plugins\Articles;
+namespace Foolz\Foolframe\Controller\Admin;
 
-if (!defined('DOCROOT'))
-	exit('No direct script access allowed');
+use \Foolz\Foolframe\Model\DoctrineConnection as DC,
+	\Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
+	\Foolz\Foolframe\Plugins\Articles\ArticlesArticleNotFoundException;
 
-class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
+class Articles extends \Foolz\Foolframe\Controller\Admin
 {
-	
+
 	public function before()
 	{
 		if( ! \Auth::has_access('maccess.mod'))
@@ -17,7 +18,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 
 		parent::before();
 	}
-	
+
 	public function structure()
 	{
 		return array(
@@ -26,29 +27,33 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			),
 			'id' => array(
 				'type' => 'hidden',
-				'database' => TRUE,
+				'database' => true,
 				'validation_func' => function($input, $form_internal)
 				{
 					// check that the ID exists
-					$query = \DB::select()
-						->from('plugin_ff-articles')
-						->where('id', $input['id'])
-						->execute();
-					if (count($query) != 1)
+					$count = DC::qb()
+						->select('COUNT(*) as count')
+						->from(DC::p('plugin_ff_articles'), 'a')
+						->where('id = :id')
+						->setParameter(':id', $input['id'])
+						->execute()
+						->fetch()['count'];
+
+					if ($count !== 1)
 					{
 						return array(
 							'error_code' => 'ID_NOT_FOUND',
 							'error' => __('Couldn\'t find the article with the submitted ID.'),
-							'critical' => TRUE
+							'critical' => true
 						);
 					}
 
-					return array('success' => TRUE);
+					return array('success' => true);
 				}
 			),
 			'title' => array(
 				'type' => 'input',
-				'database' => TRUE,
+				'database' => true,
 				'label' => 'Title',
 				'help' => __('The title of your article'),
 				'class' => 'span4',
@@ -56,7 +61,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 				'validation' => 'trim|required'
 			),
 			'slug' => array(
-				'database' => TRUE,
+				'database' => true,
 				'type' => 'input',
 				'label' => __('Slug'),
 				'help' => __('Insert the short name of the article to use in the url. Only alphanumeric and dashes.'),
@@ -75,22 +80,25 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 							->as_object()
 							->execute()
 							->current();
-						
+
 						// no change?
 						if ($input['slug'] == $result->slug)
 						{
 							// no change
-							return array('success' => TRUE);
+							return array('success' => true);
 						}
 					}
 
 					// check that there isn't already an article with that name
-					$result = \DB::select()
-						->from('plugin_ff-articles')
-						->where('slug', $input['slug'])
-						->execute();
-					
-					if (count($result))
+					$count = DC::qb()
+						->select('COUNT(*) as count')
+						->from(DC::p('plugin_ff_articles'), 'a')
+						->where('slug = :slug')
+						->setParameter(':slug', $input['slug'])
+						->execute()
+						->fetch()['count'];
+
+					if ($count)
 					{
 						return array(
 							'error_code' => 'ALREADY_EXISTS',
@@ -101,7 +109,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			),
 			'url' => array(
 				'type' => 'input',
-				'database' => TRUE,
+				'database' => true,
 				'class' => 'span4',
 				'label' => 'URL',
 				'help' => __('If you set this, the article link will actually be an outlink.'),
@@ -109,7 +117,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			),
 			'article' => array(
 				'type' => 'textarea',
-				'database' => TRUE,
+				'database' => true,
 				'style' => 'height:350px; width: 90%',
 				'label' => __('Article'),
 				'help' => __('The content of your article, in MarkDown')
@@ -119,13 +127,13 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			),
 			'top' => array(
 				'type' => 'checkbox',
-				'database' => TRUE,
+				'database' => true,
 				'label' => __('Display the article link on the top of the page'),
 				'help' => __('Display the article link on the top of the page')
 			),
 			'bottom' => array(
 				'type' => 'checkbox',
-				'database' => TRUE,
+				'database' => true,
 				'label' => __('Display the article link on the bottom of the page'),
 				'help' => __('Display the article link on the bottom of the page')
 			),
@@ -148,8 +156,8 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 		$this->_views['controller_title'] = __("Articles");
 		$this->_views['method_title'] = __('Manage');
 
-		$articles = Articles::get_all();
-		
+		$articles = A::get_all();
+
 		ob_start();
 		?>
 
@@ -165,7 +173,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 					</tr>
 				</thead>
 				<tbody>
-					<?php 
+					<?php
 					foreach($articles as $article) : ?>
 					<tr>
 						<td>
@@ -187,19 +195,19 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 
 		<?php
 		$this->_views["main_content_view"] = ob_get_clean();
-		return \Response::forge(\View::forge('admin/default', $this->_views));
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 
 	public function action_edit($slug = null)
 	{
 		$data['form'] = $this->structure();
-		
+
 		if (\Input::post() && ! \Security::check_token())
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if(\Input::post())
+		elseif (\Input::post())
 		{
 			$result = \Validation::form_validate($data['form']);
 			if (isset($result['error']))
@@ -209,7 +217,7 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			else
 			{
 				// it's actually fully checked, we just have to throw it in DB
-				Articles::save($result['success']);
+				A::save($result['success']);
 				if (is_null($slug))
 				{
 					\Notices::set_flash('success', __('New article created!'));
@@ -227,40 +235,40 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 				}
 			}
 		}
-		
+
 		if(!is_null($slug))
 		{
-			$data['object'] = Articles::get_by_slug($slug);
+			$data['object'] = A::get_by_slug($slug);
 			if($data['object'] == FALSE)
 			{
-				throw new HttpServerErrorException;
-			}	
-			
+				throw new \HttpServerErrorException;
+			}
+
 			$this->_views["method_title"] = __('Article') . ': ' . $data['object']->slug;
 		}
-		else 
+		else
 		{
 			$this->_views["method_title"] = __('New article') ;
 		}
-		
+
 		$this->_views["controller_title"] = __('Articles');
-		
-		$this->_views["main_content_view"] = \View::forge('admin/form_creator', $data);
-		return \Response::forge(\View::forge('admin/default', $this->_views));
+
+		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-	
+
 	public function action_remove($id)
 	{
 		try
 		{
-			$article = Articles::get_by_id($id);
+			$article = A::get_by_id($id);
 		}
 		catch (ArticlesArticleNotFoundException $e)
 		{
 			throw new \HttpNotFoundException;
 		}
-		
+
 		if (\Input::post() && ! \Security::check_token())
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
@@ -275,19 +283,19 @@ class Controller_Plugin_Ff_Articles_Admin_Articles extends \Controller_Admin
 			{
 				throw new \HttpNotFoundException;
 			}
-			
+
 			\Response::redirect('admin/articles');
 		}
-		
-		
+
+
 		$this->_views["controller_title"] = __('Articles');
 		$this->_views["method_title"] = __('Removing article:') . ' ' . $article->title;
 		$data['alert_level'] = 'warning';
 		$data['message'] = __('Do you really want to remove the article?');
 
-		$this->_views["main_content_view"] = \View::forge('admin/confirm', $data);
-		return \Response::forge(\View::forge('admin/default', $this->_views));
-		
+		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/confirm', $data);
+		return \Response::forge(\View::forge('foolz::foolframe/admin/default', $this->_views));
+
 	}
-	
+
 }

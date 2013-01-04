@@ -1,7 +1,7 @@
 {
-	"name": "foolz/articles",
-	"type": "foolz-plugin",
-	"description": "Enable support for custom pages in MarkDown and custom links.",
+	"name": "foolz/foolframe-plugin-ssl-tools",
+	"type": "foolz-foolframe-plugin",
+	"description": "Adds a panel to control useful tools if you have SSL available",
 	"keywords": ["fake", "mock"],
 	"homepage": "http://www.foolz.us",
 	"license": "Apache-2.0",
@@ -11,13 +11,13 @@
 		"irc": "irc://irc.irchighway.net/fooldriver"
 	},
 
-	"require" : {
+	"require": {
 		"foolz/plugin": "dev"
 	},
 
 	"extra": {
-		"name": "Articles",
-		"slug": "articles",
+		"name": "SSL Tools",
+		"slug": "ssl_tools",
 		"identifier": "ff",
 		"module": "foolframe"
 	}

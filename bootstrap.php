@@ -1,5 +1,11 @@
 <?php
 
+// start up the default caching system
+$apc_config = \Foolz\Cache\Config::forgeApc();
+$apc_config->setFormat('smart_json');
+$apc_config->setThrow(true);
+\Foolz\Cache\Cache::instantiate($apc_config);
+
 \Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
 
 // TODO convert this into "use" references

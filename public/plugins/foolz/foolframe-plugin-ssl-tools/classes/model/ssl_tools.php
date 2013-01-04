@@ -1,13 +1,9 @@
 <?php
 
-namespace Foolframe\Plugins\Ssl_Tools;
+namespace Foolz\Foolframe\Plugins\SslTools\Model;
 
-if (!defined('DOCROOT'))
-	exit('No direct script access allowed');
-
-class Ssl_Tools extends \Plugins
+class SslTools
 {
-
 	public static function check()
 	{
 		if(!isset($_SERVER['HTTPS']) || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'off'))
@@ -50,5 +46,4 @@ class Ssl_Tools extends \Plugins
 
 		$result->setParam('nav', $nav)->set($nav);
 	}
-
 }

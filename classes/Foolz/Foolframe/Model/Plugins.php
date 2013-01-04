@@ -2,8 +2,9 @@
 
 namespace Foolz\Foolframe\Model;
 
-use Foolz\Plugin\Loader;
+use \Foolz\Plugin\Loader;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use \Foolz\Cache\Cache;
 
 class PluginException extends \FuelException {}
 
@@ -55,8 +56,8 @@ class Plugins
 
 	public static function clear_cache()
 	{
-		\Cache::delete('ff.model.plugins.get_all.query');
-		\Cache::delete('ff.model.plugins.get_enabled.query');
+		Cache::item('ff.model.plugins.get_all.query')->delete();
+		Cache::item('ff.model.plugins.get_enabled.query')->delete();
 	}
 
 	public static function get_all()
@@ -68,9 +69,9 @@ class Plugins
 	{
 		try
 		{
-			$result = \Cache::get('ff.model.plugins.get_enabled.query');
+			$result = Cache::item('ff.model.plugins.get_enabled.query')->get();
 		}
-		catch (\CacheNotFoundException $e)
+		catch (\OutOfBoundsException $e)
 		{
 			$result = DC::qb()
 				->select('*')
@@ -80,7 +81,7 @@ class Plugins
 				->execute()
 				->fetchAll();
 
-			\Cache::set('ff.model.plugins.get_enabled.query', $result, 3600);
+			Cache::item('ff.model.plugins.get_enabled.query')->set($result, 3600);
 		}
 
 		return $result;
