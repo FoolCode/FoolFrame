@@ -87,6 +87,15 @@ class Plugins
 		return $result;
 	}
 
+	public static function get_installed()
+	{
+		return DC::qb()
+			->select('*')
+			->from(DC::p('plugins'), 'p')
+			->execute()
+			->fetchAll();
+	}
+
 	/**
 	 *
 	 * @param type $module
@@ -153,14 +162,6 @@ class Plugins
 		static::clear_cache();
 	}
 
-	public static function upgrade($module, $slug)
-	{
-		$plugin = static::$loader->get($module, $slug);
-
-		$upgrade = \Foolz\Autoupgrade\Upgrade::forge($plugin->getDir());
-		$upgrade->run();
-	}
-
 	public static function install($module, $slug)
 	{
 		$plugin = static::$loader->get($module, $slug);
@@ -169,11 +170,29 @@ class Plugins
 
 		DC::forge()->insert(DC::p('plugins'), ['identifier' => $module, 'slug' => $slug, 'enabled' => true]);
 
+		static::clear_cache();
+
 		// run the schema update
 		$sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix().'plugin_');
-		\Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate')
-			->setParam('schema', $sm->getCodedSchema())
-			->execute();
+
+		foreach (static::get_installed() as $enabled)
+		{
+			try
+			{
+				$plug = static::$loader->get($enabled['identifier'], $enabled['slug']);
+
+				if ( ! $plug->isBootstrapped())
+				{
+					$plug->bootstrap();
+				}
+
+				\Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.'.$plug->getConfig('name'))
+					->setParam('schema', $sm->getCodedSchema())
+					->execute();
+			}
+			catch (\OutOfBoundsException $e)
+			{}
+		}
 
 		$sm->commit();
 

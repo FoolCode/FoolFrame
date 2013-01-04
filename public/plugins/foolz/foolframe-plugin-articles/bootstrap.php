@@ -47,35 +47,25 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 		*/
 	});
 
-\Foolz\Plugin\Event::forge('Foolz\Plugin\Plugin::install.foolz/foolframe-plugin-articles')
-	->setCall(function($result) {
-
-	\Foolz\Plugin\Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate')
+\Foolz\Plugin\Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-articles')
 		->setCall(function($result) {
-			/* @var $schema \Doctrine\DBAL\Schema\Schema */
-			/* @var $table \Doctrine\DBAL\Schema\Table */
-			$schema = $result->getParam('schema');
-			$table = $schema->createTable(DC::p('plugin_ff_articles'));
-			if (DC::forge()->getDriver()->getName() == 'pdo_mysql')
-			{
-				$table->addOption('charset', 'utf8mb4');
-				$table->addOption('collate', 'utf8mb4_unicode_ci');
-			}
-			$table->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
-			$table->addColumn('slug', 'string', ['length' => 128]);
-			$table->addColumn('title', 'string', ['length' => 256]);
-			$table->addColumn('url', 'string', ['length' => 256]);
-			$table->addColumn('article', 'text', ['length' => 65532]);
-			$table->addColumn('active', 'smallint', ['unsigned' => true, 'default' => 0]);
-			$table->addColumn('top', 'smallint', ['unsigned' => true, 'default' => 0]);
-			$table->addColumn('bottom', 'smallint', ['unsigned' => true, 'default' => 0]);
-			$table->setPrimaryKey(['id']);
-			$table->addIndex(['slug'], 'slug_index');
-		});
-
-	});
-
-\Foolz\Plugin\Event::forge('foolz\plugin\plugin.uninstall.foolz/articles')
-	->setCall(function($result) {
-		\DB::drop_database('plugin_ff-articles');
+		/* @var $schema \Doctrine\DBAL\Schema\Schema */
+		/* @var $table \Doctrine\DBAL\Schema\Table */
+		$schema = $result->getParam('schema');
+		$table = $schema->createTable(DC::p('plugin_ff_articles'));
+		if (DC::forge()->getDriver()->getName() == 'pdo_mysql')
+		{
+			$table->addOption('charset', 'utf8mb4');
+			$table->addOption('collate', 'utf8mb4_unicode_ci');
+		}
+		$table->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
+		$table->addColumn('slug', 'string', ['length' => 128]);
+		$table->addColumn('title', 'string', ['length' => 256]);
+		$table->addColumn('url', 'string', ['length' => 256]);
+		$table->addColumn('article', 'text', ['length' => 65532]);
+		$table->addColumn('active', 'smallint', ['unsigned' => true, 'default' => 0]);
+		$table->addColumn('top', 'smallint', ['unsigned' => true, 'default' => 0]);
+		$table->addColumn('bottom', 'smallint', ['unsigned' => true, 'default' => 0]);
+		$table->setPrimaryKey(['id']);
+		$table->addIndex(['slug'], 'slug_index');
 	});
