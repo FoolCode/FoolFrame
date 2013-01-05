@@ -7,7 +7,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 		\Autoloader::add_classes(array(
 			'Foolz\Foolframe\Plugins\Articles\Model\Articles' => __DIR__.'/classes/model/articles.php',
 			'Foolz\Foolframe\Controller\Admin\Articles' => __DIR__.'/classes/controller/admin.php',
-			'Foolframe\\Plugins\\Articles\\Controller_Plugin_Ff_Articles_Chan' => __DIR__.'/classes/controller/chan.php'
+			'Foolz\Foolfuuka\Controller\Chan\Articles' => __DIR__.'/classes/controller/chan.php'
 		));
 
 		// don't add the admin panels if the user is not an admin
@@ -29,9 +29,22 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 					)
 				)
 			);
-		}/*
+		}
 
-		\Router::add('_/articles/(:any)', 'plugin/ff/articles/chan/articles/$1', true);
+		\Router::add('_/articles/(:any)', 'foolz/foolfuuka/chan/articles/articles/$1');
+
+		\Foolz\Plugin\Event::forge('Fuel\Core\Router.parse_match.intercept')
+			->setCall(function($result)
+			{
+				if ($result->getParam('controller') === 'Foolz\Foolfuuka\Controller\Chan')
+				{
+					if ($result->getParam('action') === 'articles')
+					{
+						$result->setParam('controller', 'Foolz\Foolfuuka\Controller\Chan\Articles');
+						$result->set(true);
+					}
+				}
+			})->setPriority(4);
 
 		\Foolz\Plugin\Event::forge('ff.themes.generic_top_nav_buttons')
 			->setCall('Foolz\Foolframe\Plugins\Articles\Model\Articles::get_top')
@@ -44,7 +57,6 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 		\Foolz\Plugin\Event::forge('ff.themes.generic.index_nav_elements')
 			->setCall('Foolz\Foolframe\Plugins\Articles\Model\Articles::get_index')
 			->setPriority(3);
-		*/
 	});
 
 \Foolz\Plugin\Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-articles')

@@ -119,24 +119,24 @@ class Articles
 	}
 
 
-	public static function get_nav($where, $result)
+	protected static function get_nav($where, $result)
 	{
 		$nav = $result->getParam('nav');
 
 		try
 		{
-			$res = \Cache::get('ff.plugin.articles.model.get_nav_'.$where);
+			$res = Cache::item('ff.plugin.articles.model.get_nav_'.$where)->get();
 		}
-		catch (\CacheNotFoundException $e)
+		catch (\OutOfBoundsException $e)
 		{
-			$res = \DB::select('slug', 'title')
-				->from('plugin_ff-articles')
-				->where($where, 1)
-				->as_object()
+			$res = DC::qb()
+				->select('slug, title')
+				->from(DC::p('plugin_ff_articles'), 'a')
+				->where($where.' = 1')
 				->execute()
-				->as_array();
+				->fetchAll();
 
-			\Cache::set('ff.plugin.articles.model.get_nav_'.$where, $res, 3600);
+			Cache::item('ff.plugin.articles.model.get_nav_'.$where)->set($res, 3600);
 		}
 
 		if( ! count($res))
@@ -146,10 +146,10 @@ class Articles
 
 		foreach($res as $article)
 		{
-			$nav[] = array('href' => \Uri::create('_/articles/' . $article->slug), 'text' => e($article->title));
+			$nav[] = array('href' => \Uri::create('_/articles/' . $article['slug']), 'text' => e($article['title']));
 		}
 
-		//$result->setParam('nav', $nav)->set($nav);
+		$result->setParam('nav', $nav)->set($nav);
 	}
 
 
@@ -157,11 +157,11 @@ class Articles
 	{
 		$nav = $result->getParam('nav');
 
-		$res = \DB::select('slug', 'title')
-			->from('plugin_ff-articles')
-			->as_object()
+		$res = DC::qb()
+			->select('slug, title')
+			->from(DC::p('plugin_ff_articles'), 'a')
 			->execute()
-			->as_array();
+			->fetchAll();
 
 		if( ! count($res))
 		{
@@ -173,8 +173,8 @@ class Articles
 		foreach($res as $article)
 		{
 			$nav['articles']['elements'][] = array(
-				'href' => \Uri::create('_/articles/' . $article->slug),
-				'text' => e($article->title)
+				'href' => \Uri::create('_/articles/' . $article['slug']),
+				'text' => e($article['title'])
 			);
 		}
 
@@ -193,7 +193,7 @@ class Articles
 
 			foreach ($data as $k => $i)
 			{
-				$query->set(':'.$k, DC::forge()->quote($i));
+				$query->set($k, DC::forge()->quote($i));
 			}
 
 			$query->execute();

@@ -1,13 +1,13 @@
 <?php
 
-namespace Foolframe\Plugins\Articles;
+namespace Foolz\Foolfuuka\Controller\Chan;
 
-if (!defined('DOCROOT'))
-	exit('No direct script access allowed');
+use 	\Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
+	\Foolz\Foolframe\Plugins\Articles\ArticlesArticleNotFoundException;
 
-class Controller_Plugin_Ff_Articles_Chan extends \Foolfuuka\Controller_Chan
+class Articles extends \Foolz\Foolfuuka\Controller\Chan
 {
-	
+
 	public function action_articles($slug = null)
 	{
 		if(is_null($slug))
@@ -17,21 +17,24 @@ class Controller_Plugin_Ff_Articles_Chan extends \Foolfuuka\Controller_Chan
 
 		try
 		{
-			$article = Articles::get_by_slug($slug);
+			$article = A::get_by_slug($slug);
 		}
 		catch (ArticlesArticleNotFoundException $e)
 		{
 			throw new \HttpNotFoundException;
 		}
 
-		if($article->url)
+		if ($article['url'])
 		{
-			\Response::redirect($article->url);
+			\Response::redirect($article['url']);
 		}
 
-		$this->_theme->set_title(e($article->title) . ' « ' . \Preferences::get('ff.gen.website_title'));
-		$this->_theme->bind('section_title', $article->title);
-		$this->_theme->bind('content', $article->article);
-		return \Response::forge($this->_theme->build('markdown'));
+		$this->builder->getProps()->addTitle($article['title']);
+		$this->param_manager->setParam('section_title', $article['title']);
+
+		$this->builder->createPartial('body', 'markdown')
+			->getParamManager()->setParam('content', $article['article']);
+
+		return \Response::forge($this->builder->build());
 	}
 }

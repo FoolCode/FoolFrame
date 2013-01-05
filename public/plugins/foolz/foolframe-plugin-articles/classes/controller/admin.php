@@ -31,7 +31,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				'validation_func' => function($input, $form_internal)
 				{
 					// check that the ID exists
-					$count = DC::qb()
+					$count = (int) DC::qb()
 						->select('COUNT(*) as count')
 						->from(DC::p('plugin_ff_articles'), 'a')
 						->where('id = :id')
@@ -74,15 +74,16 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 					if (isset($input['id']))
 					{
 						// existence ensured by CRITICAL in the ID check
-						$result = \DB::select()
-							->from('plugin_ff-articles')
-							->where('id', $input['id'])
-							->as_object()
+						$result = DC::qb()
+							->select('*')
+							->from(DC::p('plugin_ff_articles'), 'a')
+							->where('id = :id')
+							->setParameter(':id', $input['id'])
 							->execute()
-							->current();
+							->fetch();
 
 						// no change?
-						if ($input['slug'] == $result->slug)
+						if ($input['slug'] == $result['slug'])
 						{
 							// no change
 							return array('success' => true);
@@ -177,16 +178,16 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 					foreach($articles as $article) : ?>
 					<tr>
 						<td>
-							<?php echo htmlentities($article->title) ?>
+							<?php echo htmlentities($article['title']) ?>
 						</td>
 						<td>
-							<a href="<?php echo \Uri::create('_/articles/' . $article->slug) ?>" target="_blank"><?php echo $article->slug ?></a>
+							<a href="<?php echo \Uri::create('_/articles/' . $article['slug']) ?>" target="_blank"><?php echo $article['slug'] ?></a>
 						</td>
 						<td>
-							<a href="<?php echo \Uri::create('admin/articles/edit/'.$article->slug) ?>" class="btn btn-mini btn-primary"><?php echo __('Edit') ?></a>
+							<a href="<?php echo \Uri::create('admin/articles/edit/'.$article['slug']) ?>" class="btn btn-mini btn-primary"><?php echo __('Edit') ?></a>
 						</td>
 						<td>
-							<a href="<?php echo \Uri::create('admin/articles/remove/'.$article->id) ?>" class="btn btn-mini btn-danger"><?php echo __('Remove') ?></a>
+							<a href="<?php echo \Uri::create('admin/articles/remove/'.$article['id']) ?>" class="btn btn-mini btn-danger"><?php echo __('Remove') ?></a>
 						</td>
 					</tr>
 					<?php endforeach; ?>
@@ -227,7 +228,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				{
 					// case in which letter was changed
 					\Notices::set_flash('success', __('Article information updated.'));
-					\Response::redirect('admin/article/edit/' . $result['success']['slug']);
+					\Response::redirect('admin/articles/edit/' . $result['success']['slug']);
 				}
 				else
 				{
@@ -236,9 +237,9 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			}
 		}
 
-		if(!is_null($slug))
+		if( ! is_null($slug))
 		{
-			$data['object'] = A::get_by_slug($slug);
+			$data['object'] = (object) A::get_by_slug($slug);
 			if($data['object'] == FALSE)
 			{
 				throw new \HttpServerErrorException;
