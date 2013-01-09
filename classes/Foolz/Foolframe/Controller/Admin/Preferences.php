@@ -85,7 +85,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			foreach($themes['default'] as $name => $theme)
 			{
 				$theme_checkboxes[] = array(
-					'type' => 'checkbox',
+					'type' => 'checkbox_array_value',
 					'label' => $theme->getConfig('name'),
 					'help' => sprintf(__('Enable %s theme'), $theme->getConfig('name')),
 					'array_key' => $theme->getConfig('name'),

@@ -19,7 +19,7 @@ class Preferences
 		\Profiler::mark('Preferences::load_settings Start');
 		if ($reload === true)
 		{
-			\Cache::delete('ff.model.preferences.settings');
+			Cache::item('ff.model.preferences.settings')->delete();
 		}
 
 		// we need to know the identifiers of the modules, like ff => foolfuuka, fu => foolfuuka, fs => foolslide
@@ -94,14 +94,14 @@ class Preferences
 			->where('p.name = :name')
 			->setParameter(':name', $setting)
 			->execute()
-			->fetch();
+			->fetch()['count'];
 
-		if ($count['count'])
+		if ($count)
 		{
 			DC::qb()
 				->update(DC::p('preferences'))
 				->set('value', ':value')
-				->where('name', ':name')
+				->where('name = :name')
 				->setParameters([':value' => $value, ':name' => $setting])
 				->execute();
 		}

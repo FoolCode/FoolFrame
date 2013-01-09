@@ -330,6 +330,7 @@
 							{
 								$item['value'] = array();
 							}
+							\Debug::dump($item['value']);
 						}
 
 						foreach($helpers['checkboxes'] as $checkbox)
