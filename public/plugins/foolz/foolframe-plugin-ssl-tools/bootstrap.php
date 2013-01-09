@@ -1,6 +1,6 @@
 <?php
 
-\Foolz\Plugin\Event::forge('Foolz\Plugin\Plugin::execute.foolz/ssl_tools')
+\Foolz\Plugin\Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
 	->setCall(function($result) {
 
 		// this plugin works with indexes that don't exist in CLI
