@@ -78,15 +78,6 @@
 					<?php if (isset($main_content_view)) : ?>
 						<?= $main_content_view ?>
 					<?php endif; ?>
-
-					<footer class="footer">
-						<p style="padding-left: 20px;">
-							<?= \Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.name') ?> Version <?= \Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>
-							<?php if (\Auth::member('admin') && (\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') != \Preferences::get('ff.cron.latest_version') && \Preferences::get('ff.cron.latest_version'))) : ?>
-								- <a href="<?= Uri::create('admin/system/upgrade') ?>"><?= \Str::tr(__('New Version Available: :version'), array('version' => \Preferences::get('ff.cron.latest_version'))) ?></a>
-							<?php endif; ?>
-						</p>
-					</footer>
 				</div>
 				<div style="clear:both"></div>
 			</div>

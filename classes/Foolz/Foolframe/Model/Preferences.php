@@ -7,12 +7,11 @@ use \Foolz\Cache\Cache;
 
 class Preferences
 {
-	protected static $_preferences = array();
+	protected static $_preferences = [];
 
-	protected static $_module_identifiers = array();
+	protected static $_module_identifiers = [];
 
 	protected static $loaded = false;
-
 
 	public static function load_settings($reload = false)
 	{
@@ -54,7 +53,6 @@ class Preferences
 		return static::$_preferences;
 	}
 
-
 	public static function get($setting, $fallback = null)
 	{
 		if ( ! static::$loaded)
@@ -78,7 +76,6 @@ class Preferences
 
 		return \Foolz\Config\Config::get(static::$_module_identifiers[$identifier], 'package', 'preferences.'.$query);
 	}
-
 
 	public static function set($setting, $value, $reload = true)
 	{
@@ -118,7 +115,6 @@ class Preferences
 		return static::$_preferences;
 	}
 
-
 	/**
 	 * Save in the preferences table the name/value pairs
 	 *
@@ -147,7 +143,6 @@ class Preferences
 		static::load_settings(true);
 	}
 
-
 	/**
 	 * A lazy way to submit the preference panel input, saves some code in controller
 	 *
@@ -168,7 +163,7 @@ class Preferences
 				return false;
 			}
 
-			$post = array();
+			$post = [];
 
 			foreach (\Input::post() as $key => $item)
 			{
@@ -193,7 +188,4 @@ class Preferences
 			}
 		}
 	}
-
 }
-
-/* end of file preferences.php */

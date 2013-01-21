@@ -92,10 +92,10 @@ class SchemaManager
 			->get($tables);
 
 		// create a database "how it is now"
-		$new->database_schema = new \Doctrine\DBAL\Schema\Schema($tables, array(), $sm->createSchemaConfig());
+		$new->database_schema = new \Doctrine\DBAL\Schema\Schema($tables, [], $sm->createSchemaConfig());
 
 		// make an empty schema
-		$new->coded_schema = new \Doctrine\DBAL\Schema\Schema(array(), array(), $sm->createSchemaConfig());
+		$new->coded_schema = new \Doctrine\DBAL\Schema\Schema([], [], $sm->createSchemaConfig());
 
 		return $new;
 	}
@@ -137,7 +137,10 @@ class SchemaManager
 	 */
 	public function getChanges()
 	{
-		return $this->coded_schema->getMigrateFromSql($this->database_schema, $this->connection->getSchemaManager()->getDatabasePlatform());
+		return $this->coded_schema->getMigrateFromSql(
+			$this->database_schema,
+			$this->connection->getSchemaManager()->getDatabasePlatform()
+		);
 	}
 
 	/**

@@ -6,7 +6,6 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
 class User extends \Model
 {
-
 	public $id = null;
 	public $username = null;
 	public $password = null;
@@ -29,7 +28,7 @@ class User extends \Model
 
 	public $password_current = null;
 
-	private $editable_fields = array(
+	private $editable_fields = [
 		'username',
 		'password',
 		'group_id',
@@ -38,7 +37,7 @@ class User extends \Model
 		'bio',
 		'twitter',
 		'display_name'
-	);
+	];
 
 	public function __construct($data)
 	{
@@ -48,17 +47,16 @@ class User extends \Model
 			{
 				$key = 'password_current';
 			}
-			
+
 			$this->$key = $item;
 		}
 	}
 
-
 	public static function forge($data)
 	{
-		if (is_array($data) && !\Arr::is_assoc($data))
+		if (is_array($data) && ! \Arr::is_assoc($data))
 		{
-			$array = array();
+			$array = [];
 
 			foreach($data as $item)
 			{
@@ -71,15 +69,14 @@ class User extends \Model
 		return new User($data);
 	}
 
-
-	public function save(Array $data = array())
+	public function save(Array $data = [])
 	{
 		foreach ($data as $key => $item)
 		{
 			$this->$key = $item;
 		}
 
-		$set = array();
+		$set = [];
 
 		foreach($this->editable_fields as $filter)
 		{
@@ -87,9 +84,13 @@ class User extends \Model
 		}
 
 		if ( ! is_null($set['password']) && $set['password'] !== '')
+		{
 			$set['password'] = \Auth::hash_password($set['password']);
+		}
 		else
+		{
 			unset($set['password']);
+		}
 
 		$query = DC::qb()
 			->update(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')))
@@ -103,5 +104,4 @@ class User extends \Model
 
 		$query->execute();
 	}
-
 }

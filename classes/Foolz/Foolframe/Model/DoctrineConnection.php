@@ -3,7 +3,7 @@
 namespace Foolz\Foolframe\Model;
 
 /**
- * Doctrine connection manager for FuelPHP 1.x that uses config/db.php
+ * Doctrine Connection Manager for FoolFrame
  */
 class DoctrineConnection
 {
@@ -24,7 +24,7 @@ class DoctrineConnection
 	/**
 	 * Creates a new \Doctrine\DBAL\Connection or returns the existing instance
 	 *
-	 * @param   string  $instance  The named instance
+	 * @param  string  $instance  The name of the instance
 	 *
 	 * @return  \Doctrine\DBAL\Connection
 	 * @throws  \DomainException  If the database configuration doesn't exist
@@ -42,7 +42,7 @@ class DoctrineConnection
 
 		if ($db_data === false)
 		{
-			throw new \DomainException('There\'s no such a database configuration available');
+			throw new \DomainException('The specified database configuration is not available.');
 		}
 
 		$data = [
@@ -59,9 +59,9 @@ class DoctrineConnection
 	}
 
 	/**
-	 * Returns a query builder
+	 * Returns a Query Builder
 	 *
-	 * @param   string  $instance  The named instance
+	 * @param  string  $instance  The named instance
 	 *
 	 * @return  \Doctrine\DBAL\Query\QueryBuilder
 	 * @throws  \DomainException  If the database configuration doesn't exist

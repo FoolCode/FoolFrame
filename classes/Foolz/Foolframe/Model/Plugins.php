@@ -24,7 +24,6 @@ class Plugins
 	 */
 	protected static $modules = [];
 
-
 	protected static $_admin_sidebars = [];
 
 	protected static $_identifiers = [];
@@ -49,7 +48,9 @@ class Plugins
 				static::$loader->get($enabled['identifier'], $enabled['slug'])->enabled = true;
 			}
 			catch (\OutOfBoundsException $e)
-			{}
+			{
+
+			}
 		}
 
 	}
@@ -165,7 +166,6 @@ class Plugins
 	public static function install($module, $slug)
 	{
 		$plugin = static::$loader->get($module, $slug);
-
 		$plugin->install();
 
 		DC::forge()->insert(DC::p('plugins'), ['identifier' => $module, 'slug' => $slug, 'enabled' => true]);
@@ -191,7 +191,9 @@ class Plugins
 					->execute();
 			}
 			catch (\OutOfBoundsException $e)
-			{}
+			{
+
+			}
 		}
 
 		$sm->commit();
@@ -199,7 +201,7 @@ class Plugins
 		static::clear_cache();
 	}
 
-	public static function uninstall($idenfitier, $slug)
+	public static function uninstall($identifier, $slug)
 	{
 		$dir = static::get_plugin_dir($identifier, $slug);
 
@@ -222,7 +224,7 @@ class Plugins
 	{
 		if ( ! isset(static::$_admin_sidebars[$type]))
 		{
-			return array();
+			return [];
 		}
 
 		return static::$_admin_sidebars[$type];
@@ -233,7 +235,7 @@ class Plugins
 		// the user can also send an array with the index inseted in $section
 		if( ! is_null($array))
 		{
-			$array2 = array();
+			$array2 = [];
 			$array2[$section] = $array;
 			$array = $array2;
 		}
@@ -246,5 +248,4 @@ class Plugins
 
 		\Foolz\Foolframe\Controller\Admin::add_sidebar_element($array);
 	}
-
 }

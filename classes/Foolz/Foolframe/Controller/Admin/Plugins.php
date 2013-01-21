@@ -20,7 +20,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
 	function action_manage()
 	{
-		$data = array();
+		$data = [];
 		$data['plugins'] = \Plugins::get_all();
 		$this->_views['method_title'] = __('Manage');
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/plugins/manage', $data);
@@ -119,6 +119,4 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
 		\Response::redirect('admin/plugins/manage');
 	}
-
-
 }

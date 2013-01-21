@@ -5,12 +5,11 @@ return array(
 	 * Variables necessary for the installation module to work
 	 */
 	'install' => array(
-
 		/**
 		 * This must be turned to true so the application can run,
 		 * otherwise only the install module will be available
 		 */
-		'installed' => false,
+		'installed' => false
 	),
 
 	/**
@@ -24,13 +23,11 @@ return array(
 	 * Information about the modules supported by FoolFrame
 	 */
 	'modules' => array(
-
 		/**
 		 * The installed modules
 		 */
 		'installed' => array(
 			'ff' => 'foolz/foolframe'
 		)
-	),
-
+	)
 );

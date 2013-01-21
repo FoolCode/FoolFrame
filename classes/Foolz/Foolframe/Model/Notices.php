@@ -26,6 +26,7 @@ class Notices
 	public static function flash()
 	{
 		$array = \Session::get_flash('notices');
+
 		return is_array($array) ? $array : [];
 	}
 
@@ -61,5 +62,4 @@ class Notices
 	{
 		static::$notices[] = ['level' => $level, 'message' => $message];
 	}
-
 }

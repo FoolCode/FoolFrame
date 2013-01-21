@@ -24,7 +24,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		// the login button has been submitted - authenticate username and password
 		if (\Input::post() && ! \Security::check_token())
 		{
-			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+			\Notices::set('warning', __('The security token was not found. Pleas try again.'));
 		}
 		elseif (\Input::post())
 		{
@@ -62,7 +62,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 	{
 		if ( ! \Security::check_token(\Input::get('token')))
 		{
-			die('The security token didn\'t match or has expired.');
+			die('The security token is invalid.');
 		}
 
 		\Auth::logout(false);
@@ -556,7 +556,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 	public function action_profile()
 	{
-		$form = array();
+		$form = [];
 
 		$form['open'] = array(
 			'type' => 'open'

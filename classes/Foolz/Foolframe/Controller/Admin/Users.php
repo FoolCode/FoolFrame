@@ -4,7 +4,6 @@ namespace Foolz\Foolframe\Controller\Admin;
 
 class Users extends \Foolz\Foolframe\Controller\Admin
 {
-
 	public function before()
 	{
 		// only mods and admins can see and edit users
@@ -18,7 +17,6 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		parent::before();
 	}
 
-
 	public function action_manage($page = 1)
 	{
 		if (intval($page) < 1)
@@ -26,7 +24,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 			$page = 1;
 		}
 
-		$data = array();
+		$data = [];
 		$users_data = \Users::get_all($page, 40);
 		$data['users'] = $users_data['result'];
 		$data['count'] = $users_data['count'];
@@ -36,7 +34,6 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
-
 
 	public function action_user($id = null)
 	{
@@ -55,8 +52,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 			throw new \HttpNotFoundException;
 		}
 
-
-		$form = array();
+		$form = [];
 
 		$form['open'] = array(
 			'type' => 'open'
@@ -188,9 +184,8 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		}
 
 		// create a form
-		$this->_views["method_title"] = __('User');
+		$this->_views["method_title"] = [__('Manage'), __('Edit'), $data['object']->username];
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
-
 }

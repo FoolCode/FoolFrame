@@ -4,11 +4,9 @@ namespace Foolz\Foolframe\Controller;
 
 class Admin extends Common
 {
-
 	protected $_views = null;
-	private static $sidebar = array();
-	private static $sidebar_dynamic = array();
-
+	private static $sidebar = [];
+	private static $sidebar_dynamic = [];
 
     public function before()
     {
@@ -35,18 +33,15 @@ class Admin extends Common
 		$this->_views['sidebar'] = \View::forge('foolz/foolframe::admin/sidebar', array('sidebar' => self::get_sidebar(self::$sidebar)));
 	}
 
-
     public function action_index()
     {
 		return \Response::redirect('admin/account/profile');
     }
 
-
 	public function action_404()
 	{
 		return \Response::forge('404', 404);
 	}
-
 
 	/**
 	 * Non-dynamic sidebar array.
@@ -71,7 +66,6 @@ class Admin extends Common
 		return $sidebar;
 	}
 
-
 	/**
 	 * Sets new sidebar elements, the array must match the defaults' structure.
 	 * It can override the methods.
@@ -82,12 +76,11 @@ class Admin extends Common
 	{
 		if (is_null(static::$sidebar_dynamic))
 		{
-			static::$sidebar_dynamic = array();
+			static::$sidebar_dynamic = [];
 		}
 
 		static::$sidebar_dynamic[] = $array;
 	}
-
 
 	/**
 	 * Merges without destroying twi sidebars, where $array2 overwrites values of
@@ -140,7 +133,7 @@ class Admin extends Common
 						}
 						else
 						{
-							$array1[$key]['content'] = self::merge_sidebars(array(), $item);
+							$array1[$key]['content'] = self::merge_sidebars([], $item);
 						}
 					}
 				}
@@ -155,7 +148,7 @@ class Admin extends Common
 						$element = $item['position']['element'];
 
 						$array_temp = $array1;
-						$array1 = array();
+						$array1 = [];
 						foreach ($array_temp as $subkey => $temp)
 						{
 							if ($subkey == $element)
@@ -199,7 +192,6 @@ class Admin extends Common
 		return $array1;
 	}
 
-
 	/**
 	 * Returns the sidebar array
 	 *
@@ -210,10 +202,10 @@ class Admin extends Common
 		// not logged in users don't need the sidebar
 		if (\Auth::member('guest'))
 		{
-			return array();
+			return [];
 		}
 
-		$result = array();
+		$result = [];
 		foreach ($array as $key => $item)
 		{
 			if (\Auth::has_access('maccess.' . $item['level']) && !empty($item))
@@ -256,12 +248,12 @@ class Admin extends Common
 					$subresult['href'] = \Uri::create(implode('/', $default_uri));
 				}
 
-				$subresult['content'] = array();
+				$subresult['content'] = [];
 
 				// cherry-picking subfunctions
 				foreach ($item['content'] as $subkey => $subitem)
 				{
-					$subsubresult = array();
+					$subsubresult = [];
 					$subsubresult = $subitem;
 					if (\Auth::has_access('maccess.' . $subitem['level']))
 					{
@@ -311,6 +303,4 @@ class Admin extends Common
 		}
 		return $result;
 	}
-
-
 }

@@ -6,7 +6,6 @@ use \Foolz\Config\Config;
 
 class Preferences extends \Foolz\Foolframe\Controller\Admin
 {
-
 	public function before()
 	{
 		parent::before();
@@ -20,12 +19,11 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['controller_title'] = __("Preferences");
 	}
 
-
 	function action_theme()
 	{
 		$this->_views["method_title"] = __("Theme");
 
-		$form = array();
+		$form = [];
 
 		$form['open'] = array(
 			'type' => 'open'
@@ -63,9 +61,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'separator'
 		);
 
-
-
-		$themes = array();
+		$themes = [];
 
 		foreach (Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 		{
@@ -100,7 +96,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 				'checkboxes' => $theme_checkboxes
 			);
 
-			$themes_default = array();
+			$themes_default = [];
 
 			foreach($themes['default'] as $name => $theme)
 			{
@@ -185,12 +181,11 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-
 	function action_advertising()
 	{
 		$this->_views["method_title"] = __("Advertising");
 
-		$form = array();
+		$form = [];
 
 		$form['open'] = array(
 			'type' => 'open'
@@ -240,7 +235,6 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'close'
 		);
 
-
 		$data['form'] = $form;
 
 		\Preferences::submit_auto($form);
@@ -250,12 +244,11 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-
 	function action_registration()
 	{
 		$this->_views["method_title"] = __("Registration");
 
-		$form = array();
+		$form = [];
 
 		$form['open'] = array(
 			'type' => 'open'
@@ -312,7 +305,6 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		$form['close'] = array(
 			'type' => 'close'
 		);
-
 
 		$data['form'] = $form;
 

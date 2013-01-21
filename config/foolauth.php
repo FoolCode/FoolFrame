@@ -20,7 +20,6 @@
  */
 
 return array(
-
 	/**
 	 * DB connection, leave null to use default
 	 */
@@ -105,7 +104,6 @@ return array(
 	 */
 	'login_hash_salt' => 'put_some_salt_in_here',
 
-
 	'salt' => 'vQMRaiF92DqdmSHjbrNkdTCk',
 
 	/**
@@ -121,5 +119,5 @@ return array(
 	/**
 	 * The amount of tries before an account is locked
 	 */
-	'attempts_to_lock' => 10,
+	'attempts_to_lock' => 10
 );

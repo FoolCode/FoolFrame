@@ -35,7 +35,6 @@ class Users
 		return User::forge($result);
 	}
 
-
 	/**
 	 * Gets single user database row by selected row
 	 *
@@ -58,7 +57,6 @@ class Users
 
 		return User::forge($result);
 	}
-
 
 	/**
 	 * Gets all user limited with page and limit
@@ -85,9 +83,6 @@ class Users
 			->execute()
 			->fetch();
 
-		return array('result' => $users, 'count' => $count['count']);
+		return ['result' => $users, 'count' => $count['count']];
 	}
-
 }
-
-/* end of file user.php */

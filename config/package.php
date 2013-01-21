@@ -1,7 +1,6 @@
 <?php
 
 return array(
-
 	/**
 	 * FoolFrame is the general structure built on FuelPHP
 	 */
@@ -10,7 +9,7 @@ return array(
 		/**
 		 * Version number for upgrading
 		 */
-		'version' => '0.1-dev-0',
+		'version' => '0.2.0',
 
 		/**
 		 * Display name
@@ -86,6 +85,5 @@ return array(
 				'pt_PT' => 'Portuguese',
 			)
 		)
-	),
-
+	)
 );
