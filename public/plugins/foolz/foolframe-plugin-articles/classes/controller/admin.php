@@ -224,7 +224,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 					\Notices::set_flash('success', __('New article created!'));
 					\Response::redirect('admin/articles/edit/' . $result['success']['slug']);
 				}
-				else if ($slug != $result['success']['slug'])
+				elseif ($slug != $result['success']['slug'])
 				{
 					// case in which letter was changed
 					\Notices::set_flash('success', __('Article information updated.'));
@@ -274,7 +274,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if (\Input::post())
+		elseif (\Input::post())
 		{
 			try
 			{

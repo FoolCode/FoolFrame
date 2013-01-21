@@ -162,7 +162,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if (\Input::post())
+		elseif (\Input::post())
 		{
 			$result = \Validation::form_validate($form);
 

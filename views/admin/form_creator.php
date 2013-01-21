@@ -340,7 +340,7 @@
 							{
 								$checked = (bool) $item['value'][$checkbox['array_key']];
 							}
-							else if(isset($checkbox['checked']))
+							elseif(isset($checkbox['checked']))
 							{
 								$checked = $checkbox['checked'];
 							}
@@ -363,15 +363,15 @@
 						{
 							$item['selected'] = \Preferences::get(str_replace(',', '.', $name));
 						}
-						else if (isset($item['value']))
+						elseif (isset($item['value']))
 						{
 							$item['selected'] = $item['value'];
 						}
-						else if (isset($object->$name))
+						elseif (isset($object->$name))
 						{
 							$item['selected'] = $object->$name;
 						}
-						else if (isset($helpers['default_value']))
+						elseif (isset($helpers['default_value']))
 						{
 							$item['selected'] = $helpers['default_value'];
 						}
@@ -417,11 +417,11 @@
 									}
 								}
 							}
-							else if (isset($object->$name))
+							elseif (isset($object->$name))
 							{
 								$item['value'] = $object->$name;
 							}
-							else if (isset($helpers['default_value']))
+							elseif (isset($helpers['default_value']))
 							{
 								$item['value'] = $helpers['default_value'];
 							}

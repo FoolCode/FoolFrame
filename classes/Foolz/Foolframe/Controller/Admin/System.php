@@ -56,7 +56,7 @@ class System extends \Foolz\Foolframe\Controller\Admin
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if (Input::post())
+		elseif (Input::post())
 		{
 			// run upgrades for every module
 			foreach ($mods as $mod)

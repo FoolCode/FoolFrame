@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><?php echo Preferences::get('fu.gen.website_title'); ?> <?php echo __('Control Panel') ?></title>
+		<title><?= Preferences::get('fu.gen.website_title').' '. __('Control Panel') ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
@@ -25,40 +25,38 @@
 					<?= $sidebar ?>
 				</div>
 
-
 				<div style="width:82%" class="pull-right">
+
 					<ul class="breadcrumb">
 						<li><?= $controller_title ?></li>
 
-						<?php if (isset($method_title)) : ?>
-							<span class="divider">/</span> <li><?= $method_title ?></li>
-						<?php endif; ?>
-
 						<?php
-						if (isset($extra_title) && !empty($extra_title))
+						if (isset($method_title) && is_array($method_title))
 						{
 							$count = 1;
-							foreach ($extra_title as $item)
+							$total = count($method_title);
+							foreach ($method_title as $title)
 							{
 								echo ' <span class="divider">/</span> ';
-								if ($count == count($extra_title))
+
+								if ($count == $total)
 								{
-									echo '<li class="active">'.$item.'</li>';
+									echo '<li class="active">'.$title.'</li>';
 								}
 								else
 								{
-									echo '<li>'.$item.'</li>';
+									echo '<li>'.$title.'</li>';
 								}
 
 								$count++;
 							}
 						}
+						elseif (isset($method_title))
+						{
+							echo ' <span class="divider">/</span> <li class="active">'.$method_title.'</li>';
+						}
 						?>
 					</ul>
-
-					<?php if (isset($method_title)) : ?>
-						<h3><?= $method_title ?></h3>
-					<?php endif; ?>
 
 					<div class="alerts">
 						<?php $notices = array_merge(\Notices::get(), \Notices::flash()); ?>

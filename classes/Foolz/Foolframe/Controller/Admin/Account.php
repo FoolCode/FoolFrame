@@ -8,29 +8,26 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 	{
 		parent::before();
 
-		// set controller information
 		$this->_views['controller_title'] = __('Account');
 	}
 
-
 	public function action_login()
 	{
+		// redirect user to admin panel
 		if (\Auth::has_access('maccess.user'))
 		{
 			\Response::redirect('admin');
 		}
 
-		$data = array();
+		$data = [];
 
 		// the login button has been submitted - authenticate username and password
 		if (\Input::post() && ! \Security::check_token())
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if (\Input::post())
+		elseif (\Input::post())
 		{
-
-
 			// load authentication instance
 			$auth = \Auth::instance();
 
@@ -61,7 +58,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-
 	public function action_logout()
 	{
 		if ( ! \Security::check_token(\Input::get('token')))
@@ -72,7 +68,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		\Auth::logout(false);
 		\Response::redirect('admin');
 	}
-
 
 	/**
 	 * Log out from all the devices
@@ -87,7 +82,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		\Auth::logout(true);
 		\Response::redirect('admin');
 	}
-
 
 	public function action_register()
 	{
@@ -105,7 +99,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if (\Input::post())
+		elseif (\Input::post())
 		{
 
 			$val = \Validation::forge('register');
@@ -183,7 +177,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-
 	public function action_activate($id, $activation_key)
 	{
 		if (\Auth::has_access('maccess.user'))
@@ -201,7 +194,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		\Response::redirect('admin/account/login');
 	}
 
-
 	public function action_forgot_password()
 	{
 		if (\Auth::has_access('maccess.user'))
@@ -213,7 +205,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if (\Input::post())
+		elseif (\Input::post())
 		{
 			$val = \Validation::forge('forgotten_password');
 			$val->add_field('email', __('Email'), 'required|trim|valid_email');
@@ -236,7 +228,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-
 	public function action_change_password($id = null, $password_key = null)
 	{
 		if ($id != null && $password_key != null)
@@ -247,7 +238,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				{
 					\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 				}
-				else if (\Input::post())
+				elseif (\Input::post())
 				{
 					$val = \Validation::forge('forgotten_password');
 					$val->add_field('password', __('Password'), 'required|min_length[4]|max_length[32]');
@@ -297,7 +288,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			{
 				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 			}
-			else if (\Input::post())
+			elseif (\Input::post())
 			{
 				return static::send_change_password_email(\Auth::get_email());
 			}
@@ -308,7 +299,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 		}
 	}
-
 
 	public function action_change_email($id = null, $email_key = null)
 	{
@@ -340,7 +330,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			{
 				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 			}
-			else if (\Input::post())
+			elseif (\Input::post())
 			{
 				$val = \Validation::forge('change_password');
 				$val->add_field('password', __('Password'), 'required');
@@ -414,10 +404,9 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 	}
 
-
 	public function action_delete($id = null, $key = null)
 	{
-		$this->_views['method_title'] = __('Delete Account');
+		$this->_views['method_title'] = __('Delete');
 
 		if ($id != null && $key != null)
 		{
@@ -451,7 +440,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			{
 				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 			}
-			else if (\Input::post())
+			elseif (\Input::post())
 			{
 				$val = \Validation::forge('change_password');
 				$val->add_field('password', __('Password'), 'required');
@@ -517,7 +506,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		}
 	}
 
-
 	public function send_change_password_email($email)
 	{
 		try
@@ -565,7 +553,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		\Auth::logout();
 		\Response::redirect('admin/account/login');
 	}
-
 
 	public function action_profile()
 	{
@@ -631,7 +618,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		{
 			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
 		}
-		else if (\Input::post())
+		elseif (\Input::post())
 		{
 			$result = \Validation::form_validate($form);
 
@@ -659,5 +646,4 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
-
 }
