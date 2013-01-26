@@ -1,24 +1,34 @@
-<?php if(!empty($sidebar)) : ?>
-<div class="well">
-	<ul class="nav nav-list" style="padding: 9px 0">
-		<?php
-			foreach($sidebar as $key => $item) : ?>
-			<li class="nav-header">
-				<?php echo $item['name'] ?>
-			</li>
-			<?php foreach($item['content'] as $k => $i) : ?>
-				<li <?php echo ($i['active']?'class="active"':'') ?>>
-					<a href="<?php echo $i['href'] ?>">
-						<?php if($i['icon']) ?> <i class="<?php echo $i['icon'] ?><?php if($i['active']) echo ' icon-white' ?>"></i>
-						<?php echo $i['name'] ?>
+<?php if (count($sidebar) > 0) : ?>
+<div class="well" style="padding: 3px;">
+	<ul class="nav nav-list">
+	<?php foreach ($sidebar as $key => $item) : ?>
+		<li class="nav-header">	<?= $item['name'] ?></li>
+		<?php foreach ($item['content'] as $k => $i) : ?>
+			<?php if ($i['active']) : ?>
+				<li class="active">
+					<a href="<?= $i['href'] ?>">
+						<i class="<?= $i['icon'] ?> icon-white"></i> <?= $i['name'] ?>
+						<?php if (isset($i['notification'])) : ?>
+							<div style="float: right;">
+								<?= $i['notification'] ?>
+							</div>
+						<?php endif; ?>
 					</a>
 				</li>
-			<?php endforeach; endforeach; ?>
+			<?php else : ?>
+				<li>
+					<a href="<?= $i['href'] ?>">
+						<i class="<?= $i['icon'] ?>"></i> <?= $i['name'] ?>
+						<?php if (isset($i['notification'])) : ?>
+							<div style="float: right;">
+								<?= $i['notification'] ?>
+							</div>
+						<?php endif; ?>
+					</a>
+				</li>
+			<?php endif; ?>
+		<?php endforeach; ?>
+	<?php endforeach; ?>
 	</ul>
 </div>
-<?php else : ?>
-
-<div class="span3" style="height:10px;">
-</div>
-
 <?php endif; ?>
