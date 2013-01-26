@@ -25,7 +25,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		}
 
 		$data = [];
-		$users_data = \Users::get_all($page, 40);
+		$users_data = \Users::getAll($page, 40);
 		$data['users'] = $users_data['result'];
 		$data['count'] = $users_data['count'];
 
@@ -44,7 +44,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		try
 		{
-			$data['object'] = \Foolz\Foolframe\Model\Users::get_user_by('id', $id);
+			$data['object'] = \Foolz\Foolframe\Model\Users::getUserBy('id', $id);
 			$data['object']->password = '';
 		}
 		catch (\Foolz\Foolframe\Model\UsersWrongIdException $e)
@@ -175,7 +175,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 				\Notices::set('success', __('Preferences updated.'));
 
-				$user = \Foolz\Foolframe\Model\Users::get_user_by('id', $id);
+				$user = \Foolz\Foolframe\Model\Users::getUserBy('id', $id);
 
 				$user->save($result['success']);
 				$data['object'] = $user;

@@ -59,7 +59,7 @@
 					</ul>
 
 					<div class="alerts">
-						<?php $notices = array_merge(\Notices::get(), \Notices::flash()); ?>
+						<?php $notices = array_merge(\Notices::get(), \Notices::getFlash()); ?>
 						<?php foreach ($notices as $notice) : ?>
 							<div class="alert alert-"<?= $notice['level'] ?>">
 								<?php if (is_array($notice['message'])) : ?>

@@ -84,9 +84,7 @@ $sidebar['system'] = [
 		],
 		'upgrade' => [
 			'level' => 'admin',
-			'name' => __('Upgrade') . ((\Preferences::get('ff.cron_autoupgrade_version') && version_compare(\Config::get('foolframe.main.version'),
-				\Preferences::get('ff.cron_autoupgrade_version')) < 0) ? ' <span class='label label-success'>' . __('New') . '</span>'
-					: ''),
+			'name' => __('Upgrade'),
 			'icon' => 'icon-refresh'
 		]
 	]

@@ -19,30 +19,6 @@ class Notices
 	protected static $notices = [];
 
 	/**
-	 * Get the flash notices
-	 *
-	 * @return  array  The flash notices, can be empty
-	 */
-	public static function flash()
-	{
-		$array = \Session::get_flash('notices');
-
-		return is_array($array) ? $array : [];
-	}
-
-	/**
-	 * Sets a flash notice
-	 *
-	 * @param  string  $level    The level of the message: success, warning, danger
-	 * @param  string  $message  The message
-	 */
-	public static function set_flash($level, $message)
-	{
-		static::$flash_notices[] = ['level' => $level, 'message' => $message];
-		\Session::set_flash('notices', static::$flash_notices);
-	}
-
-	/**
 	 * Returns the notices that have been set during this load
 	 *
 	 * @return  array  The notices, can be empty
@@ -63,6 +39,27 @@ class Notices
 		static::$notices[] = ['level' => $level, 'message' => $message];
 	}
 
+	/**
+	 * Get the flash notices
+	 *
+	 * @return  array  The flash notices, can be empty
+	 */
+	public static function getFlash()
+	{
+		$array = \Session::get_flash('notices');
 
-	public
+		return is_array($array) ? $array : [];
+	}
+
+	/**
+	 * Sets a flash notice
+	 *
+	 * @param  string  $level    The level of the message: success, warning, danger
+	 * @param  string  $message  The message
+	 */
+	public static function setFlash($level, $message)
+	{
+		static::$flash_notices[] = ['level' => $level, 'message' => $message];
+		\Session::set_flash('notices', static::$flash_notices);
+	}
 }

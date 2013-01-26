@@ -40,7 +40,7 @@ class Plugins
 			static::$loader->addDir($module, $dir);
 		}
 
-		foreach (static::get_enabled() as $enabled)
+		foreach (static::getEnabled() as $enabled)
 		{
 			try
 			{
@@ -54,18 +54,18 @@ class Plugins
 		}
 	}
 
-	public static function clear_cache()
+	public static function clearCache()
 	{
 		Cache::item('ff.model.plugins.get_all.query')->delete();
 		Cache::item('ff.model.plugins.get_enabled.query')->delete();
 	}
 
-	public static function get_all()
+	public static function getAll()
 	{
 		return static::$loader->getAll();
 	}
 
-	public static function get_enabled()
+	public static function getEnabled()
 	{
 		try
 		{
@@ -87,7 +87,7 @@ class Plugins
 		return $result;
 	}
 
-	public static function get_installed()
+	public static function getInstalled()
 	{
 		return DC::qb()
 			->select('*')
@@ -96,14 +96,7 @@ class Plugins
 			->fetchAll();
 	}
 
-	/**
-	 *
-	 * @param type $module
-	 * @param type $slug
-	 *
-	 * @return \Foolz\Plugin\Plugin
-	 */
-	public static function get_plugin($module, $slug)
+	public static function getPlugin($module, $slug)
 	{
 		return static::$loader->get($module, $slug);
 	}
@@ -135,7 +128,7 @@ class Plugins
 			->setParameters(['enabled' => true, ':identifier' => $module, ':slug' => $slug])
 			->execute();
 
-		static::clear_cache();
+		static::clearCache();
 	}
 
 	/**
@@ -159,7 +152,7 @@ class Plugins
 			->setParameters([':enabled' => false, ':identifier' => $module, ':slug' => $slug])
 			->execute();
 
-		static::clear_cache();
+		static::clearCache();
 	}
 
 	public static function install($module, $slug)
@@ -169,12 +162,12 @@ class Plugins
 
 		DC::forge()->insert(DC::p('plugins'), ['identifier' => $module, 'slug' => $slug, 'enabled' => true]);
 
-		static::clear_cache();
+		static::clearCache();
 
 		// run the schema update
 		$sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix().'plugin_');
 
-		foreach (static::get_installed() as $enabled)
+		foreach (static::getInstalled() as $enabled)
 		{
 			try
 			{
@@ -197,12 +190,12 @@ class Plugins
 
 		$sm->commit();
 
-		static::clear_cache();
+		static::clearCache();
 	}
 
 	public static function uninstall($identifier, $slug)
 	{
-		$dir = static::get_plugin_dir($identifier, $slug);
+		$dir = static::getPluginDir($identifier, $slug);
 
 		if (file_exists($dir.'uninstall.php'))
 		{
@@ -216,10 +209,10 @@ class Plugins
 			->setParameters([':identifier' => $identifier, ':slug' => $slug])
 			->execute();
 
-		static::clear_cache();
+		static::clearCache();
 	}
 
-	public static function get_sidebar_elements($type)
+	public static function getSidebarElements($type)
 	{
 		if ( ! isset(static::$_admin_sidebars[$type]))
 		{
@@ -229,7 +222,7 @@ class Plugins
 		return static::$_admin_sidebars[$type];
 	}
 
-	public static function register_sidebar_element($type, $section, $array = null)
+	public static function registerSidebarElement($type, $section, $array = null)
 	{
 		// the user can also send an array with the index inseted in $section
 		if( ! is_null($array))

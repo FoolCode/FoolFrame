@@ -12,7 +12,7 @@ class Admin extends Common
     {
 		parent::before();
 
-		if( ! \Auth::has_access('maccess.user') && \Uri::string() != 'admin/account/login')
+		if ( ! \Auth::has_access('maccess.user') && (\Uri::string() != 'admin/account/login' && \Uri::string() != 'admin/account/register'))
 		{
 			return \Response::redirect('admin/account/login');
 		}
@@ -21,7 +21,7 @@ class Admin extends Common
 		self::$sidebar = static::get_sidebar_values();
 
 		// get the plugin sidebars
-		self::$sidebar_dynamic = \Foolz\Foolframe\Model\Plugins::get_sidebar_elements('admin');
+		self::$sidebar_dynamic = \Foolz\Foolframe\Model\Plugins::getSidebarElements('admin');
 
 		// merge if there were sidebar elements added dynamically
 		if ( ! empty(self::$sidebar_dynamic))

@@ -13,9 +13,9 @@ class Preferences
 
 	protected static $loaded = false;
 
-	public static function load_settings($reload = false)
+	public static function load($reload = false)
 	{
-		\Profiler::mark('Preferences::load_settings Start');
+		\Profiler::mark('Preferences::load Start');
 		if ($reload === true)
 		{
 			Cache::item('ff.model.preferences.settings')->delete();
@@ -46,7 +46,7 @@ class Preferences
 		}
 
 		\Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');
-		\Profiler::mark('Preferences::load_settings End');
+		\Profiler::mark('Preferences::load End');
 
 		static::$loaded = true;
 
@@ -57,7 +57,7 @@ class Preferences
 	{
 		if ( ! static::$loaded)
 		{
-			static::load_settings();
+			static::load();
 		}
 
 		if (isset(static::$_preferences[$setting]) && static::$_preferences[$setting] !== '')
@@ -109,7 +109,7 @@ class Preferences
 
 		if ($reload)
 		{
-			return static::load_settings(true);
+			return static::load(true);
 		}
 
 		return static::$_preferences;
@@ -143,7 +143,7 @@ class Preferences
 		}
 
 		// reload those preferences
-		static::load_settings(true);
+		static::load(true);
 	}
 
 	/**

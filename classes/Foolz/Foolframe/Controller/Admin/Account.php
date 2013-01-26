@@ -119,7 +119,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				// activate or send activation email
 				if ( ! $activation_key)
 				{
-					\Notices::set_flash('success', __('Congratulations! You have successfully registered.'));
+					\Notices::setFlash('success', __('Congratulations! You have successfully registered.'));
 				}
 				else
 				{
@@ -149,12 +149,12 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					{
 						// the email driver was unable to send the email. the account will be activated automatically.
 						\Auth::activate_user($id, $activation_key);
-						\Notices::set_flash('success', __('Congratulations! You have successfully registered.'));
+						\Notices::setFlash('success', __('Congratulations! You have successfully registered.'));
 						\Log::error(\Str::tr('The system was unable to send an activation email to :username. The account was activated automatically in order to allow the user access.', array('username' => $input['username'])));
 						\Response::redirect('admin/account/login');
 					}
 
-					\Notices::set_flash('success', __('Congratulations! You have successfully registered. Please check your email to activate your account.'));
+					\Notices::setFlash('success', __('Congratulations! You have successfully registered. Please check your email to activate your account.'));
 				}
 
 				\Response::redirect('admin/account/login');
@@ -186,11 +186,11 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 		if (\Auth::activate_user($id, $activation_key))
 		{
-			\Notices::set_flash('success', __('Your account has been activated. You are now able to login and access the control panel.'));
+			\Notices::setFlash('success', __('Your account has been activated. You are now able to login and access the control panel.'));
 			\Response::redirect('admin/account/login');
 		}
 
-		\Notices::set_flash('error', __('It appears that you are accessing an invalid link or that your activation key has expired. If your account has not been activated in the last 48 hours, you will need to re-register the account again.'));
+		\Notices::setFlash('error', __('It appears that you are accessing an invalid link or that your activation key has expired. If your account has not been activated in the last 48 hours, you will need to re-register the account again.'));
 		\Response::redirect('admin/account/login');
 	}
 
@@ -314,7 +314,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			try
 			{
 				\Auth::change_email($id, $email_key);
-				\Notices::set_flash('success', __('You have activated and verified your new email address successfully.'));
+				\Notices::setFlash('success', __('You have activated and verified your new email address successfully.'));
 				\Response::redirect();
 			}
 			catch (\Auth\FoolUserWrongKey $e)
@@ -346,16 +346,16 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					}
 					catch (\Auth\FoolUserWrongPassword $e)
 					{
-						\Notices::set_flash('error', __('The password entered is incorrect.'));
+						\Notices::setFlash('error', __('The password entered is incorrect.'));
 						\Response::redirect('admin/account/change_email_request');
 					}
 					catch (\Auth\FoolUserEmailExists $e)
 					{
-						\Notices::set_flash('error', __('The email address is already associated with another username. Please enter another email address.'));
+						\Notices::setFlash('error', __('The email address is already associated with another username. Please enter another email address.'));
 						\Response::redirect('admin/account/change_email_request');
 					}
 
-					$user = \Users::get_user();
+					$user = \Users::getUser();
 
 					$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
@@ -378,13 +378,13 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					try
 					{
 						$sendmail->send();
-						\Notices::set_flash('success', __('An email has been sent to verify your new email address. The activation link included will only work for the next 24 hours..'));
+						\Notices::setFlash('success', __('An email has been sent to verify your new email address. The activation link included will only work for the next 24 hours..'));
 
 					}
 					catch(\EmailSendingFailedException $e)
 					{
 						// the email driver was unable to send the email. the account's email address will not be changed.
-						\Notices::set_flash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));
+						\Notices::setFlash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));
 						\Log::error(\Str::tr('The system was unable to send a verification email to :username. This user was attempting to change their email address.'), array('username' => $user->username));
 					}
 
@@ -455,11 +455,11 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					}
 					catch (\Auth\FoolUserWrongPassword $e)
 					{
-						\Notices::set_flash('error', __('The password entered is incorrect.'));
+						\Notices::setFlash('error', __('The password entered is incorrect.'));
 						\Response::redirect('admin/account/delete');
 					}
 
-					$user = \Users::get_user();
+					$user = \Users::getUser();
 
 					$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
@@ -482,12 +482,12 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					try
 					{
 						$sendmail->send();
-						\Notices::set_flash('success', __('An email has been sent to verify the deletion of your account. The verification link included will only work for the next 15 minutes.'));
+						\Notices::setFlash('success', __('An email has been sent to verify the deletion of your account. The verification link included will only work for the next 15 minutes.'));
 					}
 					catch(\EmailSendingFailedException $e)
 					{
 						// the email driver was unable to send the email. the account will not be deleted.
-						\Notices::set_flash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));
+						\Notices::setFlash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));
 						\Log::error(\Str::tr('The system was unable to send a verification email to :username. This user was attempting to delete their account.'), array('username' => $user->username));
 					}
 
@@ -514,11 +514,11 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		}
 		catch (\Auth\FoolUserWrongEmail $e)
 		{
-			\Notices::set_flash('error', __('The email address provided does not exist in the system. Please check and verify that it is correct.'));
+			\Notices::setFlash('error', __('The email address provided does not exist in the system. Please check and verify that it is correct.'));
 			\Response::redirect('admin/account/forgotten_password');
 		}
 
-		$user = \Users::get_user_by('email', $email);
+		$user = \Users::getUserBy('email', $email);
 
 		$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
@@ -541,12 +541,12 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		try
 		{
 			$sendmail->send();
-			\Notices::set_flash('success', __('An email has been sent to verify that you wish to change your password. The verification link included will only work for the next 15 minutes.'));
+			\Notices::setFlash('success', __('An email has been sent to verify that you wish to change your password. The verification link included will only work for the next 15 minutes.'));
 		}
 		catch(\EmailSendingFailedException $e)
 		{
 			// the email driver was unable to send the email. the account's password will not be changed..
-			\Notices::set_flash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));
+			\Notices::setFlash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));
 			\Log::error(\Str::tr('The system was unable to send a verification email to :username. This user was attempting to change their password.'), array('username' => $user->username));
 		}
 

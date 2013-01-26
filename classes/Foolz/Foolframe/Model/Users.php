@@ -14,7 +14,7 @@ class Users
 	 * @param  int  $id
 	 * @return object
 	 */
-	public static function get_user()
+	public static function getUser()
 	{
 		$id = \Auth::get_user_id();
 		$id = $id[1];
@@ -41,7 +41,7 @@ class Users
 	 * @param  int  $id
 	 * @return object
 	 */
-	public static function get_user_by($field, $id)
+	public static function getUserBy($field, $id)
 	{
 		$result = DC::qb()
 			->select('*')
@@ -65,7 +65,7 @@ class Users
 	 * @param  into $limit
 	 * @return object
 	 */
-	public static function get_all($page = 1, $limit = 40)
+	public static function getAll($page = 1, $limit = 40)
 	{
 		$users = DC::qb()
 			->select('*')
