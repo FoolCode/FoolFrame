@@ -19,7 +19,7 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-return array(
+return [
 	/**
 	 * DB connection, leave null to use default
 	 */
@@ -44,7 +44,7 @@ return array(
 	 * Choose which columns are selected, must include: username, password, email, last_login,
 	 * login_hash, group & profile_fields
 	 */
-	'table_columns' => array('*'),
+	'table_columns' => ['*'],
 
 	/**
 	 * This will allow you to use the group & acl driver for non-logged in users
@@ -52,52 +52,52 @@ return array(
 	'guest_login' => true,
 
 	/**
-	 * Groups as id => array(name => <string>, roles => <array>)
+	 * Groups as id => [name => <string>, roles => <array>]
 	 */
-	'groups' => array(
-		0    => array('name' => 'Guests', 'roles' => array()),
-		1    => array('name' => 'Users', 'roles' => array('user')),
-		50   => array('name' => 'Moderators', 'roles' => array('mod')),
-		100  => array('name' => 'Administrators', 'roles' => array('admin')),
-	),
+	'groups' => [
+		0    => ['name' => 'Guests', 'roles' => []],
+		1    => ['name' => 'Users', 'roles' => ['user']],
+		50   => ['name' => 'Moderators', 'roles' => ['mod']],
+		100  => ['name' => 'Administrators', 'roles' => ['admin']],
+	],
 
 	/**
-	 * Roles as name => array(location => rights)
+	 * Roles as name => [location => rights]
 	 */
-	'roles' => array(
-		'user' => array(
-			'access' => array('user', 'member'),
-			'maccess' => array('user')
-		),
-		'mod' => array(
-			'access' => array('mod'),
-			'maccess' => array('user', 'mod'),
-			'users' => array('access')
-		),
-		'admin' => array(
-			'access' => array('admin'),
-			'maccess' => array('user', 'mod', 'admin'),
-			'users' => array('access', 'change_credentials', 'change_group')
-		),
+	'roles' => [
+		'user' => [
+			'access'  => ['user', 'member'],
+			'maccess' => ['user']
+		],
+		'mod' => [
+			'access'  => ['mod'],
+			'maccess' => ['user', 'mod'],
+			'users'   => ['access']
+		],
+		'admin' => [
+			'access'  => ['admin'],
+			'maccess' => ['user', 'mod', 'admin'],
+			'users'   => ['access', 'change_credentials', 'change_group']
+		],
 		/**
 		 * Examples
 		 * ---
 		 *
 		 * Regular example with role "user" given create & read rights on "comments":
-		 *   'user'  => array('comments' => array('create', 'read')),
+		 *   'user'  => ['comments' => ['create', 'read']],
 		 * And similar additional rights for moderators:
-		 *   'moderator'  => array('comments' => array('update', 'delete')),
+		 *   'moderator'  => ['comments' => ['update', 'delete']],
 		 *
-		 * Wildcard # role (auto assigned to all groups):
-		 *   '#'  => array('website' => array('read'))
+		 * Wildcard # role (auto assigned to all groups]:
+		 *   '#'  => ['website' => ['read']]
 		 *
 		 * Global disallow by assigning false to a role:
 		 *   'banned' => false,
 		 *
-		 * Global allow by assigning true to a role (use with care!):
+		 * Global allow by assigning true to a role (use with care!]:
 		 *   'super' => true,
 		 */
-	),
+	],
 
 	/**
 	 * Salt for the login hash
@@ -120,4 +120,4 @@ return array(
 	 * The amount of tries before an account is locked
 	 */
 	'attempts_to_lock' => 10
-);
+];

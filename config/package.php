@@ -1,10 +1,10 @@
 <?php
 
-return array(
+return [
 	/**
 	 * FoolFrame is the general structure built on FuelPHP
 	 */
-	'main' => array(
+	'main' => [
 
 		/**
 		 * Version number for upgrading
@@ -29,61 +29,60 @@ return array(
 		/**
 		 *  URL to download a newer version
 		 */
-		'git_tags_url' => 'https://api.github.com/repos/foolrulez/foolfuuka/tags',
+		'git_tags_url' => 'https://api.github.com/repos/foolcode/foolfuuka/tags',
 
 		/**
 		 * URL to fetch the changelog
 		 */
-		'git_changelog_url' => 'https://raw.github.com/foolrulez/FoOlFuuka/master/CHANGELOG.md',
+		'git_changelog_url' => 'https://raw.github.com/FoolCode/FoolFuuka/master/CHANGELOG.md',
 
-	),
+	],
 
 	/**
 	 * Variables necessary for the installation module to work
 	 */
-	'install' => array(
+	'install' => [
 		/**
 		 * Requirements to install FoolFrame
 		 */
-		'requirements' => array(
+		'requirements' => [
 			/**
 			* Minimal PHP requirement
 			*/
-			'min_php_version' => '5.3.0',
+			'min_php_version' => '5.4.0',
 
 			/**
 			 * Minimal MySQL requirement
 			 */
 			'min_mysql_version' => '5.5.0'
-		)
-	),
+		]
+	],
 
 	/**
 	 * Locations of the data out of the module folder
 	 */
-	'directories' => array(
+	'directories' => [
 		'themes' => 'public/themes/',
 		'plugins' => 'public/plugins/'
-	),
+	],
 
 	/**
 	 * Preferences defaults
 	 */
-	'preferences' => array(
-
-		'gen' => array(
+	'preferences' => [
+		'gen' => [
 			'website_title' => 'FoolFrame',
 			'index_title' => 'FoolFrame',
-		),
+		],
 
-		'lang' => array(
+		'lang' => [
 			'default' => 'en_EN',
-			'available' => array(
+			'available' => [
 				'en_EN' => 'English',
 				'fr_FR' => 'French',
 				'it_IT' => 'Italian',
 				'pt_PT' => 'Portuguese',
-			)
-		)
-	)
-);
+			]
+		]
+	]
+];

@@ -38,7 +38,7 @@ class DoctrineConnection
 
 		$config = new \Doctrine\DBAL\Configuration();
 
-		$db_data = \Foolz\Config\Config::get('foolz/foolframe' , 'db', $instance);
+		$db_data = \Foolz\Config\Config::get('foolz/foolframe', 'db', $instance);
 
 		if ($db_data === false)
 		{

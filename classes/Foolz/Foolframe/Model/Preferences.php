@@ -93,7 +93,7 @@ class Preferences
 			->execute()
 			->fetch()['count'];
 
-		if ($count)
+		if ($count > 0)
 		{
 			DC::qb()
 				->update(DC::p('preferences'))
@@ -129,9 +129,12 @@ class Preferences
 			{
 				// remove also empty values with array_filter
 				// but we want to keep 0s
-				$value = serialize(array_filter($value, function($var){
+				$value = serialize(array_filter($value, function($var) {
 					if($var === 0)
+					{
 						return true;
+					}
+
 					return $var;
 				}));
 			}

@@ -62,4 +62,7 @@ class Notices
 	{
 		static::$notices[] = ['level' => $level, 'message' => $message];
 	}
+
+
+	public
 }

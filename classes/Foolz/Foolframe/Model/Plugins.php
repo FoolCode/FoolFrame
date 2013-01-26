@@ -2,9 +2,9 @@
 
 namespace Foolz\Foolframe\Model;
 
-use \Foolz\Plugin\Loader;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 use \Foolz\Cache\Cache;
+use \Foolz\Plugin\Loader;
 
 class PluginException extends \FuelException {}
 
@@ -52,7 +52,6 @@ class Plugins
 
 			}
 		}
-
 	}
 
 	public static function clear_cache()
