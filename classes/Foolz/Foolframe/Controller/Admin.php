@@ -12,7 +12,7 @@ class Admin extends Common
     {
 		parent::before();
 
-		if ( ! \Auth::has_access('maccess.user') && (\Uri::string() != 'admin/account/login' && \Uri::string() != 'admin/account/register'))
+		if ( ! \Auth::has_access('maccess.user') && ! in_array(\Uri::string(), ['admin/account/login', 'admin/account/forgot_password', 'admin/account/register']))
 		{
 			return \Response::redirect('admin/account/login');
 		}

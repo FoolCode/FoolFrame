@@ -24,7 +24,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		// the login button has been submitted - authenticate username and password
 		if (\Input::post() && ! \Security::check_token())
 		{
-			\Notices::set('warning', __('The security token was not found. Pleas try again.'));
+			\Notices::set('warning', __('The security token was not found. Please try again.'));
 		}
 		elseif (\Input::post())
 		{
@@ -55,7 +55,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['method_title'] = __('Login');
 		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/login');
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return \Response::forge(\View::forge('foolz/foolframe::admin/account', $this->_views));
 	}
 
 	public function action_logout()
@@ -174,7 +174,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['method_title'] = __('Register');
 		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/register');
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return \Response::forge(\View::forge('foolz/foolframe::admin/account', $this->_views));
 	}
 
 	public function action_activate($id, $activation_key)
@@ -225,7 +225,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['method_title'] = __('Forgot Password');
 		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/forgot_password');
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return \Response::forge(\View::forge('foolz/foolframe::admin/account', $this->_views));
 	}
 
 	public function action_change_password($id = null, $password_key = null)

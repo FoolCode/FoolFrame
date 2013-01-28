@@ -1,24 +1,15 @@
-<div class="well">
-
-	<p>
-		<?= __('To reset your password, please enter the following information to begin the process of resetting your account password.') ?>
-	</p>
-
-	<?= \Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);')) ?>
+<?= \Form::open(['class' => 'form-account', 'onsubmit' => 'fuel_set_csrf_token(this);']) ?>
 	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
+	<h2 class="form-account-heading"><?= __('Forgot Password') ?></h2>
 
-	<label><?= \Form::label(__("Email Address"), 'email') ?></label>
-	<?= \Form::input(array(
+	<?= \Form::input([
+		'class' => 'input-block-level',
 		'name' => 'email',
-		'id' => 'email',
 		'value' => \Input::post('email'),
-		'placeholder' => __('Required')
-	)) ?>
+		'placeholder' => __('E-mail Address')
+	]) ?>
 
-	<br/>
+	<?= Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => __('Submit')]) ?>
 
-	<?= \Form::submit(array('name' => 'submit', 'value' => __('Submit'), 'class' => 'btn btn-primary')) ?>
-
-	<?= \Form::close() ?>
-
-</div>
+	<input type="button" onClick="window.location.href='<?= \Uri::create('/admin/account/login/') ?>'" class="btn" value="<?= htmlspecialchars(__('Back')) ?>" />
+<?= \Form::close() ?>

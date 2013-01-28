@@ -1,43 +1,34 @@
-<div class="well">
-	<?= \Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);')) ?>
+<?= \Form::open(['class' => 'form-account', 'onsubmit' => 'fuel_set_csrf_token(this);']) ?>
 	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
+	<h2 class="form-account-heading"><?= __('Login') ?></h2>
 
-	<label><?= \Form::label(__('Username'), 'username') ?></label>
-	<?= \Form::input(array(
+	<?= \Form::input([
+		'class' => 'input-block-level',
 		'name' => 'username',
-		'id' => 'username',
 		'value' => \Input::post('username'),
-		'maxlength' => 80,
-		'size' => 30,
-		'placeholder' => __('Required')
-	)) ?>
+		'placeholder' => __('Username')
+	]) ?>
 
-	<label><?= \Form::label(__('Password'), 'password') ?></label>
-	<?= \Form::password(array(
+	<?= \Form::password([
+		'class' => 'input-block-level',
 		'name' => 'password',
-		'id' => 'password',
-		'size' => 30,
-		'placeholder' => __('Required')
-	)) ?>
-
+		'placeholder' => __('Password')
+	]) ?>
 
 	<label class="checkbox">
-	<?= \Form::checkbox(array(
-		'name' => 'remember',
-		'id' => 'remember',
-		'value' => 1,
-		'checked' => \Input::post('remember'),
-	)) ?>
-	<?= \Form::label(__('Remember Me'), 'remember') ?>
+		<?= \Form::checkbox([
+			'name' => 'remember',
+			'value' => true,
+			'checked' => \Input::post('remember')
+		]) ?>
+		<?= \Form::label(__('Remember Me'), 'remember') ?>
 	</label>
 
-	<?= \Form::submit(array('name' => 'submit', 'value' => __('Login'), 'class' => 'btn btn-primary')) ?>
+	<?= Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => __('Login')]) ?>
 
-	<input type="button" onClick="window.location.href='<?= \Uri::create('/admin/account/forgot_password/') ?>'" class="btn" value="<?= htmlspecialchars(__("Forgot Password")) ?>" />
+	<input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/forgot_password/') ?>'" value="<?= htmlspecialchars(__('Forgot Password')) ?>" />
+
 	<?php if ( ! \Preferences::get('ff.auth.disable_registration')) : ?>
-		<input type="button" onClick="window.location.href='<?= \Uri::create('/admin/account/register/') ?>'" class="btn" value="<?= htmlspecialchars(__("Register")) ?>" />
+	<input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/register/') ?>'" value="<?= htmlspecialchars(__('Register')) ?>" />
 	<?php endif; ?>
-
-	<?= \Form::close() ?>
-
-</div>
+<?= \Form::close() ?>

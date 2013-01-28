@@ -1,65 +1,37 @@
-<div class="well">
-
-	<?= \Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);')) ?>
+<?= \Form::open(['class' => 'form-account', 'onsubmit' => 'fuel_set_csrf_token(this);']) ?>
 	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
+	<h2 class="form-account-heading"><?= __('Register') ?></h2>
 
-	<label><?= \Form::label(__('Username'), 'username') ?></label>
-	<?= Form::input(array(
+	<?= \Form::input([
+		'class' => 'input-block-level',
 		'name' => 'username',
-		'id' => 'username',
 		'value' => \Input::post('username'),
-		'maxlength' => 32,
-		'size' => 30,
-		'placeholder' => __('required')
-	)) ?>
+		'placeholder' => __('Username')
+	]) ?>
 
-	<label><?= \Form::label(__('Email Address'), 'email') ?></label>
-	<?= \Form::input(array(
+	<?= \Form::input([
+		'class' => 'input-block-level',
 		'name' => 'email',
-		'id' => 'email',
 		'value' => \Input::post('email'),
-		'maxlength' => 80,
-		'size' => 30,
-		'placeholder' => __('required')
-	)) ?>
+		'placeholder' => __('E-mail Address')
+	]) ?>
 
-
-	<label><?= \Form::label(__('Password'), 'password') ?></label>
-	<?= \Form::password(array(
+	<?= \Form::password([
+		'class' => 'input-block-level',
 		'name' => 'password',
-		'id' => 'password',
-		'value' => \Input::post('password'),
-		'maxlength' => 32,
-		'size' => 30,
-		'placeholder' => __('required')
-	)) ?>
+		'placeholder' => __('Password')
+	]) ?>
 
-
-	<label><?= \Form::label(__('Confirm Password'), 'confirm_password') ?></label>
-	<?= \Form::password(array(
+	<?= \Form::password([
+		'class' => 'input-block-level',
 		'name' => 'confirm_password',
-		'id' => 'confirm_password',
-		'value' => \Input::post('confirm_password'),
-		'maxlength' => 32,
-		'size' => 30,
-		'placeholder' => __('required')
-	)) ?>
-
+		'placeholder' => __('Confirm Password')
+	]) ?>
 
 	<?= (\ReCaptcha::available()) ? '<br/><br/>'.\ReCaptcha::instance()->get_html() : '' ?>
 
+	<?= Form::submit(['class' => 'btn btn-primary', 'name' => 'register', 'value' => __('Register')]) ?>
 
-	<br/><br/>
-
-	<?= \Form::submit(array(
-		'name' => 'register',
-		'value' => __('Register'),
-		'class' => 'btn btn-primary'
-	)) ?>
-
-
-	<input type="button" onClick="window.location.href='<?= \Uri::create('/admin/account/login/') ?>'" class="btn" value="<?= htmlspecialchars(__("Back to login")) ?>" />
-
-	<?= \Form::close() ?>
-
-</div>
+	<input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/forgot_password/') ?>'" value="<?= htmlspecialchars(__('Forgot Password')) ?>" />
+	<input type="button" onClick="window.location.href='<?= \Uri::create('/admin/account/login/') ?>'" class="btn" value="<?= htmlspecialchars(__('Back')) ?>" />
+<?= \Form::close() ?>

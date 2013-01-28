@@ -1,5 +1,5 @@
 <?php if (count($sidebar) > 0) : ?>
-<div class="well" style="padding: 3px;">
+<div class="well sidebar-nav">
 	<ul class="nav nav-list">
 	<?php foreach ($sidebar as $key => $item) : ?>
 		<li class="nav-header">	<?= $item['name'] ?></li>

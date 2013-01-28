@@ -48,7 +48,7 @@
  */
 ?>
 
-<div class="well"<?php echo (isset($parent))?' data-form-parent="' . $parent . '"':'';
+<div class="form-container"<?php echo (isset($parent))?' data-form-parent="' . $parent . '"':'';
 	echo ((isset($hide) && $hide === TRUE)?' style="display:none"':'');
 ?>>
 
