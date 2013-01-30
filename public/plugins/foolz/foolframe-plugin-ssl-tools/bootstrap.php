@@ -17,7 +17,7 @@
 		// don't add the admin panels if the user is not an admin
 		if (\Auth::has_access('maccess.admin'))
 		{
-			\Plugins::register_sidebar_element('admin', 'plugins', array(
+			\Plugins::registerSidebarElement('admin', 'plugins', array(
 				"content" => array("ssl_tools/manage" => array("level" => "admin", "name" => __("SSL Tools"), "icon" => 'icon-lock'))
 			));
 		}
