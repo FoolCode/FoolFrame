@@ -24,7 +24,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		// the login button has been submitted - authenticate username and password
 		if (\Input::post() && ! \Security::check_token())
 		{
-			\Notices::set('warning', __('The security token was not found. Please try again.'));
+			\Notices::set('error', __('The security token was not found. Please try again.'));
 		}
 		elseif (\Input::post())
 		{
@@ -500,7 +500,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 			}
 
-			$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/delete');
+			$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/request_delete');
 
 			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 		}

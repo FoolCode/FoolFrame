@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title><?= __('Login').' - '.Preferences::get('fu.gen.website_title') ?></title>
+		<title><?= __('Login').' - '.Preferences::get('ff.gen.website_title') ?></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<link href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.css' ?>" rel="stylesheet">

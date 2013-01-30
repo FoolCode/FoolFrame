@@ -2,13 +2,8 @@
 	<div class="navbar-inner">
 		<div class="container">
 			<a class="brand" href="<?= \Uri::create('admin') ?>">
-				<?= \Preferences::get('ff.gen.website_title').' - '.__('Control Panel') ?>
+				<?= \Preferences::get('ff.gen.website_title') ?>
 			</a>
-			<ul class="nav">
-				<li class="active">
-					<a href="<?= \Uri::create('admin') ?>"><?= __('Home') ?></a>
-				</li>
-			</ul>
 			<ul class="nav pull-right">
 				<li><a href="<?= \Uri::base('@default') ?>"><?= __('Boards') ?></a></li>
 				<li class="divider-vertical"></li>

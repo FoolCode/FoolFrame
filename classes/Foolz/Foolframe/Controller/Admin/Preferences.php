@@ -19,9 +19,9 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['controller_title'] = __("Preferences");
 	}
 
-	function action_theme()
+	function action_general()
 	{
-		$this->_views["method_title"] = __("Theme");
+		$this->_views["method_title"] = __("General");
 
 		$form = [];
 

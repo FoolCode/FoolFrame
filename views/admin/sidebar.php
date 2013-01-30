@@ -9,9 +9,9 @@
 					<a href="<?= $i['href'] ?>">
 						<i class="<?= $i['icon'] ?> icon-white"></i> <?= $i['name'] ?>
 						<?php if (isset($i['notification'])) : ?>
-							<div style="float: right;">
+							<span class="badge badge-inverse pull-right">
 								<?= $i['notification'] ?>
-							</div>
+							</span>
 						<?php endif; ?>
 					</a>
 				</li>
@@ -20,9 +20,9 @@
 					<a href="<?= $i['href'] ?>">
 						<i class="<?= $i['icon'] ?>"></i> <?= $i['name'] ?>
 						<?php if (isset($i['notification'])) : ?>
-							<div style="float: right;">
+							<span class="badge badge-info pull-right">
 								<?= $i['notification'] ?>
-							</div>
+							</span>
 						<?php endif; ?>
 					</a>
 				</li>

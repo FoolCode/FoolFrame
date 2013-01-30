@@ -48,7 +48,7 @@
  */
 ?>
 
-<div class="form-container"<?php echo (isset($parent))?' data-form-parent="' . $parent . '"':'';
+<div class="admin-container"<?php echo (isset($parent))?' data-form-parent="' . $parent . '"':'';
 	echo ((isset($hide) && $hide === TRUE)?' style="display:none"':'');
 ?>>
 
@@ -330,7 +330,6 @@
 							{
 								$item['value'] = array();
 							}
-							\Debug::dump($item['value']);
 						}
 
 						foreach($helpers['checkboxes'] as $checkbox)

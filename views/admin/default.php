@@ -2,9 +2,8 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title><?= Preferences::get('fu.gen.website_title').' '. __('Control Panel') ?></title>
+		<title><?= __('Control Panel').' - '.Preferences::get('ff.gen.website_title') ?></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 
 		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap.min.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
 		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap-responsive.min.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
@@ -17,11 +16,10 @@
 		<![endif]-->
 		<script type="text/javascript" src="<?= \Uri::base().'assets/admin/admin.js?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
 		<style type="text/css">
-			.form-container {
+			.admin-container {
 				position: relative;
 				margin: 15px 0;
-				padding: 39px 19px 14px;
-				*padding-top: 19px;
+				padding: 15px 15px 10px;
 				background-color: #fff;
 				border: 1px solid #ddd;
 				-webkit-border-radius: 4px;
@@ -29,12 +27,10 @@
 				border-radius: 4px;
 			}
 
-
-			.form-container:after {
-				content: "General";
-				position: absolute;
-				top: -1px;
-				left: -1px;
+			.admin-container-header {
+				position: relative;
+				top: -16px;
+				left: -16px;
 				padding: 3px 7px;
 				font-size: 12px;
 				font-weight: bold;
@@ -44,6 +40,10 @@
 				-webkit-border-radius: 4px 0 4px 0;
 				-moz-border-radius: 4px 0 4px 0;
 				border-radius: 4px 0 4px 0;
+			}
+
+			.sidebar-nav {
+				padding: 9px 0;
 			}
 		</style>
 	</head>
@@ -92,7 +92,7 @@
 					<div class="alerts">
 						<?php $notices = array_merge(\Notices::get(), \Notices::getFlash()); ?>
 						<?php foreach ($notices as $notice) : ?>
-							<div class="alert alert-"<?= $notice['level'] ?>">
+							<div class="alert alert-<?= $notice['level'] ?>">
 								<?php if (is_array($notice['message'])) : ?>
 									<ul>
 										<?php foreach ($notice['message'] as $message) : ?>

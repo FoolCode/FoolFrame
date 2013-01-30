@@ -49,7 +49,7 @@ class System extends \Foolz\Foolframe\Controller\Admin
 
 		$this->_views['method_title'] = __('Manage');
 		$this->_views["main_content_view"] = \View::forge('admin/plugins/manage', $data);
-		return \Response::forge(\View::forge('admin/default', $this->_views));
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 
 		/*
 		if (\Input::post() && ! \Security::check_token())
@@ -64,5 +64,25 @@ class System extends \Foolz\Foolframe\Controller\Admin
 				$mod->run();
 			}
 		}*/
+	}
+
+	public function action_information()
+	{
+		$this->_views['method_title'] = __('Information');
+		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/system/information');
+
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+	}
+
+	public function action_preferences()
+	{
+		$this->_views['method_title'] = __('Preferences');
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+	}
+
+	public function action_upgrade()
+	{
+		$this->_views['method_title'] = __('Software Upgrade');
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 }

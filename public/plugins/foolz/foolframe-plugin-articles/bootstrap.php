@@ -16,7 +16,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 			\Router::add('admin/articles', 'foolz/foolframe/admin/articles/manage');
 			\Router::add('admin/articles/(:any)', 'foolz/foolframe/admin/articles/$1');
 
-			\Plugins::register_sidebar_element('admin', 'articles', array(
+			\Plugins::registerSidebarElement('admin', 'articles', array(
 					"name" => __("Articles"),
 					"default" => "manage",
 					"position" => array(

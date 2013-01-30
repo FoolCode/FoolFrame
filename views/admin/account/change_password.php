@@ -1,32 +1,39 @@
-<div class="well">
-
+<div class="admin-container">
+	<div class="admin-container-header"><?= __('New Password') ?></div>
 	<p>
-		<?= __('Insert the new password.') ?>
+		<?= \Form::open(['onsubmit' => 'fuel_set_csrf_token(this);']) ?>
+		<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()) ?>
+
+		<div class="control-group">
+			<label class="control-label" for="new-password"><?= __('Password') ?></label>
+			<div class="controls">
+				<?= \Form::password([
+					'id' => 'new-password',
+					'name' => 'password',
+					'placeholder' => __('Password'),
+					'required' => true
+				]) ?>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="new-password-confirm"><?= __('Confirm Password') ?></label>
+			<div class="controls">
+				<?= \Form::password([
+					'id' => 'new-password-confirm',
+					'name' => 'confirm_password',
+					'placeholder' => __('Password'),
+					'required' => true
+				]) ?>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<?= \Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => __('Submit')]) ?>
+			</div>
+		</div>
+
+		<?= \Form::close() ?>
 	</p>
-
-	<?= \Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);')) ?>
-	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
-
-	<label><?= \Form::label(__('Password'), 'password') ?></label>
-	<?= \Form::password(array(
-		'name' => 'password',
-		'id' => 'password',
-		'value' => \Input::post('password'),
-		'placeholder' => __('Required')
-	)) ?>
-
-	<label><?= \Form::label(__('Confirm Password'), 'confirm_password') ?></label>
-	<?= \Form::password(array(
-		'name' => 'confirm_password',
-		'id' => 'confirm_password',
-		'value' => \Input::post('confirm_password'),
-		'placeholder' => __('Required')
-	)) ?>
-
-	<br/>
-
-	<?= \Form::submit(array('name' => 'submit', 'value' => __('Login'), 'class' => 'btn btn-primary')) ?>
-
-	<?= \Form::close() ?>
-
 </div>

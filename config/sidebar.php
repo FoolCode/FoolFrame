@@ -5,7 +5,7 @@ $sidebar = [];
 $sidebar['account'] = [
 	'name' => __('Account'),
 	'level' => 'user',
-	'default' => 'change_email',
+	'default' => 'profile',
 	'content' => [
 		'profile' => [
 			'level' => 'user',
@@ -33,7 +33,7 @@ $sidebar['account'] = [
 $sidebar['users'] = [
 	'name' => __('Users'),
 	'level' => 'mod',
-	'default' => 'users',
+	'default' => 'manage',
 	'content' => [
 		'manage' => [
 			'alt_highlight' => ['member'],
@@ -49,9 +49,9 @@ $sidebar['preferences'] = [
 	'level' => 'admin',
 	'default' => 'general',
 	'content' => [
-		'theme' => [
+		'general' => [
 			'level' => 'admin',
-			'name' => __('Theme'),
+			'name' => __('General'),
 			'icon' => 'icon-picture'
 		],
 		'registration' => [
@@ -70,7 +70,7 @@ $sidebar['preferences'] = [
 $sidebar['system'] = [
 	'name' => __('System'),
 	'level' => 'admin',
-	'default' => 'system',
+	'default' => 'information',
 	'content' => [
 		'information' => [
 			'level' => 'admin',
@@ -105,13 +105,23 @@ $sidebar['plugins'] = [
 
 $sidebar['meta'] = [
 	'name' => 'Meta', // no gettext because meta must be meta
-	'level' => 'member',
-	'default' => 'http://ask.foolrulez.com',
+	'level' => 'user',
+	'default' => 'http://www.foolz.us/',
 	'content' => [
-		'https://github.com/FoOlRulez/FoOlFuuka/issues' => [
-			'level' => 'member',
-			'name' => __('Bug tracker'),
-			'icon' => 'icon-exclamation-sign'
+		'https://archive.foolz.us/dev/' => [
+			'level' => 'user',
+			'name' => __('Developer Community'),
+			'icon' => 'icon-comment'
+		],
+		'http://www.foolz.us/' => [
+			'level' => 'user',
+			'name' => __('Developer Site'),
+			'icon' => 'icon-home'
+		],
+		'https://github.com/FoolCode/' => [
+			'level' => 'user',
+			'name' => __('FoolCode GitHub'),
+			'icon' => 'icon-qrcode'
 		]
 	]
 ];
