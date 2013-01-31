@@ -6,21 +6,21 @@
 	<table class="table table-hover table-condensed">
 		<thead>
 			<tr>
-				<th><?= __('Plugin Name') ?></th>
-				<th><?= __('Description') ?></th>
-				<th></th>
+				<th class="span2"><?= __('Plugin Name') ?></th>
+				<th class="span8"><?= __('Description') ?></th>
+				<th class="span2"></th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php foreach ($module_plugins as $plugin) : ?>
 			<tr>
-				<td class="span2">
-					<?php echo $plugin->getJsonConfig('extra.name', $plugin->getJsonConfig('name')) ?>
+				<td>
+					<?= $plugin->getJsonConfig('extra.name', $plugin->getJsonConfig('name')) ?>
 				</td>
-				<td class="span8 muted">
-					<?php echo $plugin->getJsonConfig('description') ?>
+				<td class="muted">
+					<?= $plugin->getJsonConfig('description') ?>
 				</td>
-				<td class="span2">
+				<td>
 					<div class="btn-group pull-right">
 					<?= \Form::open(
 						'admin/plugins/action',

@@ -9,7 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/bootstrap2/css/bootstrap-responsive.min.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
 		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/admin/admin.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
 		<script type="text/javascript" src="<?= \Uri::base().'assets/js/jquery.js?v='. \Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
-		<script type="text/javascript" src="<?= \Uri::base().'assets/bootstrap2/js/bootstrap.js?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
+		<script type="text/javascript" src="<?= \Uri::base().'assets/bootstrap2/js/bootstrap.min.js?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>"></script>
 		<link rel="stylesheet" type="text/css" href="<?= \Uri::base().'assets/font-awesome/css/font-awesome.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" />
 		<!--[if lt IE 8]>
 			<link href="<?= \Uri::base().'assets/font-awesome/css/font-awesome-ie7.css?v='.\Foolz\Config\Config::get('foolz/foolframe', 'package', 'main.version') ?>" rel="stylesheet" type="text/css" />

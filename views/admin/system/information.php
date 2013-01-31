@@ -13,8 +13,9 @@ $info['server'] = [
 			'value' => PHP_VERSION,
 			'alert' => [
 				'type' => 'important',
-				'condition' => (version_compare(PHP_VERSION, '5.4.0') < 0),
-				'string' => __('The minimum requirements to run the software is 5.4.0.')
+				'condition' => (version_compare(PHP_VERSION, '5.4.0') > 0),
+				'title' => __('Please Update Immediately'),
+				'string' => __('The minimum requirements to run this software is 5.4.0.')
 			]
 		]
 	]
@@ -29,6 +30,7 @@ $info['software'] = [
 			'alert' => [
 				'type' => 'info',
 				'condition' => false,
+				'title' => __('New Update Available'),
 				'string' => __('There is a new version of the software available for download.')
 			]
 		],
@@ -38,6 +40,7 @@ $info['software'] = [
 			'alert' => [
 				'type' => 'info',
 				'condition' => true,
+				'title' => __('New Update Available'),
 				'string' => __('There is a new version of the software available for download.')
 			]
 		]
@@ -59,7 +62,8 @@ $info['php-configuration'] = [
 			'alert' => [
 				'type' => 'important',
 				'condition' => (bool) ! ini_get('allow_url_fopen'),
-				'string' => __('')
+				'title' => __('Critical'),
+				'string' => __('The PHP configuration on the server currently has URL-aware fopen wrappers disabled. The software will be operating at limited functionality.')
 			]
 		],
 		[
@@ -68,8 +72,9 @@ $info['php-configuration'] = [
 			'description' => __('This sets the maximum time in seconds a script is allowed to run before it is terminated by the parser.'),
 			'alert' => [
 				'type' => 'warning',
-				'condition' => (bool) (intval(ini_get('max_execution_time')) < 110),
-				'string' => __('')
+				'condition' => (bool) (intval(ini_get('max_execution_time')) < 60),
+				'title' => __('Warning'),
+				'string' => __('Your current value for maximum execution time is below the suggested value.')
 			]
 		],
 		[
@@ -79,6 +84,7 @@ $info['php-configuration'] = [
 			'alert' => [
 				'type' => 'important',
 				'condition' => (bool) ! ini_get('file_uploads'),
+				'title' => __('Critical'),
 				'string' => __('The PHP configuration on the server currently has file uploads disabled. This option must be enabled for the software to fully function.')
 			]
 		],
@@ -89,7 +95,8 @@ $info['php-configuration'] = [
 			'alert' => [
 				'type' => 'warning',
 				'condition' => (bool) (intval(substr(ini_get('post_max_size'), 0, -1)) < 16),
-				'string' => __('')
+				'title' => __('Warning'),
+				'string' => __('Your current value for maximum POST data size is below the suggested value.')
 			]
 		],
 		[
@@ -99,7 +106,8 @@ $info['php-configuration'] = [
 			'alert' => [
 				'type' => 'warning',
 				'condition' => (bool) (intval(substr(ini_get('upload_max_filesize'), 0, -1)) < 16),
-				'string' => __('')
+				'title' => __('Warning'),
+				'string' => __('Your current value for maximum upload file size is below the suggested value.')
 			]
 		],
 		[
@@ -109,7 +117,8 @@ $info['php-configuration'] = [
 			'alert' => [
 				'type' => 'warning',
 				'condition' => (bool) (intval(ini_get('max_file_uploads')) < 60),
-				'string' => __('')
+				'title' => __('Warning'),
+				'string' => __('Your current value for maximum number of concurrent uploads is below the suggested value.')
 			]
 		]
 	]
@@ -120,15 +129,33 @@ $info['php-extensions'] = [
 	'data' => [
 		[
 			'title' => 'cURL',
-			'value' => (extension_loaded('curl') ? __('Installed') : __('Unavailable'))
+			'value' => (extension_loaded('curl') ? __('Installed') : __('Unavailable')),
+			'alert' => [
+				'type' => 'important',
+				'condition' => (bool) ! extension_loaded('curl'),
+				'title' => __('Critical'),
+				'string' => __('Your PHP environment shows that you do not have cURL installed. This will limited the functionality of the software.')
+			]
 		],
 		[
 			'title' => 'GD2',
-			'value' => (extension_loaded('gd') ? __('Installed') : __('Unavailable'))
+			'value' => (extension_loaded('gd') ? __('Installed') : __('Unavailable')),
+			'alert' => [
+				'type' => 'warning',
+				'condition' => (bool) ! extension_loaded('gd'),
+				'title' => __('Warning'),
+				'string' => __('Your PHP environment shows that you do not have GD2 installed. This will limited the functionality of the software.')
+			]
 		],
 		[
 			'title' => 'ImageMagick',
-			'value' => (extension_loaded('gd') ? __('Installed') : __('Unavailable'))
+			'value' => (false ? __('Installed') : __('Unavailable')),
+			'alert' => [
+				'type' => 'warning',
+				'condition' => (bool) true,
+				'title' => __('Warning'),
+				'string' => __('Your PHP environment shows that you do not have ImageMagick installed. This will limited the functionality of the software.')
+			]
 		]
 	]
 ];
@@ -140,21 +167,27 @@ $info['php-extensions'] = [
 	<table class="table table-hover table-condensed">
 		<thead>
 			<tr>
-				<th></th>
-				<th><?= __('Value') ?></th>
+				<th class="span6"></th>
+				<th class="span6"><?= __('Value') ?></th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php foreach ($item['data'] as $k => $i) : ?>
 			<tr>
-				<td class="span6">
+				<td>
+					<?php if (isset($i['description'])) : ?>
+					<span data-placement="bottom" title="<?= htmlspecialchars($i['description']) ?>">
+						<?= $i['title'] ?>
+					</span>
+					<?php else : ?>
 					<?= $i['title'] ?>
+					<?php endif; ?>
 
 					<span class="pull-right">
 						<?php if (isset($i['alert']) && $i['alert']['condition'] === false) : ?>
 							<i class="icon-ok text-success"></i>
 						<?php elseif (isset($i['alert']) && $i['alert']['condition'] === true) : ?>
-							<a href="#<?= $key ?>" rel="popover-right" data-content="<?= htmlspecialchars($i['alert']['string']) ?>">
+							<a href="#<?= $key ?>" rel="popover" data-placement="right" data-trigger="hover" data-title="<?= htmlspecialchars(__($i['alert']['title'])) ?>" data-content="<?= htmlspecialchars(__($i['alert']['string'])) ?>">
 								<?php if ($i['alert']['type'] == 'info') : ?>
 									<i class="icon-exclamation-sign text-info"></i>
 								<?php elseif ($i['alert']['type'] == 'warning') : ?>
@@ -166,7 +199,7 @@ $info['php-extensions'] = [
 						<?php endif; ?>
 					</span>
 				</td>
-				<td class="span6"><?= $i['value'] ?></td>
+				<td><?= $i['value'] ?></td>
 			</tr>
 			<?php endforeach; ?>
 		</tbody>

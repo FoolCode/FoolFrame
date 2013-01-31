@@ -1,7 +1,7 @@
 <div class="admin-container">
 	<div class="admin-container-header"><?= __('Change Password') ?></div>
 	<p>
-		<?= __('If you wish to change your current password, a message will be sent to the e-mail address associated with your account. It will provide you with an URL to change your password and verify your identity.') ?>
+		<?= __('If you wish to change your current password, a message will be sent to the email address associated with your account. It will provide you with an URL to change your password and verify your identity.') ?>
 
 		<hr/>
 

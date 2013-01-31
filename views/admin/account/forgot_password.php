@@ -7,7 +7,7 @@
 		'name' => 'email',
 		'type' => 'email',
 		'value' => \Input::post('email'),
-		'placeholder' => __('E-mail Address'),
+		'placeholder' => __('Email Address'),
 		'required' => true
 	]) ?>
 

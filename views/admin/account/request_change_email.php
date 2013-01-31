@@ -1,11 +1,11 @@
 <div class="admin-container">
-	<div class="admin-container-header"><?= __('Change E-mail Address') ?></div>
+	<div class="admin-container-header"><?= __('Change Email Address') ?></div>
 	<p>
 		<?= \Form::open(['onsubmit' => 'fuel_set_csrf_token(this);']) ?>
 		<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()) ?>
 
 		<div class="control-group">
-			<label class="control-label" for="new-email"><?= __('New E-mail Address') ?></label>
+			<label class="control-label" for="new-email"><?= __('New Email Address') ?></label>
 			<div class="controls">
 				<?= \Form::input([
 					'id' => 'new-email',
