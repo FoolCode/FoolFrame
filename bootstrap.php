@@ -10,10 +10,11 @@ $apc_config->setThrow(true);
 
 // TODO convert this into "use" references
 class_alias('Foolz\\Foolframe\\Model\\DoctrineConnection', 'DoctrineConnection');
+class_alias('Foolz\\Foolframe\\Model\\Notices', 'Notices');
 class_alias('Foolz\\Foolframe\\Model\\Plugins', 'Plugins');
 class_alias('Foolz\\Foolframe\\Model\\Preferences', 'Preferences');
 class_alias('Foolz\\Foolframe\\Model\\SchemaManager', 'SchemaManager');
-class_alias('Foolz\\Foolframe\\Model\\Notices', 'Notices');
+class_alias('Foolz\\Foolframe\\Model\\System', 'System');
 class_alias('Foolz\\Foolframe\\Model\\User', 'User');
 class_alias('Foolz\\Foolframe\\Model\\Users', 'Users');
 
