@@ -6,26 +6,31 @@
 		'class' => 'input-block-level',
 		'name' => 'username',
 		'value' => \Input::post('username'),
-		'placeholder' => __('Username')
+		'placeholder' => __('Username'),
+		'required' => true
 	]) ?>
 
 	<?= \Form::input([
 		'class' => 'input-block-level',
 		'name' => 'email',
+		'type' => 'email',
 		'value' => \Input::post('email'),
-		'placeholder' => __('E-mail Address')
+		'placeholder' => __('E-mail Address'),
+		'required' => true
 	]) ?>
 
 	<?= \Form::password([
 		'class' => 'input-block-level',
 		'name' => 'password',
-		'placeholder' => __('Password')
+		'placeholder' => __('Password'),
+		'required' => true
 	]) ?>
 
 	<?= \Form::password([
 		'class' => 'input-block-level',
 		'name' => 'confirm_password',
-		'placeholder' => __('Confirm Password')
+		'placeholder' => __('Confirm Password'),
+		'required' => true
 	]) ?>
 
 	<?= (\ReCaptcha::available()) ? '<br/><br/>'.\ReCaptcha::instance()->get_html() : '' ?>

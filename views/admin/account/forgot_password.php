@@ -5,8 +5,10 @@
 	<?= \Form::input([
 		'class' => 'input-block-level',
 		'name' => 'email',
+		'type' => 'email',
 		'value' => \Input::post('email'),
-		'placeholder' => __('E-mail Address')
+		'placeholder' => __('E-mail Address'),
+		'required' => true
 	]) ?>
 
 	<?= Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => __('Submit')]) ?>

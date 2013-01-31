@@ -114,7 +114,15 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			{
 				$input = $val->input();
 
-				list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
+				try
+				{
+					list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
+				}
+				catch (\Auth\FoolUserUpdateException $e)
+				{
+					\Notices::setFlash('error', $e->getMessage());
+					\Response::redirect('admin/account/register');
+				}
 
 				// activate or send activation email
 				if ( ! $activation_key)
@@ -131,7 +139,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 						'title' => $title,
 						'site' => \Preferences::get('ff.gen.website_title'),
 						'username' => $input['username'],
-						'link' => Uri::create('foolz/foolframe::admin/account/activate/'.$id.'/'.$activation_key)
+						'link' => \Uri::create('foolz/foolframe::admin/account/activate/'.$id.'/'.$activation_key)
 					));
 
 					\Package::load('email');
