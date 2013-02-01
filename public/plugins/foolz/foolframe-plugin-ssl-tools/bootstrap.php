@@ -18,7 +18,7 @@
 		if (\Auth::has_access('maccess.admin'))
 		{
 			\Plugins::registerSidebarElement('admin', 'plugins', array(
-				"content" => array("ssl_tools/manage" => array("level" => "admin", "name" => __("SSL Tools"), "icon" => 'icon-lock'))
+				'content' => array('ssl_tools/manage' => array('level' => 'admin', 'name' => __('SSL Tools'), 'icon' => 'icon-lock'))
 			));
 		}
 
@@ -33,4 +33,3 @@
 			->setCall('\Foolz\Foolframe\Plugins\SslTools\Model\SslTools::nav_bottom')
 			->setPriority(4);
 	});
-

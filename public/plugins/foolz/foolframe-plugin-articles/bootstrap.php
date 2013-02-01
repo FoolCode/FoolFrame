@@ -17,15 +17,15 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 			\Router::add('admin/articles/(:any)', 'foolz/foolframe/admin/articles/$1');
 
 			\Plugins::registerSidebarElement('admin', 'articles', array(
-					"name" => __("Articles"),
-					"default" => "manage",
-					"position" => array(
-						"beforeafter" => "after",
-						"element" => "posts"
+					'name' => __('Articles'),
+					'default' => 'manage',
+					'position' => array(
+						'beforeafter' => 'before',
+						'element' => 'account'
 					),
-					"level" => "admin",
-					"content" => array(
-						"manage" => array("level" => "admin", "name" => __("Articles"), "icon" => 'icon-font'),
+					'level' => 'admin',
+					'content' => array(
+						'manage' => array('level' => 'admin', 'name' => __('Articles'), 'icon' => 'icon-font'),
 					)
 				)
 			);

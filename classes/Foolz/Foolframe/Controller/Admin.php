@@ -208,7 +208,7 @@ class Admin extends Common
 		$result = [];
 		foreach ($array as $key => $item)
 		{
-			if (\Auth::has_access('maccess.' . $item['level']) && !empty($item))
+			if (\Auth::has_access('maccess.' . $item['level']) && ! empty($item))
 			{
 				$subresult = $item;
 
@@ -253,7 +253,6 @@ class Admin extends Common
 				// cherry-picking subfunctions
 				foreach ($item['content'] as $subkey => $subitem)
 				{
-					$subsubresult = [];
 					$subsubresult = $subitem;
 					if (\Auth::has_access('maccess.' . $subitem['level']))
 					{

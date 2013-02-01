@@ -221,13 +221,13 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				A::save($result['success']);
 				if (is_null($slug))
 				{
-					\Notices::set_flash('success', __('New article created!'));
+					\Notices::setFlash('success', __('New article created!'));
 					\Response::redirect('admin/articles/edit/' . $result['success']['slug']);
 				}
 				elseif ($slug != $result['success']['slug'])
 				{
 					// case in which letter was changed
-					\Notices::set_flash('success', __('Article information updated.'));
+					\Notices::setFlash('success', __('Article information updated.'));
 					\Response::redirect('admin/articles/edit/' . $result['success']['slug']);
 				}
 				else
@@ -245,11 +245,11 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				throw new \HttpServerErrorException;
 			}
 
-			$this->_views["method_title"] = __('Article') . ': ' . $data['object']->slug;
+			$this->_views["method_title"] = [__('Edit'), $data['object']->slug];
 		}
 		else
 		{
-			$this->_views["method_title"] = __('New article') ;
+			$this->_views["method_title"] = __('New') ;
 		}
 
 		$this->_views["controller_title"] = __('Articles');
@@ -290,7 +290,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
 
 		$this->_views["controller_title"] = __('Articles');
-		$this->_views["method_title"] = __('Removing article:') . ' ' . $article->title;
+		$this->_views["method_title"] = __('Delete') . ' ' . $article->title;
 		$data['alert_level'] = 'warning';
 		$data['message'] = __('Do you really want to remove the article?');
 

@@ -7,12 +7,12 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
 	public function before()
 	{
-		parent::before();
-
 		if( ! \Auth::has_access('maccess.admin'))
 		{
 			Response::redirect('admin');
 		}
+
+		parent::before();
 
 		// set controller title
 		$this->_views['controller_title'] = __("Plugins");
