@@ -1,10 +1,9 @@
 <?php
 
-namespace Foolz\Foolframe\Controller\Admin\Plugins;
+namespace Foolz\Foolframe\Controller\Admin\Plugins\FF;
 
 class SslTools extends \Foolz\Foolframe\Controller\Admin
 {
-
 	public function before()
 	{
 		if ( ! \Auth::has_access('maccess.admin'))
@@ -14,12 +13,12 @@ class SslTools extends \Foolz\Foolframe\Controller\Admin
 
 		parent::before();
 
-		$this->_views['controller_title'] = __('SSL Tools');
+		$this->_views['controller_title'] = __('Plugins');
 	}
 
 	public function action_manage()
 	{
-		$this->_views['method_title'] = 'SSL';
+		$this->_views['method_title'] = [__('FoolFrame'), __('SSL Tools'), 'SSL'];
 
 		$form = array();
 

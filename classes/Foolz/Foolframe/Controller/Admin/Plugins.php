@@ -4,7 +4,6 @@ namespace Foolz\Foolframe\Controller\Admin;
 
 class Plugins extends \Foolz\Foolframe\Controller\Admin
 {
-
 	public function before()
 	{
 		if( ! \Auth::has_access('maccess.admin'))
