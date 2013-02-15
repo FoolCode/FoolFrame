@@ -25,11 +25,11 @@
 		// we can just run base checks now
 		\Foolz\Foolframe\Plugins\SslTools\Model\SslTools::check();
 
-		\Foolz\Plugin\Event::forge('ff.themes.generic_top_nav_buttons')
+		\Foolz\Plugin\Event::forge('foolframe.themes.generic_top_nav_buttons')
 			->setCall('\Foolz\Foolframe\Plugins\SslTools\Model\SslTools::nav_top')
 			->setPriority(4);
 
-		\Foolz\Plugin\Event::forge('ff.themes.generic_bottom_nav_buttons')
+		\Foolz\Plugin\Event::forge('foolframe.themes.generic_bottom_nav_buttons')
 			->setCall('\Foolz\Foolframe\Plugins\SslTools\Model\SslTools::nav_bottom')
 			->setPriority(4);
 	});

@@ -2,7 +2,7 @@
 	<div class="navbar-inner">
 		<div class="container">
 			<a class="brand" href="<?= \Uri::create('admin') ?>">
-				<?= \Preferences::get('ff.gen.website_title') ?>
+				<?= \Preferences::get('foolframe.gen.website_title') ?>
 			</a>
 			<ul class="nav pull-right">
 				<li><a href="<?= \Uri::base('@default') ?>"><?= __('Boards') ?></a></li>

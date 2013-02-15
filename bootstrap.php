@@ -56,7 +56,7 @@ else
 
 	if( ! $lang || ! array_key_exists($lang, $available_langs))
 	{
-		$lang = \Preferences::get('ff.lang.default');
+		$lang = \Preferences::get('foolframe.lang.default');
 	}
 
 	$locale = $lang . '.utf8';

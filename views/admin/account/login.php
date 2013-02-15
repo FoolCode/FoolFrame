@@ -28,7 +28,7 @@
 
 	<input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/forgot_password/') ?>'" value="<?= htmlspecialchars(__('Forgot Password')) ?>" />
 
-	<?php if ( ! \Preferences::get('ff.auth.disable_registration')) : ?>
+	<?php if ( ! \Preferences::get('foolframe.auth.disable_registration')) : ?>
 	<input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/register/') ?>'" value="<?= htmlspecialchars(__('Register')) ?>" />
 	<?php endif; ?>
 <?= \Form::close() ?>

@@ -46,15 +46,15 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 				}
 			})->setPriority(4);
 
-		\Foolz\Plugin\Event::forge('ff.themes.generic_top_nav_buttons')
+		\Foolz\Plugin\Event::forge('foolframe.themes.generic_top_nav_buttons')
 			->setCall('Foolz\Foolframe\Plugins\Articles\Model\Articles::get_top')
 			->setPriority(3);
 
-		\Foolz\Plugin\Event::forge('ff.themes.generic_bottom_nav_buttons')
+		\Foolz\Plugin\Event::forge('foolframe.themes.generic_bottom_nav_buttons')
 			->setCall('Foolz\Foolframe\Plugins\Articles\Model\Articles::get_bottom')
 			->setPriority(3);
 
-		\Foolz\Plugin\Event::forge('ff.themes.generic.index_nav_elements')
+		\Foolz\Plugin\Event::forge('foolframe.themes.generic.index_nav_elements')
 			->setCall('Foolz\Foolframe\Plugins\Articles\Model\Articles::get_index')
 			->setPriority(3);
 	});

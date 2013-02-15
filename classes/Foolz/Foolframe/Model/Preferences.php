@@ -9,7 +9,7 @@ class Preferences
 {
 	protected static $_preferences = [];
 
-	protected static $_module_identifiers = [];
+	protected static $_modules = [];
 
 	protected static $loaded = false;
 
@@ -18,15 +18,15 @@ class Preferences
 		\Profiler::mark('Preferences::load Start');
 		if ($reload === true)
 		{
-			Cache::item('ff.model.preferences.settings')->delete();
+			Cache::item('foolframe.model.preferences.settings')->delete();
 		}
 
 		// we need to know the identifiers of the modules, like ff => foolfuuka, fu => foolfuuka, fs => foolslide
-		static::$_module_identifiers = \Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed');
+		static::$_modules = \Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed');
 
 		try
 		{
-			static::$_preferences = Cache::item('ff.model.preferences.settings')->get();
+			static::$_preferences = Cache::item('foolframe.model.preferences.settings')->get();
 		}
 		catch (\OutOfBoundsException $e)
 		{
@@ -42,7 +42,7 @@ class Preferences
 				static::$_preferences[$pref['name']] = $pref['value'];
 			}
 
-			Cache::item('ff.model.preferences.settings')->set(static::$_preferences, 3600);
+			Cache::item('foolframe.model.preferences.settings')->set(static::$_preferences, 3600);
 		}
 
 		\Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');
@@ -74,7 +74,7 @@ class Preferences
 		$identifier = array_shift($segments);
 		$query = implode('.', $segments);
 
-		return \Foolz\Config\Config::get(static::$_module_identifiers[$identifier], 'package', 'preferences.'.$query);
+		return \Foolz\Config\Config::get(static::$_modules[$identifier], 'package', 'preferences.'.$query);
 	}
 
 	public static function set($setting, $value, $reload = true)

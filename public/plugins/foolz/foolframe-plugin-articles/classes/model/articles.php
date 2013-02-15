@@ -26,8 +26,8 @@ class Articles
 
 	public static function clear_cache()
 	{
-		Cache::item('ff.plugin.articles.model.get_nav_top')->delete();
-		Cache::item('ff.plugin.articles.model.get_nav_bottom')->delete();
+		Cache::item('foolframe.plugin.articles.model.get_nav_top')->delete();
+		Cache::item('foolframe.plugin.articles.model.get_nav_bottom')->delete();
 	}
 
 
@@ -125,7 +125,7 @@ class Articles
 
 		try
 		{
-			$res = Cache::item('ff.plugin.articles.model.get_nav_'.$where)->get();
+			$res = Cache::item('foolframe.plugin.articles.model.get_nav_'.$where)->get();
 		}
 		catch (\OutOfBoundsException $e)
 		{
@@ -136,7 +136,7 @@ class Articles
 				->execute()
 				->fetchAll();
 
-			Cache::item('ff.plugin.articles.model.get_nav_'.$where)->set($res, 3600);
+			Cache::item('foolframe.plugin.articles.model.get_nav_'.$where)->set($res, 3600);
 		}
 
 		if( ! count($res))

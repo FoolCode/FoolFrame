@@ -30,7 +30,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		);
 
 		// build the array for the form
-		$form['ff.gen.website_title'] = array(
+		$form['foolframe.gen.website_title'] = array(
 			'type' => 'input',
 			'label' => 'Title',
 			'class' => 'span3',
@@ -40,7 +40,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 		);
 
 		// build the array for the form
-		$form['ff.gen.index_title'] = array(
+		$form['foolframe.gen.index_title'] = array(
 			'type' => 'input',
 			'label' => 'Index title',
 			'class' => 'span3',
@@ -49,7 +49,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'help' => __('Sets the title displayed in the index page.')
 		);
 
-		$form['ff.lang.default'] = array(
+		$form['foolframe.lang.default'] = array(
 			'type' => 'select',
 			'label' => __('Default language'),
 			'help' => __('The language the users will see as they reach your site.'),
@@ -111,7 +111,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 				'preferences' => TRUE,
 			);
 		}
-		$form['ff.theme.google_analytics'] = array(
+		$form['foolframe.theme.google_analytics'] = array(
 			'type' => 'input',
 			'label' => __('Google Analytics code'),
 			'placeholder' => 'UX-XXXXXXX-X',
@@ -124,7 +124,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'separator'
 		);
 
-		$form['ff.theme.header_text'] = array(
+		$form['foolframe.theme.header_text'] = array(
 			'type' => 'textarea',
 			'label' => __('Header Text ("notices")'),
 			'preferences' => TRUE,
@@ -132,7 +132,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'class' => 'span5'
 		);
 
-		$form['ff.theme.header_code'] = array(
+		$form['foolframe.theme.header_code'] = array(
 			'type' => 'textarea',
 			'label' => __('Header Code'),
 			'preferences' => TRUE,
@@ -140,7 +140,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'class' => 'span5'
 		);
 
-		$form['ff.theme.footer_text'] = array(
+		$form['foolframe.theme.footer_text'] = array(
 			'type' => 'textarea',
 			'label' => __('Footer Text'),
 			'preferences' => TRUE,
@@ -148,7 +148,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'class' => 'span5'
 		);
 
-		$form['ff.theme.footer_code'] = array(
+		$form['foolframe.theme.footer_code'] = array(
 			'type' => 'textarea',
 			'label' => __('Footer Code'),
 			'preferences' => TRUE,
@@ -191,7 +191,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'open'
 		);
 
-		$form['ff.ads_top_banner'] = array(
+		$form['foolframe.ads_top_banner'] = array(
 			'type' => 'textarea',
 			'label' => __('Top banner'),
 			'help' => __('Insert the HTML code provided by your advertiser.'),
@@ -200,13 +200,13 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'class' => 'span5'
 		);
 
-		$form['ff.ads_top_banner_active'] = array(
+		$form['foolframe.ads_top_banner_active'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Enable top banner')
 		);
 
-		$form['ff.ads_bottom_banner'] = array(
+		$form['foolframe.ads_bottom_banner'] = array(
 			'type' => 'textarea',
 			'label' => __('Bottom banner'),
 			'help' => __('Insert the HTML code provided by your advertiser.'),
@@ -215,7 +215,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'class' => 'span5'
 		);
 
-		$form['ff.ads_bottom_banner_active'] = array(
+		$form['foolframe.ads_bottom_banner_active'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Enable bottom banner')
@@ -254,12 +254,12 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'open'
 		);
 
-		$form['ff.auth.disable_registration'] = array(
+		$form['foolframe.auth.disable_registration'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Disable New User Registrations')
 		);
-		$form['ff.auth.disable_registration_email'] = array(
+		$form['foolframe.auth.disable_registration_email'] = array(
 			'type' => 'checkbox',
 			'preferences' => TRUE,
 			'help' => __('Disable Email Activation')
@@ -274,7 +274,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'help' => __('In order to use reCAPTCHA&trade; you need to sign up for the service at <a href="http://www.google.com/recaptcha">reCAPTCHA&trade;</a>, which will provide you with a public and a private key.')
 		);
 
-		$form['ff.auth.recaptcha_public'] = array(
+		$form['foolframe.auth.recaptcha_public'] = array(
 			'type' => 'input',
 			'label' => __('reCaptcha&trade; Public Key'),
 			'preferences' => TRUE,
@@ -283,7 +283,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'class' => 'span4'
 		);
 
-		$form['ff.auth.recaptcha_private'] = array(
+		$form['foolframe.auth.recaptcha_private'] = array(
 			'type' => 'input',
 			'label' => __('reCaptcha&trade; Prvate Key'),
 			'preferences' => TRUE,

@@ -90,7 +90,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			\Response::redirect('admin');
 		}
 
-		if (\Preferences::get('ff.reg_disabled'))
+		if (\Preferences::get('foolframe.reg_disabled'))
 		{
 			throw new HttpNotFoundException;
 		}
@@ -133,18 +133,18 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				{
 					$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-					$title = \Preferences::get('ff.gen.website_title').' - '.__('Account Activation');
+					$title = \Preferences::get('foolframe.gen.website_title').' - '.__('Account Activation');
 
 					$content = \View::forge('foolz/foolframe::admin/account/email_activation', array(
 						'title' => $title,
-						'site' => \Preferences::get('ff.gen.website_title'),
+						'site' => \Preferences::get('foolframe.gen.website_title'),
 						'username' => $input['username'],
 						'link' => \Uri::create('foolz/foolframe::admin/account/activate/'.$id.'/'.$activation_key)
 					));
 
 					\Package::load('email');
 					$sendmail = \Email::forge();
-					$sendmail->from($from, \Preferences::get('ff.gen.website_title'))
+					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
 						->subject($title)
 						->to($input['email'])
 						->html_body(\View::forge('foolz/foolframe::email_default', array('title' => $title, 'content' => $content)));
@@ -367,18 +367,18 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 					$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-					$title = \Preferences::get('ff.gen.website_title').' '.__('Change Email Address');
+					$title = \Preferences::get('foolframe.gen.website_title').' '.__('Change Email Address');
 
 					$content = \View::forge('foolz/foolframe::admin/account/email_email_change', array(
 						'title' => $title,
-						'site' => \Preferences::get('ff.gen.website_title'),
+						'site' => \Preferences::get('foolframe.gen.website_title'),
 						'username' => $user->username,
 						'link' => \Uri::create('admin/account/change_email/'.$user->id.'/'.$change_email_key)
 					));
 
 					\Package::load('email');
 					$sendmail = \Email::forge();
-					$sendmail->from($from, \Preferences::get('ff.gen.website_title'))
+					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
 						->subject($title)
 						->to($input['email'])
 						->html_body(\View::forge('foolz/foolframe::email_default', array('title' => $title, 'content' => $content)));
@@ -471,18 +471,18 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 					$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-					$title = \Preferences::get('ff.gen.website_title').' '.__('Account Deletion');
+					$title = \Preferences::get('foolframe.gen.website_title').' '.__('Account Deletion');
 
 					$content = \View::forge('foolz/foolframe::admin/account/email_delete', array(
 						'title' => $title,
-						'site' => \Preferences::get('ff.gen.website_title'),
+						'site' => \Preferences::get('foolframe.gen.website_title'),
 						'username' => $user->username,
 						'link' => \Uri::create('admin/account/delete/'.$user->id.'/'.$account_deletion_key)
 					));
 
 					\Package::load('email');
 					$sendmail = \Email::forge();
-					$sendmail->from($from, \Preferences::get('ff.gen.website_title'))
+					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
 						->subject($title)
 						->to($user->email)
 						->html_body(\View::forge('foolz/foolframe::email_default', array('title' => $title, 'content' => $content)));
@@ -530,18 +530,18 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 		$from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-		$title = \Preferences::get('ff.gen.website_title').' '.__('New Password');
+		$title = \Preferences::get('foolframe.gen.website_title').' '.__('New Password');
 
 		$content = \View::forge('foolz/foolframe::admin/account/email_password_change', array(
 			'title' => $title,
-			'site' => \Preferences::get('ff.gen.website_title'),
+			'site' => \Preferences::get('foolframe.gen.website_title'),
 			'username' => $user->username,
 			'link' => \Uri::create('admin/account/change_password/'.$user->id.'/'.$password_key)
 		));
 
 		\Package::load('email');
 		$sendmail = \Email::forge();
-		$sendmail->from($from, \Preferences::get('ff.gen.website_title'))
+		$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
 			->subject($title)
 			->to($email)
 			->html_body(\View::forge('foolz/foolframe::email_default', array('title' => $title, 'content' => $content)));

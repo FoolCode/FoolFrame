@@ -224,7 +224,7 @@ class System
 			]
 		];
 
-		$environment = \Foolz\Plugin\Hook::forge('ff.model.system.environment.result')
+		$environment = \Foolz\Plugin\Hook::forge('foolframe.model.system.environment.result')
 			->setParam('environment', $environment)
 			->execute()
 			->get($environment);

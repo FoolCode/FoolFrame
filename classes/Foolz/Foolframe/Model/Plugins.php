@@ -56,8 +56,8 @@ class Plugins
 
 	public static function clearCache()
 	{
-		Cache::item('ff.model.plugins.get_all.query')->delete();
-		Cache::item('ff.model.plugins.get_enabled.query')->delete();
+		Cache::item('foolframe.model.plugins.get_all.query')->delete();
+		Cache::item('foolframe.model.plugins.get_enabled.query')->delete();
 	}
 
 	public static function getAll()
@@ -69,7 +69,7 @@ class Plugins
 	{
 		try
 		{
-			$result = Cache::item('ff.model.plugins.get_enabled.query')->get();
+			$result = Cache::item('foolframe.model.plugins.get_enabled.query')->get();
 		}
 		catch (\OutOfBoundsException $e)
 		{
@@ -81,7 +81,7 @@ class Plugins
 				->execute()
 				->fetchAll();
 
-			Cache::item('ff.model.plugins.get_enabled.query')->set($result, 3600);
+			Cache::item('foolframe.model.plugins.get_enabled.query')->set($result, 3600);
 		}
 
 		return $result;
