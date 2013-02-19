@@ -23,13 +23,11 @@ class Articles
 		static::clear_cache();
 	}
 
-
 	public static function clear_cache()
 	{
 		Cache::item('foolframe.plugin.articles.model.get_nav_top')->delete();
 		Cache::item('foolframe.plugin.articles.model.get_nav_bottom')->delete();
 	}
-
 
 	/**
 	 * Grab the whole table of articles
@@ -52,7 +50,6 @@ class Articles
 		return $result;
 	}
 
-
 	public static function get_by_slug($slug)
 	{
 		$query = DC::qb()
@@ -60,7 +57,6 @@ class Articles
 			->from(DC::p('plugin_ff_articles'), 'a')
 			->where('slug = :slug')
 			->setParameter(':slug', $slug);
-
 
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
@@ -79,7 +75,6 @@ class Articles
 
 		return $result;
 	}
-
 
 	public static function get_by_id($id)
 	{
@@ -107,7 +102,6 @@ class Articles
 		return $result[0];
 	}
 
-
 	public static function get_top($result)
 	{
 		return static::get_nav('top', $result);
@@ -117,7 +111,6 @@ class Articles
 	{
 		return static::get_nav('bottom', $result);
 	}
-
 
 	protected static function get_nav($where, $result)
 	{
@@ -152,7 +145,6 @@ class Articles
 		$result->setParam('nav', $nav)->set($nav);
 	}
 
-
 	public static function get_index($result)
 	{
 		$nav = $result->getParam('nav');
@@ -181,7 +173,6 @@ class Articles
 		$result->setParam('nav', $nav)->set($nav);
 	}
 
-
 	public static function save($data)
 	{
 		if (isset($data['id']))
@@ -206,5 +197,4 @@ class Articles
 
 		static::clear_cache();
 	}
-
 }

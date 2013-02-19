@@ -10,7 +10,7 @@ echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 	 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	 xmlns:content="http://purl.org/rss/1.0/modules/content/">
 
-    <channel>
+	<channel>
 
 		<title><?php echo $feed_name; ?></title>
 
@@ -22,7 +22,7 @@ echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 
 		<?php foreach ($posts["threads"] as $entry): ?>
 
-	        <item>
+			<item>
 
 				<title><?php echo ($entry["title"])?$entry["title"]:'No title'; ?></title>
 				<link><?php echo $entry["href"] ?></link>
@@ -31,10 +31,10 @@ echo '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 				<description><?php if ($entry["thumb"])
 			echo '<img src="' . $entry["thumb"] . '"  />' ?></description>
 				<pubDate><?php echo date("D, d M Y H:i:s O", $entry["created"]) ?></pubDate>
-	        </item>
+			</item>
 
 
 		<?php endforeach; ?>
 
-    </channel>
+	</channel>
 </rss> 

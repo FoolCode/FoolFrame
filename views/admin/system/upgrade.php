@@ -1,5 +1,6 @@
 <?php
-if (!defined('BASEPATH'))
+
+if ( ! defined('BASEPATH'))
 	exit('No direct script access allowed');
 ?>
 
@@ -18,9 +19,6 @@ echo form_submit(array(
 ));
 echo form_close();
 ?>
-
-
-
 
 <br/>
 <div class="well">

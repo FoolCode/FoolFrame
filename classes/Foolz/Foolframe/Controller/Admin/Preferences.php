@@ -116,7 +116,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'label' => __('Google Analytics code'),
 			'placeholder' => 'UX-XXXXXXX-X',
 			'preferences' => TRUE,
-			'help' => __("Insert your Google Analytics code to get statistics."),
+			'help' => __("Insert your Google Analytics code."),
 			'class' => 'span2'
 		);
 
@@ -128,7 +128,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'textarea',
 			'label' => __('Header Text ("notices")'),
 			'preferences' => TRUE,
-			'help' => __("Inserts the text above in the header, below the nagivation links."),
+			'help' => __("Inserts the text above in the header, below the navigation links."),
 			'class' => 'span5'
 		);
 
@@ -144,7 +144,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'textarea',
 			'label' => __('Footer Text'),
 			'preferences' => TRUE,
-			'help' => __('Credits in the footer and similar.'),
+			'help' => __('The text to put in the footer, such as credits and similar.'),
 			'class' => 'span5'
 		);
 
@@ -170,9 +170,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'close'
 		);
 
-
 		$data['form'] = $form;
-
 
 		\Preferences::submit_auto($form);
 

@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolfuuka\Controller\Chan;
 
-use 	\Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
+use \Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
 	\Foolz\Foolframe\Plugins\Articles\ArticlesArticleNotFoundException;
 
 class Articles extends \Foolz\Foolfuuka\Controller\Chan

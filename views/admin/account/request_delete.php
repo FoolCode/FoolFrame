@@ -1,7 +1,7 @@
 <div class="admin-container">
 	<div class="admin-container-header"><?= __('New Email Address') ?></div>
 	<p>
-		<i class="icon-warning-sign text-error"></i> <?= __('Since this action is irreversible, an email will be sent with a link to verify your decision to purge your account from the system.') ?>
+		<i class="icon-warning-sign text-error"></i> <?= __('Since this action is irreversible, a link will be sent to the email associated with your account to verify your decision to purge your account from the system.') ?>
 
 		<hr/>
 

@@ -457,8 +457,6 @@
 		endif;
 		?>
 
-
-
 	<?php endforeach; ?>
 
 </div>

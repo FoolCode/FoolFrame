@@ -11,7 +11,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
 	public function before()
 	{
-		if( ! \Auth::has_access('maccess.mod'))
+		if ( ! \Auth::has_access('maccess.mod'))
 		{
 			\Response::redirect('admin');
 		}
@@ -103,7 +103,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 					{
 						return array(
 							'error_code' => 'ALREADY_EXISTS',
-							'error' => __('The slug is already used for another board.')
+							'error' => __('The slug is already being used for another board.')
 						);
 					}
 				}
@@ -113,7 +113,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				'database' => true,
 				'class' => 'span4',
 				'label' => 'URL',
-				'help' => __('If you set this, the article link will actually be an outlink.'),
+				'help' => __('If you set this, the article link will be an outlink.'),
 				'validation' => 'trim'
 			),
 			'article' => array(
@@ -199,7 +199,6 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-
 	public function action_edit($slug = null)
 	{
 		$data['form'] = $this->structure();
@@ -237,10 +236,10 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			}
 		}
 
-		if( ! is_null($slug))
+		if ( ! is_null($slug))
 		{
 			$data['object'] = (object) A::get_by_slug($slug);
-			if($data['object'] == FALSE)
+			if ($data['object'] == FALSE)
 			{
 				throw new \HttpServerErrorException;
 			}
@@ -257,7 +256,6 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
-
 
 	public function action_remove($id)
 	{
@@ -288,7 +286,6 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			\Response::redirect('admin/articles');
 		}
 
-
 		$this->_views["controller_title"] = __('Articles');
 		$this->_views["method_title"] = __('Delete') . ' ' . $article->title;
 		$data['alert_level'] = 'warning';
@@ -298,5 +295,4 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz::foolframe/admin/default', $this->_views));
 
 	}
-
 }

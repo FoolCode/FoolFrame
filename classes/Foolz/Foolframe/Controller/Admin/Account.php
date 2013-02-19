@@ -47,7 +47,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			{
 				// account has been locked due to excess authentication failures
 				$data['username'] = \Input::post('username');
-				\Notices::set('error', \Str::tr(__('After :number failed login attempts, this account has been locked. In order to unlock your account, you are required to use the "forget password" system.'), array('number' => Config::get('foolz/foolframe', 'foolauth', 'attempts_to_lock'))));
+				\Notices::set('error', \Str::tr(__('After :number failed login attempts, this account has been locked. In order to unlock your account, please use the password reset system.'), array('number' => Config::get('foolz/foolframe', 'foolauth', 'attempts_to_lock'))));
 			}
 		}
 
@@ -158,7 +158,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 						// the email driver was unable to send the email. the account will be activated automatically.
 						\Auth::activate_user($id, $activation_key);
 						\Notices::setFlash('success', __('Congratulations! You have successfully registered.'));
-						\Log::error(\Str::tr('The system was unable to send an activation email to :username. The account was activated automatically in order to allow the user access.', array('username' => $input['username'])));
+						\Log::error(\Str::tr('The system was unable to send an activation email to :username. The account was activated automatically.', array('username' => $input['username'])));
 						\Response::redirect('admin/account/login');
 					}
 
@@ -198,7 +198,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			\Response::redirect('admin/account/login');
 		}
 
-		\Notices::setFlash('error', __('It appears that you are accessing an invalid link or that your activation key has expired. If your account has not been activated in the last 48 hours, you will need to re-register the account again.'));
+		\Notices::setFlash('error', __('It appears that you are accessing an invalid link or that your activation key has expired. If your account has not been activated in the last 48 hours, you will need to register again.'));
 		\Response::redirect('admin/account/login');
 	}
 
@@ -263,7 +263,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 						}
 						catch (\Auth\FoolUserWrongKey $e)
 						{
-							\Notices::set('warning', __('It appears that you are accessing an invalid link or that your activation key has expired.'));
+							\Notices::set('warning', __('It appears that you are trying to access an invalid link or your activation key has expired.'));
 						}
 					}
 					else
@@ -278,7 +278,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			}
 			else
 			{
-				\Notices::set('warning', __('It appears that you are accessing an invalid link or that your activation key has expired.'));
+				\Notices::set('warning', __('It appears that you are trying to access an invalid link or your activation key has expired.'));
 			}
 
 			$this->_views['method_title'] = __('Forgot Password');
@@ -322,7 +322,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			try
 			{
 				\Auth::change_email($id, $email_key);
-				\Notices::setFlash('success', __('You have activated and verified your new email address successfully.'));
+				\Notices::setFlash('success', __('You have successfully verified your new email address.'));
 				\Response::redirect();
 			}
 			catch (\Auth\FoolUserWrongKey $e)
@@ -359,7 +359,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					}
 					catch (\Auth\FoolUserEmailExists $e)
 					{
-						\Notices::setFlash('error', __('The email address is already associated with another username. Please enter another email address.'));
+						\Notices::setFlash('error', __('The email address is already associated with another username. Please use another email address.'));
 						\Response::redirect('admin/account/change_email_request');
 					}
 
@@ -386,7 +386,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					try
 					{
 						$sendmail->send();
-						\Notices::setFlash('success', __('An email has been sent to verify your new email address. The activation link included will only work for the next 24 hours..'));
+						\Notices::setFlash('success', __('An email has been sent to verify your new email address. The activation link will only be valid for 24 hours.'));
 
 					}
 					catch(\EmailSendingFailedException $e)
@@ -420,7 +420,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		{
 			if ( ! \Auth::has_access('maccess.user'))
 			{
-				\Notices::set('warning', __('You must log in to the system in order to delete your acction with this verification link.'));
+				\Notices::set('warning', __('You must log in to delete your account with this verification link.'));
 
 				return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 			}
@@ -432,7 +432,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			}
 			catch (\Auth\FoolUserWrongKey $e)
 			{
-				\Notices::set('warning', __('It appears that you are accessing an invalid link or that your activation key has expired.'));
+				\Notices::set('warning', __('It appears that you are accessing an invalid link or your activation key has expired.'));
 			}
 
 			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
@@ -463,7 +463,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					}
 					catch (\Auth\FoolUserWrongPassword $e)
 					{
-						\Notices::setFlash('error', __('The password entered is incorrect.'));
+						\Notices::setFlash('error', __('The password entered was incorrect.'));
 						\Response::redirect('admin/account/delete');
 					}
 
@@ -490,7 +490,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					try
 					{
 						$sendmail->send();
-						\Notices::setFlash('success', __('An email has been sent to verify the deletion of your account. The verification link included will only work for the next 15 minutes.'));
+						\Notices::setFlash('success', __('An email has been sent to verify the deletion of your account. The verification link will only work for 15 minutes.'));
 					}
 					catch(\EmailSendingFailedException $e)
 					{

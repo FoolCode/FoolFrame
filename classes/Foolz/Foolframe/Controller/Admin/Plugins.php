@@ -26,7 +26,6 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-
 	function action_action($identifier, $vendor, $slug)
 	{
 		$slug = $vendor.'/'.$slug;

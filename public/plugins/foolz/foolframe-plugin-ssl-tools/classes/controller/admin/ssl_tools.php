@@ -81,5 +81,4 @@ class SslTools extends \Foolz\Foolframe\Controller\Admin
 		$this->_views["main_content_view"] = \View::forge("foolz/foolframe::admin/form_creator", $data);
 		return \Response::forge(\View::forge("foolz/foolframe::admin/default", $this->_views));
 	}
-
 }

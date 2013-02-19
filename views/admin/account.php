@@ -25,7 +25,7 @@
 				background-color: #fff;
 				border: 1px solid #e5e5e5;
 				-webkit-border-radius: 5px;
-				 -moz-border-radius: 5px;
+				-moz-border-radius: 5px;
 				border-radius: 5px;
 				-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
 				-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
