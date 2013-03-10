@@ -178,9 +178,7 @@
 						if (isset($item['value']) && is_array($item['value']))
 						{
 							// better not supporting it, things might get messy
-							log_message('error',
-								'The form automator doesn\'t support arrays of hidden values in Form::hidden.');
-							show_error('The form automator doesn\'t support arrays of hidden values in Form::hidden.');
+							throw new \BadFunctionCallException('Not implemented.');
 						}
 
 
@@ -256,20 +254,20 @@
 								else
 								{
 									// do we have a fallback in the array?
-									if(isset($helpers['checked']) && $helpers['checked'] == TRUE)
+									if(isset($helpers['checked']) && $helpers['checked'])
 									{
-										$checked = TRUE;
+										$checked = true;
 									}
 									else
 									{
-										$checked = FALSE;
+										$checked = false;
 									}
 								}
 							}
 						}
 						else
 						{
-							$checked = isset($object->$name) ? $object->$name : FALSE;
+							$checked = isset($object->$name) ? $object->$name : false;
 						}
 
 						$extra = array();

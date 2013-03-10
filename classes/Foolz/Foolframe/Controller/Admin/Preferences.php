@@ -61,8 +61,6 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			'type' => 'separator'
 		);
 
-		$themes = [];
-
 		foreach (Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 		{
 			if ($module === 'foolz/foolframe')
@@ -78,18 +76,19 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 			$module_name = Config::get($module, 'package', 'main.name');
 
 			$theme_checkboxes = [];
+
 			foreach($themes['default'] as $name => $theme)
 			{
 				$theme_checkboxes[] = array(
 					'type' => 'checkbox_array_value',
 					'label' => $theme->getConfig('name'),
-					'help' => sprintf(__('Enable %s theme'), $theme->getConfig('name')),
+					'help' => sprintf(__('Enable %s theme'), $theme->getConfig('extra.name')),
 					'array_key' => $theme->getConfig('name'),
-					'preferences' => TRUE
+					'preferences' => true
 				);
 			}
 
-			$form[$identifier.'.theme.active_themes'] = array(
+			$form[strtolower($module_name).'.theme.active_themes'] = array(
 				'type' => 'checkbox_array',
 				'label' => __('Active themes'),
 				'help' => \Str::tr(__('Choose the themes to make available to the users for :module. Admins are able to access any of them even if disabled.'), array('module' => '<strong>'.$module_name.'</strong>')),
@@ -100,10 +99,10 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 
 			foreach($themes['default'] as $name => $theme)
 			{
-				$themes_default[$name] = $theme->getConfig('name');
+				$themes_default[$name] = $theme->getConfig('extra.name');
 			}
 
-			$form[$identifier.'.theme.default'] = array(
+			$form[strtolower($module_name).'.theme.default'] = array(
 				'type' => 'select',
 				'label' => \Str::tr(__('Default theme for :module'), array('module' => '<strong>'.$module_name.'</strong>')),
 				'help' => \Str::tr(__('The theme the users will see as they reach :module.'), array('module' => '<strong>'.$module_name.'</strong>')),
@@ -111,6 +110,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 				'preferences' => TRUE,
 			);
 		}
+
 		$form['foolframe.theme.google_analytics'] = array(
 			'type' => 'input',
 			'label' => __('Google Analytics code'),
