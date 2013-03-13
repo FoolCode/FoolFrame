@@ -1,5 +1,7 @@
 <?php
 
+use Foolz\Config\Config;
+
 // start up the default caching system
 $apc_config = \Foolz\Cache\Config::forgeApc();
 $apc_config->setFormat('smart_json');
@@ -19,7 +21,7 @@ class_alias('Foolz\\Foolframe\\Model\\User', 'User');
 class_alias('Foolz\\Foolframe\\Model\\Users', 'Users');
 
 // check if FoolFrame is installed and in case it's not, allow reaching install
-if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'config', 'install.installed'))
+if ( ! Config::get('foolz/foolframe', 'config', 'install.installed'))
 {
 	\Module::load('install', PKGPATH.'foolz/install/');
 	require PKGPATH.'foolz/install/bootstrap.php';
@@ -27,7 +29,7 @@ if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'config', 'install.installed
 else
 {
 	// load each FoolFrame module, bootstrap and config
-	foreach(\Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
+	foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 	{
 		// foolframe is already loaded
 		if ($module !== 'foolz/foolframe')
@@ -36,14 +38,14 @@ else
 		}
 
 		// load the module routing
-		foreach(\Foolz\Config\Config::get($module, 'autoroutes') as $key => $item)
+		foreach(Config::get($module, 'autoroutes') as $key => $item)
 		{
 			\Router::add($key, $item);
 		}
 	}
 
 	// run the bootstrap for each module
-	foreach(\Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
+	foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 	{
 		if ($module !== 'foolz/foolframe')
 		{
@@ -51,7 +53,7 @@ else
 		}
 	}
 
-	$available_langs = \Config::get('foolframe.preferences.lang.available');
+	$available_langs = Config::get('foolz/foolframe', 'package', 'preferences.lang.available');
 	$lang = \Cookie::get('language');
 
 	if( ! $lang || ! array_key_exists($lang, $available_langs))
