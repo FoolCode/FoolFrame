@@ -26,10 +26,8 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
-	function action_action($identifier, $vendor, $slug)
+	function action_action()
 	{
-		$slug = $vendor.'/'.$slug;
-
 		if (\Input::post() && ! \Security::check_token())
 		{
 			\Notices::setFlash('warning', __('The security token wasn\'t found. Try resubmitting.'));
