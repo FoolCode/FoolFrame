@@ -2,11 +2,32 @@
 
 use Foolz\Config\Config;
 
-// start up the default caching system
-$apc_config = \Foolz\Cache\Config::forgeApc();
-$apc_config->setFormat('smart_json');
-$apc_config->setThrow(true);
-\Foolz\Cache\Cache::instantiate($apc_config);
+// start up the caching system
+$caching_config = Config::get('foolz/foolframe', 'cache', '');
+switch ($caching_config['type'])
+{
+	case 'apc':
+		$apc_config = \Foolz\Cache\Config::forgeApc();
+		$apc_config->setFormat('smart_json');
+		$apc_config->setThrow(true);
+		\Foolz\Cache\Cache::instantiate($apc_config);
+		break;
+
+	case 'memcached':
+		$mem_config = \Foolz\Cache\Config::forgeMemcached();
+		$mem_config->setFormat('smart_json');
+		$mem_config->setServers($caching_config['servers']);
+		$mem_config->setThrow(true);
+		\Foolz\Cache\Cache::instantiate($mem_config);
+		break;
+
+	case 'dummy':
+		$dummy_config = \Foolz\Cache\Config::forgeDummy();
+		$dummy_config->setFormat('smart_json');
+		$dummy_config->setThrow(true);
+		\Foolz\Cache\Cache::instantiate($dummy_config);
+		break;
+}
 
 \Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
 
