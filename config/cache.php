@@ -1,5 +1,9 @@
 <?php
 
 return [
-	'type' => 'dummy'
+	'type' => 'dummy',
+
+	'prefix' => '',
+
+	'servers' => []
 ];

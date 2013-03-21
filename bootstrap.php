@@ -9,6 +9,7 @@ switch ($caching_config['type'])
 	case 'apc':
 		$apc_config = \Foolz\Cache\Config::forgeApc();
 		$apc_config->setFormat('smart_json');
+		$apc_config->setPrefix($caching_config['prefix']);
 		$apc_config->setThrow(true);
 		\Foolz\Cache\Cache::instantiate($apc_config);
 		break;
@@ -16,6 +17,7 @@ switch ($caching_config['type'])
 	case 'memcached':
 		$mem_config = \Foolz\Cache\Config::forgeMemcached();
 		$mem_config->setFormat('smart_json');
+		$mem_config->setPrefix($caching_config['prefix']);
 		$mem_config->setServers($caching_config['servers']);
 		$mem_config->setThrow(true);
 		\Foolz\Cache\Cache::instantiate($mem_config);
@@ -24,6 +26,7 @@ switch ($caching_config['type'])
 	case 'dummy':
 		$dummy_config = \Foolz\Cache\Config::forgeDummy();
 		$dummy_config->setFormat('smart_json');
+		$dummy_config->setPrefix($caching_config['prefix']);
 		$dummy_config->setThrow(true);
 		\Foolz\Cache\Cache::instantiate($dummy_config);
 		break;
