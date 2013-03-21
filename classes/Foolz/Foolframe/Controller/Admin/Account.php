@@ -139,7 +139,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 						'title' => $title,
 						'site' => \Preferences::get('foolframe.gen.website_title'),
 						'username' => $input['username'],
-						'link' => \Uri::create('foolz/foolframe::admin/account/activate/'.$id.'/'.$activation_key)
+						'link' => \Uri::create('admin/account/activate/'.$id.'/'.$activation_key)
 					));
 
 					\Package::load('email');
