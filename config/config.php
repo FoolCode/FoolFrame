@@ -17,7 +17,7 @@ return [
 	'modules' => [
 		// list of modules installed
 		'installed' => [
-			'ff' => 'foolz/foolframe'
+			'foolframe' => 'foolz/foolframe'
 		]
 	]
 ];

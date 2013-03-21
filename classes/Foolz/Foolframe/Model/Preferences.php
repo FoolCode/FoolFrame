@@ -21,7 +21,6 @@ class Preferences
 			Cache::item('foolframe.model.preferences.settings')->delete();
 		}
 
-		// we need to know the identifiers of the modules, like ff => foolfuuka, fu => foolfuuka, fs => foolslide
 		static::$_modules = \Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed');
 
 		try
