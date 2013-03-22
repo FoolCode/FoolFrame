@@ -53,6 +53,11 @@ class DoctrineConnection
 			'driver' => $db_data['driver'],
 		];
 
+		if ($db_data['driver'] == 'pdo_mysql')
+		{
+			$data['charset'] = $db_data['charset'];
+		}
+
 		static::$prefixes[$instance] = $db_data['prefix'];
 
 		return static::$instances[$instance] = \Doctrine\DBAL\DriverManager::getConnection($data, $config);
