@@ -2,6 +2,8 @@
 	<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()); ?>
 	<h2 class="form-account-heading"><?= __('Login') ?></h2>
 
+	<hr>
+
 	<?= \Form::input([
 		'class' => 'input-block-level',
 		'name' => 'username',
@@ -31,4 +33,8 @@
 	<?php if ( ! \Preferences::get('foolframe.auth.disable_registration')) : ?>
 	<input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/register/') ?>'" value="<?= htmlspecialchars(__('Register')) ?>" />
 	<?php endif; ?>
+
+	<hr>
+
+	<a href="<?= \Uri::base() ?>">Back to Index</a>
 <?= \Form::close() ?>
