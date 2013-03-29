@@ -2,6 +2,7 @@
 	"name": "foolz/foolframe-plugin-ssl-tools",
 	"type": "foolz-foolframe-plugin",
 	"description": "Adds a panel to control useful tools if you have SSL available",
+	"version": "1.0.0",
 	"keywords": ["fake", "mock"],
 	"homepage": "http://www.foolz.us",
 	"license": "Apache-2.0",

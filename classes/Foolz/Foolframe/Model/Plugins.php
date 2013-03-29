@@ -38,6 +38,8 @@ class Plugins
 			$dir = VENDPATH.$module.'/'.\Foolz\Config\Config::get($module, 'package', 'directories.plugins');
 			static::$_identifiers[$module] = $dir;
 			static::$loader->addDir($module, $dir);
+			static::$loader->setBaseUrl(\Uri::base().'foolfuuka/');
+			static::$loader->setPublicDir(DOCROOT.'foolfuuka/');
 		}
 
 		foreach (static::getEnabled() as $enabled)

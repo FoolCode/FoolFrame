@@ -2,6 +2,7 @@
 	"name": "foolz/foolframe-plugin-articles",
 	"type": "foolz-foolframe-plugin",
 	"description": "Enable support for custom pages in MarkDown and custom links.",
+	"version": "1.0.0",
 	"keywords": ["fake", "mock"],
 	"homepage": "http://www.foolz.us",
 	"license": "Apache-2.0",
