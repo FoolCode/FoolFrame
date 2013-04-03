@@ -3,7 +3,7 @@
 namespace Foolz\Foolfuuka\Controller\Chan;
 
 use \Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
-	\Foolz\Foolframe\Plugins\Articles\ArticlesArticleNotFoundException;
+	\Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
 
 class Articles extends \Foolz\Foolfuuka\Controller\Chan
 {
@@ -17,7 +17,7 @@ class Articles extends \Foolz\Foolfuuka\Controller\Chan
 
 		try
 		{
-			$article = A::get_by_slug($slug);
+			$article = A::getBySlug($slug);
 		}
 		catch (ArticlesArticleNotFoundException $e)
 		{

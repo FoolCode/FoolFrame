@@ -4,7 +4,7 @@ namespace Foolz\Foolframe\Controller\Admin;
 
 use \Foolz\Foolframe\Model\DoctrineConnection as DC,
 	\Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
-	\Foolz\Foolframe\Plugins\Articles\ArticlesArticleNotFoundException;
+	\Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
 
 class Articles extends \Foolz\Foolframe\Controller\Admin
 {
@@ -157,7 +157,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['controller_title'] = __("Articles");
 		$this->_views['method_title'] = __('Manage');
 
-		$articles = A::get_all();
+		$articles = A::getAll();
 
 		ob_start();
 		?>
@@ -238,13 +238,16 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
 		if ( ! is_null($slug))
 		{
-			$data['object'] = (object) A::get_by_slug($slug);
-			if ($data['object'] == FALSE)
+			try
 			{
-				throw new \HttpServerErrorException;
+				$article = A::getBySlug($slug);
+			}
+			catch (ArticlesArticleNotFoundException $e)
+			{
+				throw new \HttpNotFoundException;
 			}
 
-			$this->_views["method_title"] = [__('Edit'), $data['object']->slug];
+			$this->_views["method_title"] = [__('Edit'), $article['slug']];
 		}
 		else
 		{
@@ -261,7 +264,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 	{
 		try
 		{
-			$article = A::get_by_id($id);
+			$article = A::getById($id);
 		}
 		catch (ArticlesArticleNotFoundException $e)
 		{
@@ -287,12 +290,12 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		}
 
 		$this->_views["controller_title"] = __('Articles');
-		$this->_views["method_title"] = __('Delete') . ' ' . $article->title;
+		$this->_views["method_title"] = __('Delete') . ' ' . $article['title'];
 		$data['alert_level'] = 'warning';
 		$data['message'] = __('Do you really want to remove the article?');
 
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/confirm', $data);
-		return \Response::forge(\View::forge('foolz::foolframe/admin/default', $this->_views));
+		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
 
 	}
 }

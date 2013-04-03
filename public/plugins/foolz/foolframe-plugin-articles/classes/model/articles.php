@@ -32,7 +32,7 @@ class Articles
 	/**
 	 * Grab the whole table of articles
 	 */
-	public static function get_all()
+	public static function getAll()
 	{
 		$query = DC::qb()
 			->select('*')
@@ -50,7 +50,33 @@ class Articles
 		return $result;
 	}
 
-	public static function get_by_slug($slug)
+	public static function getById($id)
+	{
+		$query = DC::qb()
+			->select('*')
+			->from(DC::p('plugin_ff_articles'), 'a')
+			->where('id = :id')
+			->setParameter(':id', $id);
+
+		if ( ! \Auth::has_access('maccess.mod'))
+		{
+			$query
+				->where('top', 1)
+				->orWhere('bottom', 1);
+		}
+
+		$result = $query->execute()
+			->fetch();
+
+		if ( ! count($result))
+		{
+			throw new ArticlesArticleNotFoundException;
+		}
+
+		return $result[0];
+	}
+
+	public static function getBySlug($slug)
 	{
 		$query = DC::qb()
 			->select('*')
@@ -61,8 +87,7 @@ class Articles
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
 			$query
-				->where('top = 1')
-				->orWhere('bottom = 1');
+				->andWhere('(top = 1 OR bottom = 1)');
 		}
 
 		$result = $query->execute()
@@ -76,43 +101,17 @@ class Articles
 		return $result;
 	}
 
-	public static function get_by_id($id)
+	public static function getTop($result)
 	{
-		$query = \DB::select()
-			->from('plugin_ff-articles')
-			->where('id', $id);
-
-		if ( ! \Auth::has_access('maccess.mod'))
-		{
-			$query->where_open()
-				->where('top', 1)
-				->or_where('bottom', 1)
-				->where_close();
-		}
-
-		$result = $query->as_object()
-			->execute()
-			->as_array();
-
-		if ( ! count($result))
-		{
-			throw new ArticlesArticleNotFoundException;
-		}
-
-		return $result[0];
+		return static::getNav('top', $result);
 	}
 
-	public static function get_top($result)
+	public static function getBottom($result)
 	{
-		return static::get_nav('top', $result);
+		return static::getNav('bottom', $result);
 	}
 
-	public static function get_bottom($result)
-	{
-		return static::get_nav('bottom', $result);
-	}
-
-	protected static function get_nav($where, $result)
+	protected static function getNav($where, $result)
 	{
 		$nav = $result->getParam('nav');
 
@@ -145,7 +144,7 @@ class Articles
 		$result->setParam('nav', $nav)->set($nav);
 	}
 
-	public static function get_index($result)
+	public static function getIndex($result)
 	{
 		$nav = $result->getParam('nav');
 
@@ -184,7 +183,10 @@ class Articles
 
 			foreach ($data as $k => $i)
 			{
-				$query->set($k, DC::forge()->quote($i));
+				if ($k !== 'id')
+				{
+					$query->set($k, DC::forge()->quote($i));
+				}
 			}
 
 			$query->execute();
