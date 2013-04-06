@@ -17,11 +17,6 @@ return [
 		'name' => 'FoolFrame',
 
 		/**
-		 * The two letter identifier
-		 */
-		'identifier' => 'ff',
-
-		/**
 		 * The name that can be used in classes names
 		 */
 		'class_name' => 'Foolframe',
