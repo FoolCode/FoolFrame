@@ -33,7 +33,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
 		\Router::add('_/articles/(:any)', 'foolz/foolfuuka/chan/articles/articles/$1');
 
-		\Foolz\Plugin\Event::forge('Fuel\Core\Router.parse_match.intercept')
+		\Foolz\Plugin\Event::forge('Fuel\Core\Router::parse_match.intercept')
 			->setCall(function($result)
 			{
 				if ($result->getParam('controller') === 'Foolz\Foolfuuka\Controller\Chan')
