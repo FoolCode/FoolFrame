@@ -40,8 +40,7 @@ class Articles
 
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
-			$query->where('top', 1)
-				->orWhere('bottom', 1);
+			$query->where('(top = 1 OR bottom = 1)');
 		}
 
 		$result = $query->execute()
@@ -60,9 +59,7 @@ class Articles
 
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
-			$query
-				->where('top', 1)
-				->orWhere('bottom', 1);
+			$query->andWhere('(top = 1 OR bottom = 1)');
 		}
 
 		$result = $query->execute()
@@ -86,8 +83,7 @@ class Articles
 
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
-			$query
-				->andWhere('(top = 1 OR bottom = 1)');
+			$query->andWhere('(top = 1 OR bottom = 1)');
 		}
 
 		$result = $query->execute()
@@ -178,7 +174,7 @@ class Articles
 		{
 			$query = DC::qb()
 				->update(DC::p('plugin_ff_articles'))
-				->where('id', ':id')
+				->where('id = :id')
 				->setParameter(':id', $data['id']);
 
 			foreach ($data as $k => $i)
