@@ -2,6 +2,8 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use \Foolz\Config\Config;
+
 class Users extends \Foolz\Foolframe\Controller\Admin
 {
 	public function before()
@@ -129,16 +131,20 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		if (\Auth::has_access('users.change_group'))
 		{
+			$groups = Config::get('foolz/foolframe', 'foolauth', 'groups');
+			$group_ids = [];
+
+			foreach ($groups as $level => $group)
+			{
+				$group_ids[$level] = $group['name'];
+			}
+
 			$form['group_id'] = array(
 				'type' => 'radio',
 				'database' => true,
 				'label' => 'Display name',
 				'help' => __('Change the group of the user'),
-				'radio_values' => array(
-					1 => 'User',
-					50 => 'Moderator',
-					100 => 'Administrator'
-				)
+				'radio_values' => $group_ids
 			);
 		}
 

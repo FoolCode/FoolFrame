@@ -55,10 +55,10 @@ return [
 	 * Groups as id => [name => <string>, roles => <array>]
 	 */
 	'groups' => [
-		0    => ['name' => 'Guests', 'roles' => []],
-		1    => ['name' => 'Users', 'roles' => ['user']],
-		50   => ['name' => 'Moderators', 'roles' => ['mod']],
-		100  => ['name' => 'Administrators', 'roles' => ['admin']],
+		0    => ['name' => 'Guest', 'roles' => []],
+		1    => ['name' => 'User', 'roles' => ['user']],
+		50   => ['name' => 'Moderator', 'roles' => ['mod']],
+		100  => ['name' => 'Administrator', 'roles' => ['admin']],
 	],
 
 	/**
@@ -79,24 +79,6 @@ return [
 			'maccess' => ['user', 'mod', 'admin'],
 			'users'   => ['access', 'change_credentials', 'change_group']
 		],
-		/**
-		 * Examples
-		 * ---
-		 *
-		 * Regular example with role "user" given create & read rights on "comments":
-		 *   'user'  => ['comments' => ['create', 'read']],
-		 * And similar additional rights for moderators:
-		 *   'moderator'  => ['comments' => ['update', 'delete']],
-		 *
-		 * Wildcard # role (auto assigned to all groups]:
-		 *   '#'  => ['website' => ['read']]
-		 *
-		 * Global disallow by assigning false to a role:
-		 *   'banned' => false,
-		 *
-		 * Global allow by assigning true to a role (use with care!]:
-		 *   'super' => true,
-		 */
 	],
 
 	/**
