@@ -90,7 +90,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			\Response::redirect('admin');
 		}
 
-		if (\Preferences::get('foolframe.reg_disabled'))
+		if (\Preferences::get('foolframe.auth.disable_registration'))
 		{
 			throw new HttpNotFoundException;
 		}
