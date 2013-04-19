@@ -17,14 +17,12 @@ class Markdown
 	{
 		try
 		{
-			// using crc32 should be safe enough for some human written text, and supposedly it's lighter than md5
-			// this of course appends an integer to the string
-			return Cache::item('Foolz\Foolframe\Model\Markdown::parse.crc32.'.crc32($text))->get();
+			return Cache::item('foolframe.model.markdown.parse.md5.'.md5($text))->get();
 		}
 		catch (\OutOfBoundsException $e)
 		{
 			$parsed = M::defaultTransform($text);
-			Cache::item('Foolz\Foolframe\Model\Markdown::parse.crc32.'.crc32($text))->set($parsed, 900);
+			Cache::item('foolframe.model.markdown.parse.md5.'.md5($text))->set($parsed, 900);
 			return $parsed;
 		}
 	}
