@@ -25,7 +25,7 @@ echo form_close();
 	<?php
 	echo '<div class="table" style="padding-bottom: 10px; margin-right:10px;">';
 	echo '<h3>' . __('Changelog') . '</h3><div class="changelog">';
-	$changelog = Markdown($changelog);
+	$changelog = \Foolz\Foolframe\Model\Markdown($changelog);
 	$changelog = str_replace('{{ENHANCEMENT}}', '<span class="label label-warning">Enhancement</span>', $changelog);
 	$changelog = str_replace('{{BUGFIX}}', '<span class="label label-info">Bugfix</span>', $changelog);
 	$changelog = str_replace('{{NEW}}', '<span class="label label-success">New</span>', $changelog);
