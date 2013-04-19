@@ -353,9 +353,11 @@
 						break;
 
 					case 'select':
+						if (isset($helpers['label'])) :
 						?>
 						<label><?php echo $helpers['label'] ?></label>
 						<?php
+						endif;
 						if (isset($helpers['preferences']) && $helpers['preferences'])
 						{
 							$item['selected'] = \Preferences::get(str_replace(',', '.', $name));
@@ -379,7 +381,7 @@
 							<?php
 							echo isset($helpers['help']) ? $helpers['help'] : NULL;
 							?>
-						</span>
+						</span><div></div>
 						<?php
 						break;
 
