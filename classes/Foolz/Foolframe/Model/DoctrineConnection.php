@@ -38,6 +38,8 @@ class DoctrineConnection
 
 		$config = new \Doctrine\DBAL\Configuration();
 
+		$config->setSQLLogger(new DoctrineLogger());
+
 		$db_data = \Foolz\Config\Config::get('foolz/foolframe', 'db', $instance);
 
 		if ($db_data === false)
