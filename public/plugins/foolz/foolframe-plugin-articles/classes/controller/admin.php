@@ -241,6 +241,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			try
 			{
 				$article = A::getBySlug($slug);
+				$data['object'] = (object) $article;
 			}
 			catch (ArticlesArticleNotFoundException $e)
 			{

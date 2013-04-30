@@ -60,7 +60,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 	});
 
 \Foolz\Plugin\Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-articles')
-		->setCall(function($result) {
+	->setCall(function($result) {
 		/* @var $schema \Doctrine\DBAL\Schema\Schema */
 		/* @var $table \Doctrine\DBAL\Schema\Table */
 		$schema = $result->getParam('schema');
