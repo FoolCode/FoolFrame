@@ -2,17 +2,21 @@
 
 namespace Foolz\Foolframe\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class Admin extends Common
 {
 	protected $_views = null;
 	private static $sidebar = [];
 	private static $sidebar_dynamic = [];
 
-    public function before()
+    public function before(Request $request, $method)
     {
 		parent::before();
 
-	if ( ! \Auth::has_access('maccess.user') && \Uri::segment(2) != 'account' && ! in_array(\Uri::segment(3), ['register', 'activate', 'login', 'change_password', 'forgot_password']))
+		if ( ! \Auth::has_access('maccess.user') && ! in_array($request->getPathInfo(),
+			['/admin/account/register/', '/admin/account/activate/', '/admin/account/login/',
+				'/admin/account/change_password/', '/admin/account/forgot_password/']))
 		{
 			return \Response::redirect('admin/account/login');
 		}

@@ -6,9 +6,9 @@ use \Foolz\Autoupgrade\Upgrade;
 
 class System extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before()
+	public function before(Request $request, $method)
 	{
-		parent::before();
+		parent::before($request, $method;
 
 		if( ! \Auth::has_access('maccess.admin'))
 		{

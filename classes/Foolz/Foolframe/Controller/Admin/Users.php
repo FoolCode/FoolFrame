@@ -6,7 +6,7 @@ use \Foolz\Config\Config;
 
 class Users extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before()
+	public function before(Request $request, $method)
 	{
 		// only mods and admins can see and edit users
 		if( ! \Auth::has_access('maccess.mod'))
@@ -16,7 +16,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		$this->_views['controller_title'] = __('Users');
 
-		parent::before();
+		parent::before($request, $method);
 	}
 
 	public function action_manage($page = 1)

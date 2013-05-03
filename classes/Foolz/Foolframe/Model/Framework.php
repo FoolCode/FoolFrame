@@ -5,16 +5,18 @@ namespace Foolz\Foolframe\Model;
 use Foolz\Config\Config,
 	Symfony\Component\HttpKernel\HttpKernel,
 	Symfony\Component\EventDispatcher\EventDispatcher,
-	Symfony\Component\HttpKernel\Controller\ControllerResolver,
 	Symfony\Component\Routing\RouteCollection,
 	Symfony\Component\Routing\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 class Framework extends HttpKernel
 {
 	public $routes = [];
 
-	public function __construct()
+	public function __construct(Request $request)
 	{
+		Uri::setRequest($request);
+
 		$this->setupCache();
 		$this->setupClassAliases();
 		$this->loadConfig();
@@ -23,12 +25,12 @@ class Framework extends HttpKernel
 
 		foreach ($this->routes as $key => $item)
 		{
-			$routes->add($item, new Route($key));
+			$routes->add($key, new Route($key, $item));
 		}
 
 		$context = new \Symfony\Component\Routing\RequestContext();
 		$matcher = new \Symfony\Component\Routing\Matcher\UrlMatcher($routes, $context);
-		$resolver = new ControllerResolver();
+		$resolver = new \Foolz\Foolframe\Model\ControllerResolver();
 
 		$dispatcher = new EventDispatcher();
 		$dispatcher->addSubscriber(new \Symfony\Component\HttpKernel\EventListener\RouterListener($matcher));
@@ -72,6 +74,7 @@ class Framework extends HttpKernel
 
 	protected function setupClassAliases()
 	{
+		class_alias('Foolz\\Foolframe\\Model\\Uri', 'Uri');
 		class_alias('Foolz\\Foolframe\\Model\\DoctrineConnection', 'DoctrineConnection');
 		class_alias('Foolz\\Foolframe\\Model\\Notices', 'Notices');
 		class_alias('Foolz\\Foolframe\\Model\\Plugins', 'Plugins');

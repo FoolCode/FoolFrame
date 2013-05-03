@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Controller;
 
-class Common extends \Controller
+class Common
 {
 	public function before()
 	{
@@ -10,7 +10,5 @@ class Common extends \Controller
 		{
 			throw new HttpNotFoundException;
 		}
-
-		parent::before();
 	}
 }

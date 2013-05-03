@@ -1,6 +1,13 @@
 <?php
 
 return [
+	'/admin/' => ['_controller' => '\Foolz\Foolframe\Controller\Admin::index'],
+	'/admin/account/' =>  ['_controller' => '\Foolz\Foolframe\Controller\Admin\Account::login'],
+	'/admin/account/{_method}/' => [
+		'_controller' => '\Foolz\Foolframe\Controller\Admin\Account::*',
+		'_method' => 'login'
+	]
+	/*
 	'admin' => 'foolz/foolframe/admin/index',
 	'admin/account' => 'foolz/foolframe/admin/account/login',
 	'admin/account/(:any)' => 'foolz/foolframe/admin/account/$1',
@@ -11,5 +18,5 @@ return [
 	'admin/system' => 'foolz/foolframe/admin/system/information',
 	'admin/system/(:any)' => 'foolz/foolframe/admin/system/$1',
 	'admin/users' => 'foolz/foolframe/admin/users/manage',
-	'admin/users/(:any)' => 'foolz/foolframe/admin/users/$1'
+	'admin/users/(:any)' => 'foolz/foolframe/admin/users/$1'*/
 ];

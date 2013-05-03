@@ -2,11 +2,14 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 class Account extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before()
+	public function before(Request $request, $method)
 	{
-		parent::before();
+		parent::before($request, $method);
 
 		$this->_views['controller_title'] = __('Account');
 	}
@@ -55,7 +58,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['method_title'] = __('Login');
 		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/login');
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/account', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/account', $this->_views));
 	}
 
 	public function action_logout()

@@ -4,14 +4,14 @@ namespace Foolz\Foolframe\Controller\Admin;
 
 class Plugins extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before()
+	public function before($request, $method)
 	{
 		if( ! \Auth::has_access('maccess.admin'))
 		{
 			Response::redirect('admin');
 		}
 
-		parent::before();
+		parent::before($request, $method);
 
 		// set controller title
 		$this->_views['controller_title'] = __("Plugins");
