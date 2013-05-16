@@ -59,7 +59,7 @@ class Schema
 		$users->addColumn('password', 'string', ['length' => 255]);
 		$users->addColumn('group_id', 'integer', ['unsigned' => true]);
 		$users->addColumn('email', 'string', ['length' => 100]);
-		$users->addColumn('last_login', 'integer', ['unsigned' => true]);
+		$users->addColumn('last_login', 'integer', ['unsigned' => true, 'notnull' => false]);
 		$users->addColumn('new_email', 'string', ['length' => 100, 'notnull' => false, 'default' => null]);
 		$users->addColumn('new_email_key', 'string', ['length' => 128, 'notnull' => false, 'default' => null]);
 		$users->addColumn('new_email_time', 'integer', ['unsigned' => true, 'notnull' => false, 'default' => null]);
@@ -70,9 +70,9 @@ class Schema
 		$users->addColumn('deletion_key', 'string', ['length' => 128, 'notnull' => false, 'default' => null]);
 		$users->addColumn('deletion_time', 'integer', ['unsigned' => true, 'notnull' => false, 'default' => null]);
 		$users->addColumn('profile_fields', 'text', ['length' => 65532]);
-		$users->addColumn('bio', 'text', ['length' => 65532]);
-		$users->addColumn('twitter', 'string', ['length' => 32]);
-		$users->addColumn('display_name', 'string', ['length' => 32]);
+		$users->addColumn('bio', 'text', ['length' => 65532, 'notnull' => false]);
+		$users->addColumn('twitter', 'string', ['length' => 32, 'notnull' => false]);
+		$users->addColumn('display_name', 'string', ['length' => 32, 'notnull' => false]);
 		$users->addColumn('created_at', 'integer', ['unsigned' => true]);
 		$users->setPrimaryKey(['id']);
 		$users->addUniqueIndex(['username', 'email'], 'username_email_index');
