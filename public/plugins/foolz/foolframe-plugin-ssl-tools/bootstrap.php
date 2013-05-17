@@ -11,7 +11,7 @@
 
 		\Autoloader::add_classes(array(
 			'Foolz\Foolframe\Plugins\SslTools\Model\SslTools' => __DIR__.'/classes/model/ssl_tools.php',
-			'Foolz\Foolframe\Controller\Admin\SslTools' => __DIR__.'/classes/controller/admin/ssl_tools.php'
+			'Foolz\Foolframe\Controller\Admin\Plugins\SslTools' => __DIR__.'/classes/controller/admin/ssl_tools.php'
 		));
 
 		// don't add the admin panels if the user is not an admin
@@ -22,7 +22,7 @@
 					'/admin/plugins/ssl_tools/{_suffix}',
 					[
 						'_suffix' => 'manage',
-						'_controller' => '\Foolz\Foolframe\Controller\Admin\SslTools::manage'
+						'_controller' => '\Foolz\Foolframe\Controller\Admin\Plugins\SslTools::manage'
 					],
 					[
 						'_suffix' => '.*'

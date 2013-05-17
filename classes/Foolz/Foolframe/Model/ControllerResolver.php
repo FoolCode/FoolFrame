@@ -76,6 +76,8 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 		if ($method === '*') {
 			if (count($this->parameters) > 0) {
 				$method = array_shift($this->parameters);
+			} elseif ($default_suffix = $request->attributes->get('_default_suffix')) {
+				$method = $default_suffix;
 			} else {
 				$method = 'index';
 			}

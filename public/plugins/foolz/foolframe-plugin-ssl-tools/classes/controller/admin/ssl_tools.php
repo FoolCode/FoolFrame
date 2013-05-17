@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Controller\Admin;
+namespace Foolz\Foolframe\Controller\Admin\Plugins;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
