@@ -11,14 +11,27 @@
 
 		\Autoloader::add_classes(array(
 			'Foolz\Foolframe\Plugins\SslTools\Model\SslTools' => __DIR__.'/classes/model/ssl_tools.php',
-			'Foolz\Foolframe\Controller\Admin\Plugins\Ff\SslTools' => __DIR__.'/classes/controller/admin/ssl_tools.php'
+			'Foolz\Foolframe\Controller\Admin\SslTools' => __DIR__.'/classes/controller/admin/ssl_tools.php'
 		));
 
 		// don't add the admin panels if the user is not an admin
 		if (\Auth::has_access('maccess.admin'))
 		{
+			$result->getParam('framework')->getRouteCollection()->add(
+				'foolframe.plugin.ssl_tools.admin', new \Symfony\Component\Routing\Route(
+					'/admin/plugins/ssl_tools/{_suffix}',
+					[
+						'_suffix' => 'manage',
+						'_controller' => '\Foolz\Foolframe\Controller\Admin\SslTools::manage'
+					],
+					[
+						'_suffix' => '.*'
+					]
+				)
+			);
+
 			\Plugins::registerSidebarElement('admin', 'plugins', array(
-				'content' => array('ff/ssl_tools/manage' => array('level' => 'admin', 'name' => __('SSL Tools'), 'icon' => 'icon-lock'))
+				'content' => array('ssl_tools/manage' => array('level' => 'admin', 'name' => __('SSL Tools'), 'icon' => 'icon-lock'))
 			));
 		}
 

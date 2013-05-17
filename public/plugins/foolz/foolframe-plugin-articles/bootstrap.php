@@ -4,6 +4,9 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
 \Foolz\Plugin\Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
 	->setCall(function($result) {
+		/* @var $framework \Foolz\Foolframe\Model\Framework */
+		$framework = $result->getParam('framework');
+
 		\Autoloader::add_classes(array(
 			'Foolz\Foolframe\Plugins\Articles\Model\Articles' => __DIR__.'/classes/model/articles.php',
 			'Foolz\Foolframe\Controller\Admin\Articles' => __DIR__.'/classes/controller/admin.php',
@@ -13,8 +16,18 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 		// don't add the admin panels if the user is not an admin
 		if (\Auth::has_access('maccess.admin'))
 		{
-			\Router::add('admin/articles', 'foolz/foolframe/admin/articles/manage');
-			\Router::add('admin/articles/(:any)', 'foolz/foolframe/admin/articles/$1');
+			$framework->getRouteCollection()->add(
+				'foolframe.plugin.articles.admin', new \Symfony\Component\Routing\Route(
+					'/admin/articles/{_suffix}',
+					[
+						'_suffix' => 'manage',
+						'_controller' => '\Foolz\Foolframe\Controller\Admin\Articles::*'
+					],
+					[
+						'_suffix' => '.*'
+					]
+				)
+			);
 
 			\Plugins::registerSidebarElement('admin', 'articles', array(
 					'name' => __('Articles'),
@@ -31,7 +44,18 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 			);
 		}
 
-		\Router::add('_/articles/(:any)', 'foolz/foolfuuka/chan/articles/articles/$1');
+		$framework->getRouteCollection()->add(
+			'foolframe.plugin.articles.chan', new \Symfony\Component\Routing\Route(
+				'/_/articles/{_suffix}',
+				[
+					'_suffix' => '',
+					'_controller' => '\Foolz\Foolfuuka\Controller\Chan\Articles::articles'
+				],
+				[
+					'_suffix' => '.*'
+				]
+			)
+		);
 
 		\Foolz\Plugin\Event::forge('Fuel\Core\Router::parse_match.intercept')
 			->setCall(function($result)
@@ -79,5 +103,5 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 		$table->addColumn('top', 'smallint', ['unsigned' => true, 'default' => 0]);
 		$table->addColumn('bottom', 'smallint', ['unsigned' => true, 'default' => 0]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['slug'], 'slug_index');
+		$table->addIndex(['slug'], DC::p('plugin_ff_articles_slug_index'));
 	});

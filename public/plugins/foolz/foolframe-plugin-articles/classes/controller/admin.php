@@ -5,18 +5,20 @@ namespace Foolz\Foolframe\Controller\Admin;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC,
 	\Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
 	\Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Articles extends \Foolz\Foolframe\Controller\Admin
 {
 
-	public function before()
+	public function before(Request $request)
 	{
 		if ( ! \Auth::has_access('maccess.mod'))
 		{
 			\Response::redirect('admin');
 		}
 
-		parent::before();
+		parent::before($request);
 	}
 
 	public function structure()
@@ -196,7 +198,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
 		<?php
 		$this->_views["main_content_view"] = ob_get_clean();
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 	public function action_edit($slug = null)
@@ -258,7 +260,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		$this->_views["controller_title"] = __('Articles');
 
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 	public function action_remove($id)
@@ -296,7 +298,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		$data['message'] = __('Do you really want to remove the article?');
 
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/confirm', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 
 	}
 }

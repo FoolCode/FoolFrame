@@ -124,6 +124,8 @@ class Framework extends HttpKernel
 				}
 			}
 
+			$frameworks = [];
+
 			// run the Framework class for each module
 			foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 			{
@@ -137,7 +139,7 @@ class Framework extends HttpKernel
 					}
 
 					$class .= 'Model\Framework';
-					new $class($this);
+					$frameworks[] = new $class($this);
 				}
 			}
 
@@ -169,6 +171,14 @@ class Framework extends HttpKernel
 			bindtextdomain($lang, DOCROOT . "assets/locale");
 			bind_textdomain_codeset($lang, 'UTF-8');
 			textdomain($lang);
+
+			Plugins::instantiate($this);
+
+			// we must run this later else the plugins have no change to correctly set the
+			foreach ($frameworks as $framework)
+			{
+				$framework->routes();
+			}
 
 			foreach(['account', 'plugins', 'preferences', 'system', 'users'] as $location)
 			{

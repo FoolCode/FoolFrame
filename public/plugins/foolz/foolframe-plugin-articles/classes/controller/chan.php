@@ -1,9 +1,9 @@
 <?php
 
 namespace Foolz\Foolfuuka\Controller\Chan;
-
 use \Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
 	\Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Articles extends \Foolz\Foolfuuka\Controller\Chan
 {
@@ -12,7 +12,7 @@ class Articles extends \Foolz\Foolfuuka\Controller\Chan
 	{
 		if(is_null($slug))
 		{
-			throw new \HttpNotFoundException;
+			return $this->action_404();
 		}
 
 		try
@@ -21,7 +21,7 @@ class Articles extends \Foolz\Foolfuuka\Controller\Chan
 		}
 		catch (ArticlesArticleNotFoundException $e)
 		{
-			throw new \HttpNotFoundException;
+			return $this->action_404();
 		}
 
 		if ($article['url'])
@@ -35,6 +35,6 @@ class Articles extends \Foolz\Foolfuuka\Controller\Chan
 		$this->builder->createPartial('body', 'markdown')
 			->getParamManager()->setParam('content', $article['article']);
 
-		return \Response::forge($this->builder->build());
+		return new Response($this->builder->build());
 	}
 }
