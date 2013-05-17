@@ -3,12 +3,14 @@
 namespace Foolz\Foolframe\Controller\Admin;
 
 use \Foolz\Config\Config;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Preferences extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before(Request $request, $method)
+	public function before(Request $request)
 	{
-		parent::before($request, $method);
+		parent::before($request);
 
 		if( ! \Auth::has_access('maccess.admin'))
 		{
@@ -176,7 +178,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 
 		// create a form
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 	function action_advertising()
@@ -239,7 +241,7 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 
 		// create a form
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 	function action_registration()
@@ -310,6 +312,6 @@ class Preferences extends \Foolz\Foolframe\Controller\Admin
 
 		// create a form
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 }

@@ -3,12 +3,14 @@
 namespace Foolz\Foolframe\Controller\Admin;
 
 use \Foolz\Autoupgrade\Upgrade;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class System extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before(Request $request, $method)
+	public function before(Request $request)
 	{
-		parent::before($request, $method;
+		parent::before($request);
 
 		if( ! \Auth::has_access('maccess.admin'))
 		{
@@ -49,7 +51,7 @@ class System extends \Foolz\Foolframe\Controller\Admin
 
 		$this->_views['method_title'] = __('Manage');
 		$this->_views["main_content_view"] = \View::forge('admin/plugins/manage', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 
 		/*
 		if (\Input::post() && ! \Security::check_token())
@@ -73,20 +75,20 @@ class System extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['method_title'] = __('Information');
 		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/system/information', $data);
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 	public function action_preferences()
 	{
 		$this->_views['method_title'] = __('Preferences');
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 	public function action_upgrade()
 	{
 		$this->_views['method_title'] = __('Software Upgrade');
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 }

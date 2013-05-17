@@ -3,10 +3,12 @@
 namespace Foolz\Foolframe\Controller\Admin;
 
 use \Foolz\Config\Config;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Users extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before(Request $request, $method)
+	public function before(Request $request)
 	{
 		// only mods and admins can see and edit users
 		if( ! \Auth::has_access('maccess.mod'))
@@ -16,7 +18,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		$this->_views['controller_title'] = __('Users');
 
-		parent::before($request, $method);
+		parent::before($request);
 	}
 
 	public function action_manage($page = 1)
@@ -34,7 +36,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['method_title'] = __('Manage');
 		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/users/manage', $data);
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 	public function action_user($id = null)
@@ -192,6 +194,6 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		// create a form
 		$this->_views["method_title"] = [__('Manage'), __('Edit'), $data['object']->username];
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 }

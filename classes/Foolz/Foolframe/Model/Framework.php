@@ -88,7 +88,7 @@ class Framework extends HttpKernel
 
 	protected function loadConfig()
 	{
-		//\Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
+		\Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
 
 		// check if FoolFrame is installed and in case it's not, allow reaching install
 		if ( ! Config::get('foolz/foolframe', 'config', 'install.installed'))
@@ -98,6 +98,42 @@ class Framework extends HttpKernel
 		}
 		else
 		{
+			$this->routeCollection->add(
+				'foolframe.admin', new Route(
+					'/admin',
+					[
+						'_controller' => '\Foolz\Foolframe\Controller\Admin::index'
+					]
+				)
+			);
+
+			foreach(['account', 'plugins', 'preferences', 'system', 'users'] as $location)
+			{
+				$this->routeCollection->add(
+					'foolframe.admin.'.$location, new Route(
+						'/admin/'.$location.'/{_suffix}',
+						[
+							'_suffix' => '',
+							'_controller' => '\Foolz\Foolframe\Controller\Admin\\'.ucfirst($location).'::*',
+						],
+						[
+							'_suffix' => '.*',
+						]
+					)
+				);
+			}
+
+
+			// load each FoolFrame module, bootstrap and config
+			foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
+			{
+				// foolframe is already loaded
+				if ($module !== 'foolz/foolframe')
+				{
+				  \Module::load($module, VENDPATH.$module.'/');
+				}
+			}
+
 			// run the Framework class for each module
 			foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 			{

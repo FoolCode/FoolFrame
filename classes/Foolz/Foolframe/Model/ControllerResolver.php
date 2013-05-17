@@ -74,7 +74,12 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 		}
 
 		if ($method === '*') {
-			$method = $request->attributes->get('_method');
+			if (count($this->parameters) > 0) {
+				$method = array_shift($this->parameters);
+			} else {
+				$method = 'index';
+			}
+
 		}
 
 		if (method_exists($controller, 'before')) {

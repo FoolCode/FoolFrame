@@ -2,16 +2,19 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 class Plugins extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before($request, $method)
+	public function before(Request $request)
 	{
 		if( ! \Auth::has_access('maccess.admin'))
 		{
 			Response::redirect('admin');
 		}
 
-		parent::before($request, $method);
+		parent::before($request);
 
 		// set controller title
 		$this->_views['controller_title'] = __("Plugins");
@@ -23,7 +26,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 		$data['plugins'] = \Plugins::getAll();
 		$this->_views['method_title'] = __('Manage');
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/plugins/manage', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 
 	function action_action()

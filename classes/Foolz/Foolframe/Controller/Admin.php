@@ -10,9 +10,9 @@ class Admin extends Common
 	private static $sidebar = [];
 	private static $sidebar_dynamic = [];
 
-    public function before(Request $request, $method)
+    public function before(Request $request)
     {
-		parent::before();
+	    parent::before($request);
 
 		if ( ! \Auth::has_access('maccess.user') && ! in_array($request->getPathInfo(),
 			['/admin/account/register/', '/admin/account/activate/', '/admin/account/login/',
@@ -34,7 +34,7 @@ class Admin extends Common
 		}
 
 		$this->_views['navbar'] = \View::forge('foolz/foolframe::admin/navbar');
-		$this->_views['sidebar'] = \View::forge('foolz/foolframe::admin/sidebar', array('sidebar' => self::get_sidebar(self::$sidebar)));
+		$this->_views['sidebar'] = \View::forge('foolz/foolframe::admin/sidebar', array('sidebar' => self::get_sidebar($request, self::$sidebar)));
 	}
 
     public function action_index()
@@ -201,8 +201,10 @@ class Admin extends Common
 	 *
 	 * @todo comment this
 	 */
-	public static function get_sidebar($array)
+	public static function get_sidebar(Request $request, $array)
 	{
+		$segments = explode('/', $request->getPathInfo());
+
 		// not logged in users don't need the sidebar
 		if (\Auth::member('guest'))
 		{
@@ -217,7 +219,7 @@ class Admin extends Common
 				$subresult = $item;
 
 				// segment 2 contains what's currently active so we can set it lighted up
-				if (\Uri::segment(2) == $key)
+				if (isset($segments[2]) && $segments[2] == $key)
 				{
 					$subresult['active'] = TRUE;
 				}
@@ -260,10 +262,10 @@ class Admin extends Common
 					$subsubresult = $subitem;
 					if (\Auth::has_access('maccess.' . $subitem['level']))
 					{
-						if ($subresult['active'] && (\Uri::segment(3) == $subkey ||
+						if ($subresult['active'] && (isset($segments[2]) && $segments[3] == $subkey ||
 							(
 							isset($subitem['alt_highlight']) &&
-							in_array(\Uri::segment(3), $subitem['alt_highlight'])
+							in_array($segments[3], $subitem['alt_highlight'])
 							)
 							))
 						{

@@ -7,9 +7,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Account extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before(Request $request, $method)
+	public function before(Request $request)
 	{
-		parent::before($request, $method);
+		parent::before($request);
 
 		$this->_views['controller_title'] = __('Account');
 	}
@@ -185,7 +185,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['method_title'] = __('Register');
 		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/register');
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/account', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/account', $this->_views));
 	}
 
 	public function action_activate($id, $activation_key)
@@ -236,7 +236,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$this->_views['method_title'] = __('Forgot Password');
 		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/forgot_password');
 
-		return \Response::forge(\View::forge('foolz/foolframe::admin/account', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/account', $this->_views));
 	}
 
 	public function action_change_password($id = null, $password_key = null)
@@ -286,7 +286,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 			$this->_views['method_title'] = __('Forgot Password');
 
-			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 		}
 		else
 		{
@@ -307,7 +307,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			$this->_views['method_title'] = __('Change Password');
 			$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/request_change_password');
 
-			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 		}
 	}
 
@@ -333,7 +333,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				\Notices::set('warning', __('It appears that you are accessing an invalid link or that your activation key has expired.'));
 			}
 
-			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 		}
 		else
 		{
@@ -410,7 +410,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 			$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/request_change_email');
 
-			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 		}
 
 	}
@@ -425,7 +425,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			{
 				\Notices::set('warning', __('You must log in to delete your account with this verification link.'));
 
-				return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+				return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 			}
 
 			try
@@ -438,7 +438,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				\Notices::set('warning', __('It appears that you are accessing an invalid link or your activation key has expired.'));
 			}
 
-			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 		}
 		else
 		{
@@ -513,7 +513,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 			$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/request_delete');
 
-			return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 		}
 	}
 
@@ -655,6 +655,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		// generate profile form
 		$this->_views["method_title"] = __('Profile');
 		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return \Response::forge(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
 	}
 }
