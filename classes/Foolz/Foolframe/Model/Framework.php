@@ -2,17 +2,28 @@
 
 namespace Foolz\Foolframe\Model;
 
-use Foolz\Config\Config,
-	Symfony\Component\HttpKernel\HttpKernel,
-	Symfony\Component\EventDispatcher\EventDispatcher,
-	Symfony\Component\Routing\RouteCollection,
-	Symfony\Component\Routing\Route;
+use Foolz\Config\Config;
+use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 class Framework extends HttpKernel
 {
-	public $routeCollection = [];
+	/**
+	 * RouteCollection that stores all of the Framework's Routes set before controllers
+	 *
+	 * @var \Symfony\Component\Routing\RouteCollection
+	 */
+	public $routeCollection;
 
+	/**
+	 * Called directly from index.php
+	 * Starts up the Symfony components and the FoolFrame components
+	 *
+	 * @param Request $request
+	 */
 	public function __construct(Request $request)
 	{
 		Uri::setRequest($request);
@@ -35,6 +46,11 @@ class Framework extends HttpKernel
 		parent::__construct($dispatcher, $resolver);
 	}
 
+	/**
+	 * Allows managing the routes
+	 *
+	 * @return RouteCollection
+	 */
 	public function getRouteCollection()
 	{
 		return $this->routeCollection;
@@ -98,32 +114,6 @@ class Framework extends HttpKernel
 		}
 		else
 		{
-			$this->routeCollection->add(
-				'foolframe.admin', new Route(
-					'/admin',
-					[
-						'_controller' => '\Foolz\Foolframe\Controller\Admin::index'
-					]
-				)
-			);
-
-			foreach(['account', 'plugins', 'preferences', 'system', 'users'] as $location)
-			{
-				$this->routeCollection->add(
-					'foolframe.admin.'.$location, new Route(
-						'/admin/'.$location.'/{_suffix}',
-						[
-							'_suffix' => '',
-							'_controller' => '\Foolz\Foolframe\Controller\Admin\\'.ucfirst($location).'::*',
-						],
-						[
-							'_suffix' => '.*',
-						]
-					)
-				);
-			}
-
-
 			// load each FoolFrame module, bootstrap and config
 			foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 			{
@@ -180,7 +170,34 @@ class Framework extends HttpKernel
 			bind_textdomain_codeset($lang, 'UTF-8');
 			textdomain($lang);
 
-			\Foolz\Foolframe\Model\Plugins::initialize();
+			foreach(['account', 'plugins', 'preferences', 'system', 'users'] as $location)
+			{
+				$this->routeCollection->add(
+					'foolframe.admin.'.$location, new Route(
+						'/admin/'.$location.'/{_suffix}',
+						[
+							'_suffix' => '',
+							'_controller' => '\Foolz\Foolframe\Controller\Admin\\'.ucfirst($location).'::*',
+						],
+						[
+							'_suffix' => '.*',
+						]
+					)
+				);
+			}
+
+			$this->routeCollection->add(
+				'foolframe.admin', new Route(
+					'/admin/{_suffix}',
+					[
+						'_suffix' => '',
+						'_controller' => '\Foolz\Foolframe\Controller\Admin::*'
+					],
+					[
+						'_suffix' => '.*',
+					]
+				)
+			);
 		}
 	}
 }

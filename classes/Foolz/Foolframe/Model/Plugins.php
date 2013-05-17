@@ -28,7 +28,7 @@ class Plugins
 
 	protected static $_identifiers = [];
 
-	public static function initialize()
+	public static function initialize(Framework $framework)
 	{
 		static::$loader = new Loader();
 
@@ -46,7 +46,14 @@ class Plugins
 		{
 			try
 			{
-				static::$loader->get($enabled['identifier'], $enabled['slug'])->execute();
+				$plugin = static::$loader->get($enabled['identifier'], $enabled['slug']);
+				$plugin->bootstrap();
+				// we could use execute() but we want to inject more in the call
+				\Foolz\Plugin\Hook::forge(get_class().'::execute.'.$plugin->getConfig('name'))
+					->setObject($plugin)
+					->setParam('framework', $framework)
+					->execute();
+
 				static::$loader->get($enabled['identifier'], $enabled['slug'])->enabled = true;
 			}
 			catch (\OutOfBoundsException $e)
@@ -67,7 +74,7 @@ class Plugins
 		return static::$loader->getAll();
 	}
 
-	public static function getEnabled()
+	 public static function getEnabled()
 	{
 		try
 		{
