@@ -79,7 +79,7 @@ class Plugins
 				->select('*')
 				->from(DC::p('plugins'), 'p')
 				->where('enabled = :enabled')
-				->setParameter(':enabled', true)
+				->setParameter(':enabled', 1)
 				->execute()
 				->fetchAll();
 
@@ -127,7 +127,7 @@ class Plugins
 			->set('enabled', ':enabled')
 			->where('identifier = :identifier')
 			->andWhere('slug = :slug')
-			->setParameters(['enabled' => true, ':identifier' => $module, ':slug' => $slug])
+			->setParameters(['enabled' => 1, ':identifier' => $module, ':slug' => $slug])
 			->execute();
 
 		static::clearCache();
@@ -151,7 +151,7 @@ class Plugins
 			->set('enabled', ':enabled')
 			->where('identifier = :identifier')
 			->andWhere('slug = :slug')
-			->setParameters([':enabled' => false, ':identifier' => $module, ':slug' => $slug])
+			->setParameters([':enabled' => 0, ':identifier' => $module, ':slug' => $slug])
 			->execute();
 
 		static::clearCache();
