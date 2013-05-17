@@ -8,6 +8,13 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 	private $logger;
 
 	/**
+	 * Holds parameters taken from the _suffix
+	 *
+	 * @var null|array
+	 */
+	private $parameters = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param LoggerInterface $logger A LoggerInterface instance
@@ -56,6 +63,16 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 
 		list($controller, $method) = $this->createController($controller);
 
+		$this->parameters = array();
+		if ($suffix = $request->attributes->get('_suffix')) {
+			$parameters_temp = explode('/', $suffix);
+			$parameters_temp = array_filter($parameters_temp, function ($el) { return $el !== ''; });
+
+			foreach ($parameters_temp as $p) {
+				$this->parameters[] = $p;
+			}
+		}
+
 		if ($method === '*') {
 			$method = $request->attributes->get('_method');
 		}
@@ -65,7 +82,7 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 		}
 
 		if (method_exists($controller, 'router')) {
-			list($controller, $method) = $controller->router($request, $method);
+			list($controller, $method, $this->parameters) = $controller->router($request, $method, $this->parameters);
 		}
 		else {
 			$method = 'action_'.$method;
@@ -92,6 +109,10 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 	 */
 	public function getArguments(\Symfony\Component\HttpFoundation\Request $request, $controller)
 	{
+		if ($this->parameters !== null) {
+			return $this->parameters;
+		}
+
 		if (is_array($controller)) {
 			$r = new \ReflectionMethod($controller[0], $controller[1]);
 		} elseif (is_object($controller) && !$controller instanceof \Closure) {

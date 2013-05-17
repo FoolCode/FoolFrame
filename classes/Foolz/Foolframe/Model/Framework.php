@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Framework extends HttpKernel
 {
-	public $routes = [];
+	public $routeCollection = [];
 
 	public function __construct(Request $request)
 	{
@@ -19,17 +19,13 @@ class Framework extends HttpKernel
 
 		$this->setupCache();
 		$this->setupClassAliases();
+
+		$this->routeCollection = new RouteCollection();
+
 		$this->loadConfig();
 
-		$routes = new RouteCollection();
-
-		foreach ($this->routes as $key => $item)
-		{
-			$routes->add($key, new Route($key, $item));
-		}
-
 		$context = new \Symfony\Component\Routing\RequestContext();
-		$matcher = new \Symfony\Component\Routing\Matcher\UrlMatcher($routes, $context);
+		$matcher = new \Symfony\Component\Routing\Matcher\UrlMatcher($this->routeCollection, $context);
 		$resolver = new \Foolz\Foolframe\Model\ControllerResolver();
 
 		$dispatcher = new EventDispatcher();
@@ -37,6 +33,11 @@ class Framework extends HttpKernel
 		$dispatcher->addSubscriber(new \Symfony\Component\HttpKernel\EventListener\ResponseListener('UTF-8'));
 
 		parent::__construct($dispatcher, $resolver);
+	}
+
+	public function getRouteCollection()
+	{
+		return $this->routeCollection;
 	}
 
 	protected function setupCache()
@@ -87,7 +88,7 @@ class Framework extends HttpKernel
 
 	protected function loadConfig()
 	{
-		\Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
+		//\Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
 
 		// check if FoolFrame is installed and in case it's not, allow reaching install
 		if ( ! Config::get('foolz/foolframe', 'config', 'install.installed'))
@@ -97,28 +98,20 @@ class Framework extends HttpKernel
 		}
 		else
 		{
-			// load each FoolFrame module, bootstrap and config
-			foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
-			{
-				// foolframe is already loaded
-				if ($module !== 'foolz/foolframe')
-				{
-					\Module::load($module, VENDPATH.$module.'/');
-				}
-
-				// load the module routing
-				foreach(Config::get($module, 'autoroutes') as $key => $item)
-				{
-					$this->routes[$key] = $item;
-				}
-			}
-
-			// run the bootstrap for each module
+			// run the Framework class for each module
 			foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 			{
 				if ($module !== 'foolz/foolframe')
 				{
-					require VENDPATH.$module.'/bootstrap.php';
+					$class_arr = explode('/', $module);
+					$class = '\\';
+					foreach ($class_arr as $str)
+					{
+						$class .= ucfirst($str).'\\';
+					}
+
+					$class .= 'Model\Framework';
+					new $class($this);
 				}
 			}
 
