@@ -9,7 +9,6 @@ class Schema
 	public static function load(SchemaManager $sm)
 	{
 		$charset = 'utf8mb4';
-		$collation = 'utf8mb4_general_ci';
 
 		$schema = $sm->getCodedSchema();
 
@@ -17,7 +16,6 @@ class Schema
 		if (DC::forge()->getDriver()->getName() == 'pdo_mysql')
 		{
 			$sessions->addOption('charset', $charset);
-			$sessions->addOption('collate', $collation);
 		}
 		$sessions->addColumn('session_id', 'string', ['length' => 40]);
 		$sessions->addColumn('previous_id', 'string', ['length' => 40]);
@@ -42,7 +40,6 @@ class Schema
 		if (DC::forge()->getDriver()->getName() == 'pdo_mysql')
 		{
 			$sessions->addOption('charset', $charset);
-			$sessions->addOption('collate', $collation);
 		}
 		$preferences->addColumn('name', 'string', ['length' => 64]);
 		$preferences->addColumn('value', 'text', ['length' => 65532, 'notnull' => false]);
@@ -52,7 +49,6 @@ class Schema
 		if (DC::forge()->getDriver()->getName() == 'pdo_mysql')
 		{
 			$users->addOption('charset', $charset);
-			$users->addOption('collate', $collation);
 		}
 		$users->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
 		$users->addColumn('username', 'string', ['length' => 32]);
