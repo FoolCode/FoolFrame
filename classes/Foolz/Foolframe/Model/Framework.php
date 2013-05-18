@@ -3,6 +3,7 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Config\Config;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Routing\RouteCollection;
@@ -44,6 +45,22 @@ class Framework extends HttpKernel
 		$dispatcher->addSubscriber(new \Symfony\Component\HttpKernel\EventListener\ResponseListener('UTF-8'));
 
 		parent::__construct($dispatcher, $resolver);
+
+		try
+		{
+			$response = $this->handle($request);
+		}
+		catch (NotFoundHttpException $e)
+		{
+			$controller_404 = $this->routeCollection->get('404')->getDefault('_controller');
+
+			$request = new Request();
+			//$request->attributes->add(['_controller' => '\Foolz\Foolfuuka\Controller\Chan::404']);
+			$request->attributes->add(['_controller' => $controller_404]);
+			$response = $this->handle($request);
+		}
+
+		$response->send();
 	}
 
 	/**

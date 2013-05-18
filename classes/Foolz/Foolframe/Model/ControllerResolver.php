@@ -3,6 +3,8 @@
 namespace Foolz\Foolframe\Model;
 
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\ControllerResolver
 {
 	private $logger;
@@ -96,7 +98,8 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 		}
 
 		if (!method_exists($controller, $method)) {
-			throw new \InvalidArgumentException(sprintf('Method "%s::%s" does not exist.', get_class($controller), $method));
+			throw new NotFoundHttpException;
+			//throw new \InvalidArgumentException(sprintf('Method "%s::%s" does not exist.', get_class($controller), $method));
 		}
 
 		return array($controller, $method);
