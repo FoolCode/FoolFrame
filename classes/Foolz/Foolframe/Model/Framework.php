@@ -53,9 +53,7 @@ class Framework extends HttpKernel
 		catch (NotFoundHttpException $e)
 		{
 			$controller_404 = $this->routeCollection->get('404')->getDefault('_controller');
-
 			$request = new Request();
-			//$request->attributes->add(['_controller' => '\Foolz\Foolfuuka\Controller\Chan::404']);
 			$request->attributes->add(['_controller' => $controller_404]);
 			$response = $this->handle($request);
 		}

@@ -6,7 +6,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 use \Foolz\Cache\Cache;
 use \Foolz\Plugin\Loader;
 
-class PluginException extends \FuelException {}
+class PluginException extends \Exception {}
 
 class Plugins
 {
@@ -28,8 +28,6 @@ class Plugins
 
 	protected static $_admin_sidebars = [];
 
-	protected static $_identifiers = [];
-
 	public static function instantiate(Framework $framework)
 	{
 		static::$loader = new Loader();
@@ -38,8 +36,7 @@ class Plugins
 		foreach (\Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 		{
 			$dir = VENDPATH.$module.'/'.\Foolz\Config\Config::get($module, 'package', 'directories.plugins');
-			static::$_identifiers[$module] = $dir;
-			static::$loader->addDir($module, $dir);
+			static::$loader->addDir($dir);
 			static::$loader->setBaseUrl(\Uri::base().'foolfuuka/');
 			static::$loader->setPublicDir(DOCROOT.'foolfuuka/');
 		}
@@ -48,7 +45,7 @@ class Plugins
 		{
 			try
 			{
-				$plugin = static::$loader->get($enabled['identifier'], $enabled['slug']);
+				$plugin = static::$loader->get($enabled['slug']);
 				$plugin->bootstrap();
 				// we could use execute() but we want to inject more in the call
 				\Foolz\Plugin\Hook::forge('Foolz\Plugin\Plugin::execute.'.$plugin->getConfig('name'))
@@ -56,7 +53,7 @@ class Plugins
 					->setParam('framework', $framework)
 					->execute();
 
-				static::$loader->get($enabled['identifier'], $enabled['slug'])->enabled = true;
+				static::$loader->get($enabled['slug'])->enabled = true;
 			}
 			catch (\OutOfBoundsException $e)
 			{
@@ -107,36 +104,34 @@ class Plugins
 			->fetchAll();
 	}
 
-	public static function getPlugin($module, $slug)
+	public static function getPlugin($slug)
 	{
-		return static::$loader->get($module, $slug);
+		return static::$loader->get($slug);
 	}
 
-	public static function enable($module, $slug)
+	public static function enable($slug)
 	{
-		$plugin = static::$loader->get($module, $slug);
+		$plugin = static::$loader->get($slug);
 
 		$count = DC::qb()
 			->select('COUNT(*) as count')
 			->from(DC::p('plugins'), 'p')
-			->where('identifier = :identifier')
 			->andWhere('slug = :slug')
-			->setParameters([':identifier' => $module, ':slug' => $slug])
+			->setParameters([':slug' => $slug])
 			->execute()
 			->fetch()['count'];
 
 		// if the plugin isn't installed yet, we will run install.php and NOT enable.php
 		if ( ! $count)
 		{
-			return static::install($module, $slug);
+			return static::install($slug);
 		}
 
 		DC::qb()
 			->update(DC::p('plugins'))
 			->set('enabled', ':enabled')
-			->where('identifier = :identifier')
-			->andWhere('slug = :slug')
-			->setParameters(['enabled' => 1, ':identifier' => $module, ':slug' => $slug])
+			->where('slug = :slug')
+			->setParameters(['enabled' => 1, ':slug' => $slug])
 			->execute();
 
 		static::clearCache();
@@ -145,9 +140,9 @@ class Plugins
 	/**
 	 * Disables plugin and runs plugin_disable()
 	 */
-	public static function disable($module, $slug)
+	public static function disable($slug)
 	{
-		$plugin = static::$loader->get($module, $slug);
+		$plugin = static::$loader->get($slug);
 		$dir = $plugin->getDir();
 
 		if (file_exists($dir.'disable.php'))
@@ -158,20 +153,19 @@ class Plugins
 		DC::qb()
 			->update(DC::p('plugins'))
 			->set('enabled', ':enabled')
-			->where('identifier = :identifier')
-			->andWhere('slug = :slug')
-			->setParameters([':enabled' => 0, ':identifier' => $module, ':slug' => $slug])
+			->where('slug = :slug')
+			->setParameters([':enabled' => 0, ':slug' => $slug])
 			->execute();
 
 		static::clearCache();
 	}
 
-	public static function install($module, $slug)
+	public static function install($slug)
 	{
-		$plugin = static::$loader->get($module, $slug);
+		$plugin = static::$loader->get($slug);
 		$plugin->install();
 
-		DC::forge()->insert(DC::p('plugins'), ['identifier' => $module, 'slug' => $slug, 'enabled' => true]);
+		DC::forge()->insert(DC::p('plugins'), ['slug' => $slug, 'enabled' => 1]);
 
 		static::clearCache();
 
@@ -182,7 +176,7 @@ class Plugins
 		{
 			try
 			{
-				$plug = static::$loader->get($enabled['identifier'], $enabled['slug']);
+				$plug = static::$loader->get($enabled['slug']);
 
 				if ( ! $plug->isBootstrapped())
 				{
@@ -204,9 +198,9 @@ class Plugins
 		static::clearCache();
 	}
 
-	public static function uninstall($identifier, $slug)
+	public static function uninstall($slug)
 	{
-		$dir = static::getPluginDir($identifier, $slug);
+		$dir = static::getPluginDir($slug);
 
 		if (file_exists($dir.'uninstall.php'))
 		{
@@ -215,9 +209,8 @@ class Plugins
 
 		DC::qb()
 			->delete(DC::p('plugins'))
-			->where('identifier = :identifier')
 			->andWhere('slug = :slug')
-			->setParameters([':identifier' => $identifier, ':slug' => $slug])
+			->setParameters([':slug' => $slug])
 			->execute();
 
 		static::clearCache();

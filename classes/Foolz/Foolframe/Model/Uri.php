@@ -24,7 +24,7 @@ class Uri
 
 	public static function create($uri)
 	{
-		return static::$request->getUriForPath('/'.(is_array($uri) ? implode('/', $uri) : $uri)).'/';
+		return static::$request->getUriForPath('/'.(is_array($uri) ? implode('/', $uri) : trim($uri, '/'))).'/';
 	}
 
 	public static function main()

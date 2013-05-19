@@ -2,6 +2,8 @@
 
 namespace Foolz\Foolframe\Controller;
 
+use Foolz\Foolframe\Model\Plugins;
+use Foolz\Theme\Loader;
 use Symfony\Component\HttpFoundation\Request;
 
 class Admin extends Common
@@ -9,6 +11,21 @@ class Admin extends Common
 	protected $_views = null;
 	private static $sidebar = [];
 	private static $sidebar_dynamic = [];
+
+	/**
+	 * @var \Foolz\Theme\Theme
+	 */
+	protected $theme;
+
+	/**
+	 * @var \Foolz\Theme\ParamManager
+	 */
+	protected $param_manager;
+
+	/**
+	 * @var \Foolz\Theme\Builder
+	 */
+	protected $builder;
 
     public function before(Request $request)
     {
@@ -21,11 +38,22 @@ class Admin extends Common
 			return \Response::redirect('admin/account/login');
 		}
 
+	    $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
+	    $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin');
+	    $theme_instance->setBaseUrl(\Uri::base().'foolframe/');
+	    $theme_instance->setPublicDir(DOCROOT.'foolframe/');
+	    // make it possible to override the theme so other framework components can extend with their own
+	    $this->setupTheme($theme_instance);
+	    $this->builder = $this->theme->createBuilder();
+	    $this->param_manager = $this->builder->getParamManager();
+	    $this->builder->createLayout('base');
+
+
 		// returns the hardcoded sidebar array (can't use functions when declaring a class variable)
 		self::$sidebar = static::get_sidebar_values();
 
 		// get the plugin sidebars
-		self::$sidebar_dynamic = \Foolz\Foolframe\Model\Plugins::getSidebarElements('admin');
+		self::$sidebar_dynamic = Plugins::getSidebarElements('admin');
 
 		// merge if there were sidebar elements added dynamically
 		if ( ! empty(self::$sidebar_dynamic))
@@ -33,8 +61,20 @@ class Admin extends Common
 			self::$sidebar = self::merge_sidebars(self::$sidebar, self::$sidebar_dynamic);
 		}
 
-		$this->_views['navbar'] = \View::forge('foolz/foolframe::admin/navbar');
-		$this->_views['sidebar'] = \View::forge('foolz/foolframe::admin/sidebar', array('sidebar' => self::get_sidebar($request, self::$sidebar)));
+	    $this->builder->createPartial('navbar', 'navbar');
+	    $this->builder->createPartial('sidebar', 'sidebar')
+		    ->getParamManager()
+		    ->setParams(array('sidebar' => self::get_sidebar($request, self::$sidebar)));
+	}
+
+	/**
+	 * Selects the theme. Can be overridden so other controllers can use their own admin components
+	 *
+	 * @param Loader $theme_instance
+	 */
+	public function setupTheme(Loader $theme_instance)
+	{
+		$this->theme = $theme_instance->get('foolframe/admin', 'foolz/foolframe-theme-admin');
 	}
 
     public function action_index()
@@ -148,7 +188,7 @@ class Admin extends Common
 					// extra control: allow him to put the plugin after or before any function
 					if (isset($item['position']) && is_array($item['position']))
 					{
-						$before = $item['position']['beforeafter'] == 'before' ? TRUE : FALSE;
+						$before = $item['position']['beforeafter'] == 'before' ? true : false;
 						$element = $item['position']['element'];
 
 						$array_temp = $array1;
@@ -221,11 +261,11 @@ class Admin extends Common
 				// segment 2 contains what's currently active so we can set it lighted up
 				if (isset($segments[2]) && $segments[2] == $key)
 				{
-					$subresult['active'] = TRUE;
+					$subresult['active'] = true;
 				}
 				else
 				{
-					$subresult['active'] = FALSE;
+					$subresult['active'] = false;
 				}
 
 				// we'll cherry-pick the content next
@@ -269,11 +309,11 @@ class Admin extends Common
 							)
 							))
 						{
-							$subsubresult['active'] = TRUE;
+							$subsubresult['active'] = true;
 						}
 						else
 						{
-							$subsubresult['active'] = FALSE;
+							$subsubresult['active'] = false;
 						}
 
 						// recognize plain URLs

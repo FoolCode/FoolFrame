@@ -29,7 +29,6 @@ class Schema
 
 		$plugins = $schema->createTable(DC::p('plugins'));
 		$plugins->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
-		$plugins->addColumn('identifier', 'string', ['length' => 16]);
 		$plugins->addColumn('slug', 'string', ['length' => 65]);
 		$plugins->addColumn('enabled', 'boolean');
 		$plugins->addColumn('revision', 'integer', ['unsigned' => true, 'notnull' => false, 'default' => null]);

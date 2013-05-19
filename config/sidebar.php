@@ -76,16 +76,6 @@ $sidebar['system'] = [
 			'level' => 'admin',
 			'name' => __('Information'),
 			'icon' => 'icon-info-sign'
-		],
-		'preferences' => [
-			'level' => 'admin',
-			'name' => __('Preferences'),
-			'icon' => 'icon-check'
-		],
-		'upgrade' => [
-			'level' => 'admin',
-			'name' => __('Upgrade'),
-			'icon' => 'icon-refresh'
 		]
 	]
 ];

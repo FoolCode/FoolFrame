@@ -16,9 +16,9 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 			Response::redirect('admin');
 		}
 
-		$this->_views['controller_title'] = __('Users');
-
 		parent::before($request);
+
+		$this->param_manager->setParam('controller_title', __('Users'));
 	}
 
 	public function action_manage($page = 1)
@@ -33,10 +33,11 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		$data['users'] = $users_data['result'];
 		$data['count'] = $users_data['count'];
 
-		$this->_views['method_title'] = __('Manage');
-		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/users/manage', $data);
+		$this->param_manager->setParam('method_title', __('Manage'));
+		$this->builder->createPartial('body', 'users/manage')
+			->getParamManager()->setParams($data);
 
-		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response($this->builder->build());
 	}
 
 	public function action_user($id = null)
@@ -192,8 +193,10 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		}
 
 		// create a form
-		$this->_views["method_title"] = [__('Manage'), __('Edit'), $data['object']->username];
-		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		$this->param_manager->setParam('method_title', [__('Manage'), __('Edit'), $data['object']->username]);
+		$this->builder->createPartial('body', 'form_creator')
+			->getParamManager()->setParams($data);
+
+		return new Response($this->builder->build());
 	}
 }

@@ -11,7 +11,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 	{
 		parent::before($request);
 
-		$this->_views['controller_title'] = __('Account');
+		$this->param_manager->setParam('controller_title', __('Account'));
 	}
 
 	public function action_login()
@@ -55,10 +55,10 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		}
 
 		// generate login form
-		$this->_views['method_title'] = __('Login');
-		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/login');
-
-		return new Response(\View::forge('foolz/foolframe::admin/account', $this->_views));
+		$this->param_manager->setParam('method_title', __('Login'));
+		$this->builder->createLayout('account');
+		$this->builder->createPartial('body', 'account/login');
+		return new Response($this->builder->build());
 	}
 
 	public function action_logout()
@@ -138,19 +138,21 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 					$title = \Preferences::get('foolframe.gen.website_title').' - '.__('Account Activation');
 
-					$content = \View::forge('foolz/foolframe::admin/account/email_activation', array(
+					$this->builder->createLayout('email');
+					$this->builder->getProps()->setTitle($title);
+					$this->builder->createPartial('body', 'account/email/activation', [
 						'title' => $title,
 						'site' => \Preferences::get('foolframe.gen.website_title'),
 						'username' => $input['username'],
 						'link' => \Uri::create('admin/account/activate/'.$id.'/'.$activation_key)
-					));
+					]);
 
 					\Package::load('email');
 					$sendmail = \Email::forge();
 					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
 						->subject($title)
 						->to($input['email'])
-						->html_body(\View::forge('foolz/foolframe::email_default', array('title' => $title, 'content' => $content)));
+						->html_body($this->builder->build());
 
 					try
 					{
@@ -182,10 +184,10 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			}
 		}
 
-		$this->_views['method_title'] = __('Register');
-		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/register');
-
-		return new Response(\View::forge('foolz/foolframe::admin/account', $this->_views));
+		$this->param_manager->setParam('method_title', __('Register'));
+		$this->builder->createLayout('account');
+		$this->builder->createPartial('body', 'account/register');
+		return new Response($this->builder->build());
 	}
 
 	public function action_activate($id, $activation_key)
@@ -233,10 +235,10 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			}
 		}
 
-		$this->_views['method_title'] = __('Forgot Password');
-		$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/forgot_password');
-
-		return new Response(\View::forge('foolz/foolframe::admin/account', $this->_views));
+		$this->param_manager->setParam('method_title', __('Forgot Password'));
+		$this->builder->createLayout('account');
+		$this->builder->createPartial('body', 'account/forgot_password');
+		return new Response($this->builder->build());
 	}
 
 	public function action_change_password($id = null, $password_key = null)
@@ -276,7 +278,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				}
 				else
 				{
-					$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/change_password');
+					$this->builder->createPartial('body', 'account/change_password');
 				}
 			}
 			else
@@ -286,7 +288,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 			$this->_views['method_title'] = __('Forgot Password');
 
-			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response($this->builder->build());
 		}
 		else
 		{
@@ -304,16 +306,15 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				return static::send_change_password_email(\Auth::get_email());
 			}
 
-			$this->_views['method_title'] = __('Change Password');
-			$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/request_change_password');
-
-			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			$this->param_manager->setParam('method_title', __('Change Password'));
+			$this->builder->createPartial('body', 'account/request_change_password');
+			return new Response($this->builder->build());
 		}
 	}
 
 	public function action_change_email($id = null, $email_key = null)
 	{
-		$this->_views['method_title'] = __('Change Email Address');
+		$this->param_manager->setParam('method_title', __('Change Email Address'));
 
 		if ( ! \Auth::has_access('maccess.user'))
 		{
@@ -333,7 +334,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				\Notices::set('warning', __('It appears that you are accessing an invalid link or that your activation key has expired.'));
 			}
 
-			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response($this->builder->build());
 		}
 		else
 		{
@@ -372,19 +373,22 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 					$title = \Preferences::get('foolframe.gen.website_title').' '.__('Change Email Address');
 
-					$content = \View::forge('foolz/foolframe::admin/account/email_email_change', array(
-						'title' => $title,
-						'site' => \Preferences::get('foolframe.gen.website_title'),
-						'username' => $user->username,
-						'link' => \Uri::create('admin/account/change_email/'.$user->id.'/'.$change_email_key)
-					));
+					$this->builder->createLayout('email');
+					$this->builder->getProps()->setTitle($title);
+					$this->builder->createPartial('body', 'account/email/email_change')
+						->getParamManager()->setParams([
+							'title' => $title,
+							'site' => \Preferences::get('foolframe.gen.website_title'),
+							'username' => $user->username,
+							'link' => \Uri::create('admin/account/change_email/'.$user->id.'/'.$change_email_key)
+						]);
 
 					\Package::load('email');
 					$sendmail = \Email::forge();
 					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
 						->subject($title)
 						->to($input['email'])
-						->html_body(\View::forge('foolz/foolframe::email_default', array('title' => $title, 'content' => $content)));
+						->html_body($this->builder->build());
 
 					try
 					{
@@ -408,9 +412,8 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				}
 			}
 
-			$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/request_change_email');
-
-			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			$this->builder->createPartial('body', 'account/request_change_email');
+			return new Response($this->builder->build());
 		}
 
 	}
@@ -419,13 +422,13 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 	{
 		$this->_views['method_title'] = __('Delete');
 
-		if ($id != null && $key != null)
+		if ($id !== null && $key !== null)
 		{
 			if ( ! \Auth::has_access('maccess.user'))
 			{
 				\Notices::set('warning', __('You must log in to delete your account with this verification link.'));
 
-				return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+				return new Response($this->builder->build());
 			}
 
 			try
@@ -438,7 +441,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 				\Notices::set('warning', __('It appears that you are accessing an invalid link or your activation key has expired.'));
 			}
 
-			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			return new Response($this->builder->build());
 		}
 		else
 		{
@@ -476,19 +479,21 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 					$title = \Preferences::get('foolframe.gen.website_title').' '.__('Account Deletion');
 
-					$content = \View::forge('foolz/foolframe::admin/account/email_delete', array(
+					$this->builder->createLayout('email');
+					$this->builder->getProps()->setTitle($title);
+					$this->builder->createPartial('body', 'account/email/delete', [
 						'title' => $title,
 						'site' => \Preferences::get('foolframe.gen.website_title'),
 						'username' => $user->username,
 						'link' => \Uri::create('admin/account/delete/'.$user->id.'/'.$account_deletion_key)
-					));
+					]);
 
 					\Package::load('email');
 					$sendmail = \Email::forge();
 					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
 						->subject($title)
 						->to($user->email)
-						->html_body(\View::forge('foolz/foolframe::email_default', array('title' => $title, 'content' => $content)));
+						->html_body($this->builder->build());
 
 					try
 					{
@@ -511,9 +516,8 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 			}
 
-			$this->_views['main_content_view'] = \View::forge('foolz/foolframe::admin/account/request_delete');
-
-			return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+			$this->builder->createPartial('body', 'account/request_delete');
+			return new Response($this->builder->build());
 		}
 	}
 
@@ -535,19 +539,21 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 		$title = \Preferences::get('foolframe.gen.website_title').' '.__('New Password');
 
-		$content = \View::forge('foolz/foolframe::admin/account/email_password_change', array(
+		$this->builder->createLayout('email');
+		$this->builder->getProps()->setTitle($title);
+		$this->builder->createPartial('body', 'account/email/password_change', [
 			'title' => $title,
 			'site' => \Preferences::get('foolframe.gen.website_title'),
 			'username' => $user->username,
 			'link' => \Uri::create('admin/account/change_password/'.$user->id.'/'.$password_key)
-		));
+		]);
 
 		\Package::load('email');
 		$sendmail = \Email::forge();
 		$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
 			->subject($title)
 			->to($email)
-			->html_body(\View::forge('foolz/foolframe::email_default', array('title' => $title, 'content' => $content)));
+			->html_body($this->builder->build());
 
 		try
 		{
@@ -653,8 +659,8 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$data['object'] = (object) \Auth::get_profile();
 
 		// generate profile form
-		$this->_views["method_title"] = __('Profile');
-		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		$this->param_manager->setParam('method_title', __('Profile'));
+		$this->builder->createPartial('body', 'form_creator')->getParamManager()->setParams($data);
+		return new Response($this->builder->build());
 	}
 }

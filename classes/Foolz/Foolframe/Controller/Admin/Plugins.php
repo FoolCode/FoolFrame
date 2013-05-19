@@ -2,6 +2,8 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use Foolz\Foolframe\Model\PluginException;
+use Foolz\Foolframe\Model\Plugins as PluginsModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,16 +19,17 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 		parent::before($request);
 
 		// set controller title
-		$this->_views['controller_title'] = __("Plugins");
+		$this->param_manager->setParam('controller_title', __('Plugins'));
 	}
 
 	function action_manage()
 	{
 		$data = [];
-		$data['plugins'] = \Plugins::getAll();
-		$this->_views['method_title'] = __('Manage');
-		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/plugins/manage', $data);
-		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		$data['plugins'] = PluginsModel::getAll();
+		$this->param_manager->setParam('method_title', __('Manage'));
+		$this->builder->createPartial('body', 'plugins/manage')
+			->getParamManager()->setParams($data);
+		return new Response($this->builder->build());
 	}
 
 	function action_action()
@@ -54,7 +57,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
 		$action = \Input::post('action');
 
-		$plugin = \Plugins::getPlugin($identifier, $slug);
+		$plugin = PluginsModel::getPlugin($identifier, $slug);
 
 		if ( ! $plugin)
 		{
@@ -66,9 +69,9 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			case 'enable':
 				try
 				{
-					\Plugins::enable($identifier, $slug);
+					PluginsModel::enable($identifier, $slug);
 				}
-				catch (\Plugins\PluginException $e)
+				catch (PluginException $e)
 				{
 					\Notices::setFlash('error', \Str::tr(__('The plugin :slug couldn\'t be enabled.'),
 						array('slug' => $plugin->getJsonConfig('extra.name'))));
@@ -83,9 +86,9 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			case 'disable':
 				try
 				{
-					\Plugins::disable($identifier, $slug);
+					PluginsModel::disable($identifier, $slug);
 				}
-				catch (\Plugins\PluginException $e)
+				catch (PluginException $e)
 				{
 					\Notices::setFlash('error', \Str::tr(__('The :slug plugin couldn\'t be enabled.'),
 						array('slug' => $plugin->getJsonConfig('extra.name'))));
@@ -102,9 +105,9 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			case 'remove':
 				try
 				{
-					\Plugin::remove($identifier, $slug);
+					PluginsModel::remove($identifier, $slug);
 				}
-				catch (\Plugins\PluginException $e)
+				catch (PluginException $e)
 				{
 					\Notices::setFlash('error',
 						\Str::tr(__('The :slug plugin couldn\'t be removed.'),
