@@ -4,7 +4,7 @@ namespace Foolz\Foolframe\Model;
 
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
-class User extends \Model
+class User
 {
 	public $id = null;
 	public $username = null;
