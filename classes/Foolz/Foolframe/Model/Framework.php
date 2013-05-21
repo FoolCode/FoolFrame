@@ -3,12 +3,20 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Config\Config;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+use Symfony\Component\Debug\Debug;
+use Symfony\Component\Debug\ErrorHandler;
+use Symfony\Component\Debug\ExceptionHandler;
+use Symfony\Component\HttpKernel\EventListener\ExceptionListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\EventListener\RouterListener;
+use Symfony\Component\HttpKernel\EventListener\ResponseListener;
 
 class Framework extends HttpKernel
 {
@@ -20,13 +28,28 @@ class Framework extends HttpKernel
 	public $routeCollection;
 
 	/**
+	 * @var \Monolog\Logger
+	 */
+	public $logger;
+
+	/**
 	 * Called directly from index.php
 	 * Starts up the Symfony components and the FoolFrame components
-	 *
-	 * @param Request $request
 	 */
-	public function __construct(Request $request)
+	public function __construct()
 	{
+		Debug::enable();
+		// there's a mistyped docblock on register(), remove the following when it's fixed
+		/** @var  $error_handler \Symfony\Component\Debug\ErrorHandler */
+		$error_handler = ErrorHandler::register();
+		ExceptionHandler::register();
+
+		$request = Request::createFromGlobals();
+
+		$this->logger = new Logger('foolframe');
+		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log'));
+		$error_handler->setLogger($this->logger);
+
 		Uri::setRequest($request);
 
 		$this->setupCache();
@@ -41,8 +64,8 @@ class Framework extends HttpKernel
 		$resolver = new \Foolz\Foolframe\Model\ControllerResolver();
 
 		$dispatcher = new EventDispatcher();
-		$dispatcher->addSubscriber(new \Symfony\Component\HttpKernel\EventListener\RouterListener($matcher));
-		$dispatcher->addSubscriber(new \Symfony\Component\HttpKernel\EventListener\ResponseListener('UTF-8'));
+		$dispatcher->addSubscriber(new RouterListener($matcher, null, $this->logger));
+		$dispatcher->addSubscriber(new ResponseListener('UTF-8'));
 
 		parent::__construct($dispatcher, $resolver);
 
