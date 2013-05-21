@@ -95,7 +95,6 @@ class Framework extends HttpKernel
 			$request->attributes->add(['_controller' => $controller_404]);
 			$response = $this->handle($request);
 		}
-		var_dump(get_included_files());
 
 		$response->send();
 	}
