@@ -156,8 +156,8 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
 	public function action_manage()
 	{
-		$this->_views['controller_title'] = __("Articles");
-		$this->_views['method_title'] = __('Manage');
+		$this->param_manager->setParam('controller_title', __("Articles"));
+		$this->param_manager->setParam('method_title', __('Manage'));
 
 		$articles = A::getAll();
 
@@ -197,8 +197,10 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			</table>
 
 		<?php
-		$this->_views["main_content_view"] = ob_get_clean();
-		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		$this->builder->createPartial('body', 'content')
+			->getParamManager()->setParam('content', ob_get_clean());
+
+		return new Response($this->builder->build());
 	}
 
 	public function action_edit($slug = null)
@@ -250,17 +252,18 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				throw new \HttpNotFoundException;
 			}
 
-			$this->_views["method_title"] = [__('Edit'), $article['slug']];
+			$this->param_manager->setParam('method_title', [__('Edit'), $article['slug']]);
 		}
 		else
 		{
-			$this->_views["method_title"] = __('New') ;
+			$this->param_manager->setParam('method_title', __('New'));
 		}
 
-		$this->_views["controller_title"] = __('Articles');
+		$this->param_manager->setParam('controller_title', __('Articles'));
+		$this->builder->createPartial('body', 'form_creator')
+			->getParamManager()->setParams($data);
 
-		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/form_creator', $data);
-		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		return new Response($this->builder->build());
 	}
 
 	public function action_remove($id)
@@ -282,23 +285,25 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		{
 			try
 			{
-				Articles::remove($id);
+				A::remove($id);
 			}
 			catch (ArticlesArticleNotFoundException $e)
 			{
 				throw new \HttpNotFoundException;
 			}
 
-			\Response::redirect('admin/articles');
+			\Response::redirect('admin/articles/manage');
 		}
 
-		$this->_views["controller_title"] = __('Articles');
-		$this->_views["method_title"] = __('Delete') . ' ' . $article['title'];
+		$this->param_manager->setParam('controller_title', __('Articles'));
+		$this->param_manager->setParam('method_title', __('Delete') . ' ' . $article['title']);
 		$data['alert_level'] = 'warning';
 		$data['message'] = __('Do you really want to remove the article?');
 
-		$this->_views["main_content_view"] = \View::forge('foolz/foolframe::admin/confirm', $data);
-		return new Response(\View::forge('foolz/foolframe::admin/default', $this->_views));
+		$this->builder->createPartial('body', 'confirm')
+			->getParamManager()->setParams($data);
+
+		return new Response($this->builder->build());
 
 	}
 }

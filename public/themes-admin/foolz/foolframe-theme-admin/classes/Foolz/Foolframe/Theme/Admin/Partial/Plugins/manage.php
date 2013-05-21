@@ -11,7 +11,7 @@ class Manage extends \Foolz\Theme\View
 <?php foreach ($this->getParamManager()->getParam('plugins') as $module => $module_plugins) : ?>
 <div class="admin-container">
 	<div class="admin-container-header">
-		<?= \Str::tr(__(':module Plugins'), ['module' => Config::get($module, 'package', 'main.name')]) ?>
+		<?php /*<?= \Str::tr(__(':module Plugins'), ['module' => Config::get($module, 'package', 'main.name')]) ?> */ ?>
 	</div>
 	<table class="table table-hover table-condensed">
 		<thead>

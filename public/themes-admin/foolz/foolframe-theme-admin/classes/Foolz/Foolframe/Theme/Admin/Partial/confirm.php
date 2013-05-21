@@ -8,7 +8,7 @@ class Confirm extends \Foolz\Theme\View
 	{ ?>
 <div class="alert alert-block alert-<?= $this->getParamManager()->getParam('alert_level') ?> fade in">
 	<p><?= $this->getParamManager()->getParam('message') ?></p>
-	<p><?php echo Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);'));
+	<p><?php echo \Form::open(array('onsubmit' => 'fuel_set_csrf_token(this);'));
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit(array(
 			'name' => 'confirm',

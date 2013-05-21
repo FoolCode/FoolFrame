@@ -12,7 +12,7 @@ class Articles
 	public static function remove($id)
 	{
 		// this might throw ArticlesArticleNotFound, catch in controller
-		static::get_by_id($id);
+		static::getById($id);
 
 		DC::qb()
 			->delete(DC::p('plugin_ff_articles'))
@@ -71,7 +71,7 @@ class Articles
 			throw new ArticlesArticleNotFoundException;
 		}
 
-		return $result[0];
+		return $result;
 	}
 
 	public static function getBySlug($slug)

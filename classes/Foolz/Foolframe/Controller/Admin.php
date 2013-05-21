@@ -74,7 +74,7 @@ class Admin extends Common
 	 */
 	public function setupTheme(Loader $theme_instance)
 	{
-		$this->theme = $theme_instance->get('foolframe/admin', 'foolz/foolframe-theme-admin');
+		$this->theme = $theme_instance->get('foolz/foolframe-theme-admin');
 	}
 
     public function action_index()

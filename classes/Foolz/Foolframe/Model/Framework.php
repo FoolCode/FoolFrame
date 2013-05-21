@@ -119,7 +119,7 @@ class Framework extends HttpKernel
 
 	protected function loadConfig()
 	{
-		\Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
+		//\Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
 
 		// check if FoolFrame is installed and in case it's not, allow reaching install
 		if ( ! Config::get('foolz/foolframe', 'config', 'install.installed'))
@@ -128,7 +128,7 @@ class Framework extends HttpKernel
 			require PKGPATH.'foolz/install/bootstrap.php';
 		}
 		else
-		{
+		{/*
 			// load each FoolFrame module, bootstrap and config
 			foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
 			{
@@ -137,7 +137,7 @@ class Framework extends HttpKernel
 				{
 				  \Module::load($module, VENDPATH.$module.'/');
 				}
-			}
+			}*/
 
 			$frameworks = [];
 
