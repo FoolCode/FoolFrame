@@ -33,7 +33,7 @@ class Schema
 		$plugins->addColumn('enabled', 'boolean');
 		$plugins->addColumn('revision', 'integer', ['unsigned' => true, 'notnull' => false, 'default' => null]);
 		$plugins->setPrimaryKey(['id']);
-		$plugins->addUniqueIndex(['identifier', 'slug'], 'identifier_slug_index');
+		$plugins->addUniqueIndex(['slug'], 'slug_index');
 
 		$preferences = $schema->createTable(DC::p('preferences'));
 		if (DC::forge()->getDriver()->getName() == 'pdo_mysql')

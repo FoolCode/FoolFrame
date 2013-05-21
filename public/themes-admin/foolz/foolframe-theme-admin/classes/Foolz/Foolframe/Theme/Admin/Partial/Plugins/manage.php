@@ -8,10 +8,9 @@ class Manage extends \Foolz\Theme\View
 {
 	public function toString()
 	{ ?>
-<?php foreach ($this->getParamManager()->getParam('plugins') as $module => $module_plugins) : ?>
 <div class="admin-container">
 	<div class="admin-container-header">
-		<?php /*<?= \Str::tr(__(':module Plugins'), ['module' => Config::get($module, 'package', 'main.name')]) ?> */ ?>
+		<?= __('All plugins') ?><?php /*<?= \Str::tr(__(':module Plugins'), ['module' => Config::get($module, 'package', 'main.name')]) ?> */ ?>
 	</div>
 	<table class="table table-hover table-condensed">
 		<thead>
@@ -22,7 +21,7 @@ class Manage extends \Foolz\Theme\View
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($module_plugins as $plugin) : ?>
+			<?php foreach ($this->getParamManager()->getParam('plugins') as $plugin) : ?>
 			<tr>
 				<td>
 					<?= $plugin->getJsonConfig('extra.name', $plugin->getJsonConfig('name')) ?>
@@ -36,7 +35,6 @@ class Manage extends \Foolz\Theme\View
 						'admin/plugins/action',
 						[
 							'action' => (isset($plugin->enabled) ? 'disable' : 'enable'),
-							'module' => $module,
 							'name' => $plugin->getJsonConfig('name')
 						]
 					) ?>
@@ -54,7 +52,6 @@ class Manage extends \Foolz\Theme\View
 		</tbody>
 	</table>
 </div>
-<?php endforeach; ?>
 <?php
 	}
 }

@@ -41,11 +41,6 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			\Response::redirect('admin/plugins/manage');
 		}
 
-		if ( ! $identifier = \Input::post('module'))
-		{
-			throw new NotFoundHttpException;
-		}
-
 		if ( ! $slug = \Input::post('name'))
 		{
 			throw new NotFoundHttpException;
@@ -58,7 +53,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
 		$action = \Input::post('action');
 
-		$plugin = PluginsModel::getPlugin($identifier, $slug);
+		$plugin = PluginsModel::getPlugin($slug);
 
 		if ( ! $plugin)
 		{
@@ -70,7 +65,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			case 'enable':
 				try
 				{
-					PluginsModel::enable($identifier, $slug);
+					PluginsModel::enable($slug);
 				}
 				catch (PluginException $e)
 				{
@@ -87,7 +82,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			case 'disable':
 				try
 				{
-					PluginsModel::disable($identifier, $slug);
+					PluginsModel::disable($slug);
 				}
 				catch (PluginException $e)
 				{
@@ -106,7 +101,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 			case 'remove':
 				try
 				{
-					PluginsModel::remove($identifier, $slug);
+					PluginsModel::remove($slug);
 				}
 				catch (PluginException $e)
 				{
