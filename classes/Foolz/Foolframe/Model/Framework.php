@@ -3,15 +3,19 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Config\Config;
+use Monolog\Handler\ChromePHPHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
+use Monolog\Processor\IntrospectionProcessor;
+use Monolog\Processor\WebProcessor;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
-use Symfony\Component\HttpKernel\EventListener\ExceptionListener;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,8 +51,10 @@ class Framework extends HttpKernel
 		$request = Request::createFromGlobals();
 
 		$this->logger = new Logger('foolframe');
-		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log'));
+		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log'), 7);
 		$error_handler->setLogger($this->logger);
+		$this->logger->pushProcessor(new IntrospectionProcessor());
+		$this->logger->pushProcessor(new WebProcessor());
 
 		Uri::setRequest($request);
 
@@ -59,9 +65,9 @@ class Framework extends HttpKernel
 
 		$this->loadConfig();
 
-		$context = new \Symfony\Component\Routing\RequestContext();
-		$matcher = new \Symfony\Component\Routing\Matcher\UrlMatcher($this->routeCollection, $context);
-		$resolver = new \Foolz\Foolframe\Model\ControllerResolver();
+		$context = new RequestContext();
+		$matcher = new UrlMatcher($this->routeCollection, $context);
+		$resolver = new ControllerResolver();
 
 		$dispatcher = new EventDispatcher();
 		$dispatcher->addSubscriber(new RouterListener($matcher, null, $this->logger));
