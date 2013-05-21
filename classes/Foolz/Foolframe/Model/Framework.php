@@ -3,11 +3,13 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Config\Config;
+use Foolz\Plugin\Hook;
 use Monolog\Handler\ChromePHPHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
@@ -46,9 +48,8 @@ class Framework extends HttpKernel
 		// there's a mistyped docblock on register(), remove the following when it's fixed
 		/** @var  $error_handler \Symfony\Component\Debug\ErrorHandler */
 		$error_handler = ErrorHandler::register();
-		ExceptionHandler::register();
-
-		$request = Request::createFromGlobals();
+		// this is enabled by Debug::enable()
+		// ExceptionHandler::register();
 
 		$this->logger = new Logger('foolframe');
 		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log'), 7);
@@ -56,6 +57,7 @@ class Framework extends HttpKernel
 		$this->logger->pushProcessor(new IntrospectionProcessor());
 		$this->logger->pushProcessor(new WebProcessor());
 
+		$request = Request::createFromGlobals();
 		Uri::setRequest($request);
 
 		$this->setupCache();
@@ -75,6 +77,13 @@ class Framework extends HttpKernel
 
 		parent::__construct($dispatcher, $resolver);
 
+		$this->request = $request;
+	}
+
+	public function handleWeb()
+	{
+		$request = $this->request;
+
 		try
 		{
 			$response = $this->handle($request);
@@ -88,6 +97,19 @@ class Framework extends HttpKernel
 		}
 
 		$response->send();
+	}
+
+	public function handleConsole()
+	{
+		$application = new Application();
+
+		Hook::forge('Foolz\Foolframe\Model\Framework::handleConsole.add')
+			->setParam('application', $application)
+			->setObject($this)
+			->execute();
+
+		//$application->add(new \Your\Class\Command\Console()); // that extends Command
+		$application->run();
 	}
 
 	/**
