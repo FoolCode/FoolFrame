@@ -3,6 +3,7 @@
 namespace Foolz\Foolframe\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Common
 {
@@ -10,7 +11,7 @@ class Common
 	{
 		if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'config', 'install.installed'))
 		{
-			throw new HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 	}
 }

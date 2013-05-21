@@ -7,6 +7,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC,
 	\Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Articles extends \Foolz\Foolframe\Controller\Admin
 {
@@ -249,7 +250,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			}
 			catch (ArticlesArticleNotFoundException $e)
 			{
-				throw new \HttpNotFoundException;
+				throw new NotFoundHttpException;
 			}
 
 			$this->param_manager->setParam('method_title', [__('Edit'), $article['slug']]);
@@ -274,7 +275,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 		}
 		catch (ArticlesArticleNotFoundException $e)
 		{
-			throw new \HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 
 		if (\Input::post() && ! \Security::check_token())
@@ -289,7 +290,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			}
 			catch (ArticlesArticleNotFoundException $e)
 			{
-				throw new \HttpNotFoundException;
+				throw new NotFoundHttpException;
 			}
 
 			\Response::redirect('admin/articles/manage');

@@ -4,6 +4,7 @@ namespace Foolz\Foolframe\Controller\Admin;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Account extends \Foolz\Foolframe\Controller\Admin
 {
@@ -95,7 +96,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 		if (\Preferences::get('foolframe.auth.disable_registration'))
 		{
-			throw new HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 
 		if (\Input::post() && ! \Security::check_token())

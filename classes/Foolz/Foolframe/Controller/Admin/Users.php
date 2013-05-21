@@ -5,6 +5,7 @@ namespace Foolz\Foolframe\Controller\Admin;
 use \Foolz\Config\Config;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Users extends \Foolz\Foolframe\Controller\Admin
 {
@@ -44,7 +45,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 	{
 		if (intval($id) < 1)
 		{
-			throw new \HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 
 		try
@@ -54,7 +55,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		}
 		catch (\Foolz\Foolframe\Model\UsersWrongIdException $e)
 		{
-			throw new \HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 
 		$form = [];

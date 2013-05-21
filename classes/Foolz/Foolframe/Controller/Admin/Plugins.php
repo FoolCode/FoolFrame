@@ -6,6 +6,7 @@ use Foolz\Foolframe\Model\PluginException;
 use Foolz\Foolframe\Model\Plugins as PluginsModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Plugins extends \Foolz\Foolframe\Controller\Admin
 {
@@ -42,17 +43,17 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
 		if ( ! $identifier = \Input::post('module'))
 		{
-			throw new \HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 
 		if ( ! $slug = \Input::post('name'))
 		{
-			throw new \HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 
 		if ( ! \Input::post('action') || !in_array(\Input::post('action'), array('enable', 'disable', 'remove')))
 		{
-			throw new \HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 
 		$action = \Input::post('action');
@@ -61,7 +62,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
 		if ( ! $plugin)
 		{
-			throw new \HttpNotFoundException;
+			throw new NotFoundHttpException;
 		}
 
 		switch ($action)
