@@ -52,7 +52,7 @@ class Framework extends HttpKernel
 		// ExceptionHandler::register();
 
 		$this->logger = new Logger('foolframe');
-		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log'), 7);
+		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log'), 7, Logger::ERROR);
 		$error_handler->setLogger($this->logger);
 		$this->logger->pushProcessor(new IntrospectionProcessor());
 		$this->logger->pushProcessor(new WebProcessor());
