@@ -37,9 +37,14 @@ class Plugins
 		{
 			$dir = VENDPATH.$module.'/'.\Foolz\Config\Config::get($module, 'package', 'directories.plugins');
 			static::$loader->addDir($dir);
+			$dir = VAPPPATH.$module.'/plugins';
+			static::$loader->addDir($dir);
 			static::$loader->setBaseUrl(\Uri::base().'foolfuuka/');
 			static::$loader->setPublicDir(DOCROOT.'foolfuuka/');
 		}
+
+		// public dir for plugins
+		static::$loader->addDir(VAPPPATH.'foolz/foolframe/plugins/');
 
 		foreach (static::getEnabled() as $enabled)
 		{

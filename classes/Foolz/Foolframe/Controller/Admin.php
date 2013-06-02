@@ -39,7 +39,8 @@ class Admin extends Common
 		}
 
 	    $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
-	    $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin');
+	    $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin/');
+	    $theme_instance->addDir(VAPPPATH.'foolz/foolframe/themes-admin/');
 	    $theme_instance->setBaseUrl(\Uri::base().'foolframe/');
 	    $theme_instance->setPublicDir(DOCROOT.'foolframe/');
 	    // make it possible to override the theme so other framework components can extend with their own
