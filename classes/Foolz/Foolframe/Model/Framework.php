@@ -10,7 +10,6 @@ use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Debug\Debug;
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -44,18 +43,24 @@ class Framework extends HttpKernel
 	 */
 	public function __construct()
 	{
-		Debug::enable();
-		// there's a mistyped docblock on register(), remove the following when it's fixed
-		/** @var  $error_handler \Symfony\Component\Debug\ErrorHandler */
-		$error_handler = ErrorHandler::register();
-		// this is enabled by Debug::enable()
-		// ExceptionHandler::register();
-
 		$this->logger = new Logger('foolframe');
 		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, Logger::ERROR));
-		$error_handler->setLogger($this->logger);
 		$this->logger->pushProcessor(new IntrospectionProcessor());
 		$this->logger->pushProcessor(new WebProcessor());
+
+		// there's a mistyped docblock on register(), remove the following when it's fixed
+		/** @var  $error_handler \Symfony\Component\Debug\ErrorHandler */
+		if ('cli' !== php_sapi_name())
+		{
+			error_reporting(-1);
+			$error_handler = ErrorHandler::register();
+			$error_handler->setLogger($this->logger);
+			ExceptionHandler::register();
+		}
+		elseif (!ini_get('log_errors') || ini_get('error_log'))
+		{
+			ini_set('display_errors', 1);
+		}
 
 		$request = Request::createFromGlobals();
 		Uri::setRequest($request);
