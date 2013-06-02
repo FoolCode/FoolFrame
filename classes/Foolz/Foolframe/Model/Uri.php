@@ -32,6 +32,11 @@ class Uri
 		return static::$request->getUri();
 	}
 
+	public static function string()
+	{
+		return static::$request->getPathInfo();
+	}
+
 	public static function uri_to_assoc($uri, $index = 0, $allowed = null)
 	{
 		if (is_string($uri))

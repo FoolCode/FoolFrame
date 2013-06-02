@@ -2,8 +2,16 @@
 
 namespace Foolz\Foolframe\Model;
 
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 class Notices
 {
+	/**
+	 * @var Session
+	 */
+	protected static $session;
+
 	/**
 	 * Notices for the next page load
 	 *
@@ -17,6 +25,14 @@ class Notices
 	 * @var  array
 	 */
 	protected static $notices = [];
+
+	/**
+	 * Sets the session
+	 */
+	public static function init(SessionInterface $session)
+	{
+		static::$session = $session;
+	}
 
 	/**
 	 * Returns the notices that have been set during this load
@@ -46,9 +62,7 @@ class Notices
 	 */
 	public static function getFlash()
 	{
-		$array = \Session::get_flash('notices');
-
-		return is_array($array) ? $array : [];
+		return $array = static::$session->getFlashBag()->get('notice', []);
 	}
 
 	/**
@@ -60,6 +74,6 @@ class Notices
 	public static function setFlash($level, $message)
 	{
 		static::$flash_notices[] = ['level' => $level, 'message' => $message];
-		\Session::set_flash('notices', static::$flash_notices);
+		static::$session->getFlashBag()->set('notice', static::$flash_notices);
 	}
 }

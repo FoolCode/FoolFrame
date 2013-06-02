@@ -12,6 +12,7 @@ use Monolog\Processor\WebProcessor;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -36,6 +37,11 @@ class Framework extends HttpKernel
 	 * @var \Monolog\Logger
 	 */
 	public $logger;
+
+	/**
+	 * @var Session
+	 */
+	public $session;
 
 	/**
 	 * Called directly from index.php
@@ -87,6 +93,10 @@ class Framework extends HttpKernel
 
 	public function handleWeb()
 	{
+		// the session isn't actually started until a read/write happens
+		$this->session = new Session();
+		\Notices::init($this->session);
+
 		$request = $this->request;
 
 		try
