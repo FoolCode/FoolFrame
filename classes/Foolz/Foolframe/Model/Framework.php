@@ -52,7 +52,7 @@ class Framework extends HttpKernel
 		// ExceptionHandler::register();
 
 		$this->logger = new Logger('foolframe');
-		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log'), 7, Logger::ERROR);
+		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, Logger::ERROR));
 		$error_handler->setLogger($this->logger);
 		$this->logger->pushProcessor(new IntrospectionProcessor());
 		$this->logger->pushProcessor(new WebProcessor());
@@ -170,8 +170,6 @@ class Framework extends HttpKernel
 
 	protected function loadConfig()
 	{
-		//\Module::load('foolz/foolframe', VENDPATH.'foolz/foolframe/');
-
 		// check if FoolFrame is installed and in case it's not, allow reaching install
 		if ( ! Config::get('foolz/foolframe', 'config', 'install.installed'))
 		{
@@ -179,17 +177,7 @@ class Framework extends HttpKernel
 			require PKGPATH.'foolz/install/bootstrap.php';
 		}
 		else
-		{/*
-			// load each FoolFrame module, bootstrap and config
-			foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module)
-			{
-				// foolframe is already loaded
-				if ($module !== 'foolz/foolframe')
-				{
-				  \Module::load($module, VENDPATH.$module.'/');
-				}
-			}*/
-
+		{
 			$frameworks = [];
 
 			// run the Framework class for each module
