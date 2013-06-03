@@ -57,7 +57,6 @@ class ExceptionHandler extends \Symfony\Component\Debug\ExceptionHandler {
 				if (isset($trace['function'])) $string .= $trace['function'].'('.$this->stringify($trace['args']).')';
 				$string .= "\r\n";
 			}
-			echo $string;
 			$this->logger_trace->error($string);
 		}
 
@@ -96,7 +95,6 @@ class ExceptionHandler extends \Symfony\Component\Debug\ExceptionHandler {
 			$result[] = $a;
 		}
 
-		var_dump($result);
 		return implode(', ', $result);
 	}
 }
