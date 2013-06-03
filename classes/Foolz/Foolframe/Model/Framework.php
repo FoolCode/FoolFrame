@@ -4,6 +4,7 @@ namespace Foolz\Foolframe\Model;
 
 use Foolz\Config\Config;
 use Foolz\Plugin\Hook;
+use Foolz\Foolframe\Model\ExceptionHandler;
 use Monolog\Handler\ChromePHPHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
@@ -11,7 +12,6 @@ use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Debug\ErrorHandler;
-use Symfony\Component\Debug\ExceptionHandler;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
@@ -39,9 +39,24 @@ class Framework extends HttpKernel
 	public $logger;
 
 	/**
+	 * @var \Monolog\Logger
+	 */
+	public $logger_trace;
+
+	/**
 	 * @var Session
 	 */
 	public $session;
+
+	/**
+	 * @var ErrorHandler
+	 */
+	public $error_handler;
+
+	/**
+	 * @var ExceptionHandler
+	 */
+	public $exception_handler;
 
 	/**
 	 * Called directly from index.php
@@ -50,18 +65,26 @@ class Framework extends HttpKernel
 	public function __construct()
 	{
 		$this->logger = new Logger('foolframe');
-		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, Logger::ERROR));
+		$this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, Logger::WARNING));
 		$this->logger->pushProcessor(new IntrospectionProcessor());
 		$this->logger->pushProcessor(new WebProcessor());
+
+		// special logger that saves stack traces from the exception handler
+		$this->logger_trace = new Logger('foolframe_trace');
+		$this->logger_trace->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe_trace.log', 7, Logger::WARNING));
+		$this->logger_trace->pushProcessor(new IntrospectionProcessor());
+		$this->logger_trace->pushProcessor(new WebProcessor());
 
 		// there's a mistyped docblock on register(), remove the following when it's fixed
 		/** @var  $error_handler \Symfony\Component\Debug\ErrorHandler */
 		if ('cli' !== php_sapi_name())
 		{
 			error_reporting(-1);
-			$error_handler = ErrorHandler::register();
-			$error_handler->setLogger($this->logger);
-			ExceptionHandler::register();
+			$this->error_handler = ErrorHandler::register();
+			$this->error_handler->setLogger($this->logger_trace);
+			$this->exception_handler = ExceptionHandler::register(false);
+			$this->exception_handler->setLogger($this->logger);
+			$this->exception_handler->setLoggerTrace($this->logger_trace);
 		}
 		elseif (!ini_get('log_errors') || ini_get('error_log'))
 		{
