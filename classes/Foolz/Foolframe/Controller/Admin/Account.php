@@ -140,7 +140,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					$title = \Preferences::get('foolframe.gen.website_title').' - '.__('Account Activation');
 
 					$this->builder->createLayout('email');
-					$this->builder->getProps()->setTitle($title);
+					$this->builder->getProps()->setTitle([$title]);
 					$this->builder->createPartial('body', 'account/email/activation', [
 						'title' => $title,
 						'site' => \Preferences::get('foolframe.gen.website_title'),
@@ -375,7 +375,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					$title = \Preferences::get('foolframe.gen.website_title').' '.__('Change Email Address');
 
 					$this->builder->createLayout('email');
-					$this->builder->getProps()->setTitle($title);
+					$this->builder->getProps()->setTitle([$title]);
 					$this->builder->createPartial('body', 'account/email/email_change')
 						->getParamManager()->setParams([
 							'title' => $title,
@@ -481,7 +481,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 					$title = \Preferences::get('foolframe.gen.website_title').' '.__('Account Deletion');
 
 					$this->builder->createLayout('email');
-					$this->builder->getProps()->setTitle($title);
+					$this->builder->getProps()->setTitle([$title]);
 					$this->builder->createPartial('body', 'account/email/delete', [
 						'title' => $title,
 						'site' => \Preferences::get('foolframe.gen.website_title'),
@@ -541,7 +541,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 		$title = \Preferences::get('foolframe.gen.website_title').' '.__('New Password');
 
 		$this->builder->createLayout('email');
-		$this->builder->getProps()->setTitle($title);
+		$this->builder->getProps()->setTitle([$title]);
 		$this->builder->createPartial('body', 'account/email/password_change', [
 			'title' => $title,
 			'site' => \Preferences::get('foolframe.gen.website_title'),
