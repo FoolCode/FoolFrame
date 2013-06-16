@@ -542,7 +542,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 		$this->builder->createLayout('email');
 		$this->builder->getProps()->setTitle([$title]);
-		$this->builder->createPartial('body', 'account/email/change_password', [
+		$this->builder->createPartial('body', 'account/email/password_change', [
 			'title' => $title,
 			'site' => \Preferences::get('foolframe.gen.website_title'),
 			'username' => $user->username,

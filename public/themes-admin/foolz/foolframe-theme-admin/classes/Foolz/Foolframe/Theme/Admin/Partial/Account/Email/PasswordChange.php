@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Account\Email;
 
-class EmailChange extends \Foolz\Theme\View
+class PasswordChange extends \Foolz\Theme\View
 {
 	public function toString()
 	{ ?>
