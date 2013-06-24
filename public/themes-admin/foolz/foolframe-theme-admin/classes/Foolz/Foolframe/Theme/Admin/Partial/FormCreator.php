@@ -19,9 +19,9 @@ namespace Foolz\Foolframe\Theme\Admin\Partial;
  * 			)
  * 			'name' => array(
  * 				'type' => 'input',
- * 				'label' => __('Name'),
- * 				'help' => __('Insert the name of your mom.'),
- * 				'placeholder' => __('Required'),
+ * 				'label' => _i('Name'),
+ * 				'help' => _i('Insert the name of your mom.'),
+ * 				'placeholder' => _i('Required'),
  * 				'class' => 'span3',
  * 				'validation' => 'required'
  * 			),
@@ -32,7 +32,7 @@ namespace Foolz\Foolframe\Theme\Admin\Partial;
  * 				'type' => 'checkbox',
  * 				'checked' => TRUE
  * 				'value' => 1 // defaults to 1 if not inserted
- * 				'help' => __('A checkbox example')
+ * 				'help' => _i('A checkbox example')
  * 			),
  * ...
  * 		);

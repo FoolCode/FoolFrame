@@ -161,7 +161,7 @@ class Preferences
 		{
 			if ( ! \Security::check_token())
 			{
-				\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+				\Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
 				return false;
 			}
 
@@ -185,7 +185,7 @@ class Preferences
 					\Notices::set('warning', $result['warning']);
 				}
 
-				\Notices::set('success', __('Preferences updated.'));
+				\Notices::set('success', _i('Preferences updated.'));
 				static::submit($result['success']);
 			}
 		}

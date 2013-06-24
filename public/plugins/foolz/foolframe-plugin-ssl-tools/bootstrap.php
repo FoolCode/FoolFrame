@@ -31,7 +31,7 @@
 			);
 
 			\Plugins::registerSidebarElement('admin', 'plugins', array(
-				'content' => array('ssl_tools/manage' => array('level' => 'admin', 'name' => __('SSL Tools'), 'icon' => 'icon-lock'))
+				'content' => array('ssl_tools/manage' => array('level' => 'admin', 'name' => _i('SSL Tools'), 'icon' => 'icon-lock'))
 			));
 		}
 

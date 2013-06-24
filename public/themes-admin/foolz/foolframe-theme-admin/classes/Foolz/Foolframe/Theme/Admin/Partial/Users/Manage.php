@@ -7,13 +7,13 @@ class Manage extends \Foolz\Theme\View
 	public function toString()
 	{?>
 <div class="admin-container">
-	<div class="admin-container-header"><?= __('Users') ?></div>
+	<div class="admin-container-header"><?= _i('Users') ?></div>
 	<table class="table table-hover table-condensed">
 		<thead>
 			<tr>
-				<th class="span1"><?= __('ID') ?></th>
-				<th class="span5"><?= __('Username') ?></th>
-				<th class="span5"><?= __('Email') ?></th>
+				<th class="span1"><?= _i('ID') ?></th>
+				<th class="span5"><?= _i('Username') ?></th>
+				<th class="span5"><?= _i('Email') ?></th>
 			</tr>
 		</thead>
 		<tbody>

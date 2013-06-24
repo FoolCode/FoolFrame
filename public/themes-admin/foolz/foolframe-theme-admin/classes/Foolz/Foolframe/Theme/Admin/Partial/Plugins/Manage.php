@@ -10,13 +10,13 @@ class Manage extends \Foolz\Theme\View
 	{ ?>
 <div class="admin-container">
 	<div class="admin-container-header">
-		<?= __('All plugins') ?><?php /*<?= \Str::tr(__(':module Plugins'), ['module' => Config::get($module, 'package', 'main.name')]) ?> */ ?>
+		<?= _i('All plugins') ?><?php /*<?= \Str::tr(_i(':module Plugins'), ['module' => Config::get($module, 'package', 'main.name')]) ?> */ ?>
 	</div>
 	<table class="table table-hover table-condensed">
 		<thead>
 			<tr>
-				<th class="span2"><?= __('Plugin Name') ?></th>
-				<th class="span8"><?= __('Description') ?></th>
+				<th class="span2"><?= _i('Plugin Name') ?></th>
+				<th class="span8"><?= _i('Description') ?></th>
 				<th class="span2"></th>
 			</tr>
 		</thead>
@@ -42,7 +42,7 @@ class Manage extends \Foolz\Theme\View
 					<?= \Form::submit([
 						'class' => (isset($plugin->enabled) ? 'btn btn-small btn-warning' : 'btn btn-small btn-success'),
 						'name' => 'submit',
-						'value' => (isset($plugin->enabled) ? __('Disable') : __('Enable'))
+						'value' => (isset($plugin->enabled) ? _i('Disable') : _i('Enable'))
 					]) ?>
 					<?= \Form::close(); ?>
 					</div>

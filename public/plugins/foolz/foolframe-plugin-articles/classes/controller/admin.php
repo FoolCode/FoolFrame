@@ -46,7 +46,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 					{
 						return array(
 							'error_code' => 'ID_NOT_FOUND',
-							'error' => __('Couldn\'t find the article with the submitted ID.'),
+							'error' => _i('Couldn\'t find the article with the submitted ID.'),
 							'critical' => true
 						);
 					}
@@ -58,17 +58,17 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				'type' => 'input',
 				'database' => true,
 				'label' => 'Title',
-				'help' => __('The title of your article'),
+				'help' => _i('The title of your article'),
 				'class' => 'span4',
-				'placeholder' => __('Required'),
+				'placeholder' => _i('Required'),
 				'validation' => 'trim|required'
 			),
 			'slug' => array(
 				'database' => true,
 				'type' => 'input',
-				'label' => __('Slug'),
-				'help' => __('Insert the short name of the article to use in the url. Only alphanumeric and dashes.'),
-				'placeholder' => __('Required'),
+				'label' => _i('Slug'),
+				'help' => _i('Insert the short name of the article to use in the url. Only alphanumeric and dashes.'),
+				'placeholder' => _i('Required'),
 				'class' => 'span4',
 				'validation' => 'required|valid_string[alpha,dashes,numeric]',
 				'validation_func' => function($input, $form_internal)
@@ -106,7 +106,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 					{
 						return array(
 							'error_code' => 'ALREADY_EXISTS',
-							'error' => __('The slug is already being used for another board.')
+							'error' => _i('The slug is already being used for another board.')
 						);
 					}
 				}
@@ -116,15 +116,15 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				'database' => true,
 				'class' => 'span4',
 				'label' => 'URL',
-				'help' => __('If you set this, the article link will be an outlink.'),
+				'help' => _i('If you set this, the article link will be an outlink.'),
 				'validation' => 'trim'
 			),
 			'article' => array(
 				'type' => 'textarea',
 				'database' => true,
 				'style' => 'height:350px; width: 90%',
-				'label' => __('Article'),
-				'help' => __('The content of your article, in MarkDown')
+				'label' => _i('Article'),
+				'help' => _i('The content of your article, in MarkDown')
 			),
 			'separator-1' => array(
 				'type' => 'separator'
@@ -132,14 +132,14 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			'top' => array(
 				'type' => 'checkbox',
 				'database' => true,
-				'label' => __('Display the article link on the top of the page'),
-				'help' => __('Display the article link on the top of the page')
+				'label' => _i('Display the article link on the top of the page'),
+				'help' => _i('Display the article link on the top of the page')
 			),
 			'bottom' => array(
 				'type' => 'checkbox',
 				'database' => true,
-				'label' => __('Display the article link on the bottom of the page'),
-				'help' => __('Display the article link on the bottom of the page')
+				'label' => _i('Display the article link on the bottom of the page'),
+				'help' => _i('Display the article link on the bottom of the page')
 			),
 			'separator-2' => array(
 				'type' => 'separator-short'
@@ -147,7 +147,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			'submit' => array(
 				'type' => 'submit',
 				'class' => 'btn-primary',
-				'value' => __('Submit')
+				'value' => _i('Submit')
 			),
 			'close' => array(
 				'type' => 'close'
@@ -157,15 +157,15 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
 	public function action_manage()
 	{
-		$this->param_manager->setParam('controller_title', __("Articles"));
-		$this->param_manager->setParam('method_title', __('Manage'));
+		$this->param_manager->setParam('controller_title', _i("Articles"));
+		$this->param_manager->setParam('method_title', _i('Manage'));
 
 		$articles = A::getAll();
 
 		ob_start();
 		?>
 
-			<a href="<?php echo \Uri::create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?php echo __('New article') ?></a>
+			<a href="<?php echo \Uri::create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?php echo _i('New article') ?></a>
 
 			<table class="table table-bordered table-striped table-condensed">
 				<thead>
@@ -187,10 +187,10 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 							<a href="<?php echo \Uri::create('_/articles/' . $article['slug']) ?>" target="_blank"><?php echo $article['slug'] ?></a>
 						</td>
 						<td>
-							<a href="<?php echo \Uri::create('admin/articles/edit/'.$article['slug']) ?>" class="btn btn-mini btn-primary"><?php echo __('Edit') ?></a>
+							<a href="<?php echo \Uri::create('admin/articles/edit/'.$article['slug']) ?>" class="btn btn-mini btn-primary"><?php echo _i('Edit') ?></a>
 						</td>
 						<td>
-							<a href="<?php echo \Uri::create('admin/articles/remove/'.$article['id']) ?>" class="btn btn-mini btn-danger"><?php echo __('Remove') ?></a>
+							<a href="<?php echo \Uri::create('admin/articles/remove/'.$article['id']) ?>" class="btn btn-mini btn-danger"><?php echo _i('Remove') ?></a>
 						</td>
 					</tr>
 					<?php endforeach; ?>
@@ -210,7 +210,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
 		if (\Input::post() && ! \Security::check_token())
 		{
-			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+			\Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
 		}
 		elseif (\Input::post())
 		{
@@ -225,18 +225,18 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				A::save($result['success']);
 				if (is_null($slug))
 				{
-					\Notices::setFlash('success', __('New article created!'));
+					\Notices::setFlash('success', _i('New article created!'));
 					\Response::redirect('admin/articles/edit/' . $result['success']['slug']);
 				}
 				elseif ($slug != $result['success']['slug'])
 				{
 					// case in which letter was changed
-					\Notices::setFlash('success', __('Article information updated.'));
+					\Notices::setFlash('success', _i('Article information updated.'));
 					\Response::redirect('admin/articles/edit/' . $result['success']['slug']);
 				}
 				else
 				{
-					\Notices::set('success', __('Article information updated.'));
+					\Notices::set('success', _i('Article information updated.'));
 				}
 			}
 		}
@@ -253,14 +253,14 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 				throw new NotFoundHttpException;
 			}
 
-			$this->param_manager->setParam('method_title', [__('Edit'), $article['slug']]);
+			$this->param_manager->setParam('method_title', [_i('Edit'), $article['slug']]);
 		}
 		else
 		{
-			$this->param_manager->setParam('method_title', __('New'));
+			$this->param_manager->setParam('method_title', _i('New'));
 		}
 
-		$this->param_manager->setParam('controller_title', __('Articles'));
+		$this->param_manager->setParam('controller_title', _i('Articles'));
 		$this->builder->createPartial('body', 'form_creator')
 			->getParamManager()->setParams($data);
 
@@ -280,7 +280,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
 		if (\Input::post() && ! \Security::check_token())
 		{
-			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+			\Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
 		}
 		elseif (\Input::post())
 		{
@@ -296,10 +296,10 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 			\Response::redirect('admin/articles/manage');
 		}
 
-		$this->param_manager->setParam('controller_title', __('Articles'));
-		$this->param_manager->setParam('method_title', __('Delete') . ' ' . $article['title']);
+		$this->param_manager->setParam('controller_title', _i('Articles'));
+		$this->param_manager->setParam('method_title', _i('Delete') . ' ' . $article['title']);
 		$data['alert_level'] = 'warning';
-		$data['message'] = __('Do you really want to remove the article?');
+		$data['message'] = _i('Do you really want to remove the article?');
 
 		$this->builder->createPartial('body', 'confirm')
 			->getParamManager()->setParams($data);

@@ -12,10 +12,10 @@ class Confirm extends \Foolz\Theme\View
 		echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
 		echo \Form::submit(array(
 			'name' => 'confirm',
-			'value' => __('Confirm'),
+			'value' => _i('Confirm'),
 			'class' => 'btn btn-danger',
 			'style' => 'margin-right:6px;'));
-		echo '<input type="button" onClick="history.back()" class="btn" value="'. __('Go back') . '" />';
+		echo '<input type="button" onClick="history.back()" class="btn" value="'. _i('Go back') . '" />';
 		echo \Form::close();
 	?></p>
 </div>
