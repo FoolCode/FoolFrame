@@ -72,15 +72,14 @@ class Preferences extends Admin
 			}
 
 			$theme_loader = new \Foolz\Theme\Loader();
-			$theme_loader->addDir('default', VENDPATH.$module.'/'.Config::get($module, 'package', 'directories.themes'));
+			$theme_loader->addDir(VENDPATH.$module.'/'.Config::get($module, 'package', 'directories.themes'));
 			$themes = $theme_loader->getAll();
 
-			$identifier = Config::get($module, 'package', 'main.identifier');
 			$module_name = Config::get($module, 'package', 'main.name');
 
 			$theme_checkboxes = [];
 
-			foreach($themes['default'] as $name => $theme)
+			foreach($themes as $name => $theme)
 			{
 				$theme_checkboxes[] = array(
 					'type' => 'checkbox_array_value',
@@ -94,15 +93,27 @@ class Preferences extends Admin
 			$form[strtolower($module_name).'.theme.active_themes'] = array(
 				'type' => 'checkbox_array',
 				'label' => __('Active themes'),
-				'help' => \Str::tr(__('Choose the themes to make available to the users for :module. Admins are able to access any of them even if disabled.'), array('module' => '<strong>'.$module_name.'</strong>')),
+				'help' => \Str::tr(__('Choose the themes to make available to the users for :module. Admins are able to access any of them even if disabled.'),
+					array('module' => '<strong>'.$module_name.'</strong>')),
 				'checkboxes' => $theme_checkboxes
 			);
 
 			$themes_default = [];
 
-			foreach($themes['default'] as $name => $theme)
+			foreach($themes as $name => $theme)
 			{
-				$themes_default[$name] = $theme->getConfig('extra.name');
+				if ($theme->getConfig('extra.styles', false))
+				{
+					foreach ($theme->getConfig('extra.styles') as $style => $style_name)
+					{
+						$themes_default[$name.'/'.$style] = $theme->getConfig('extra.name').' - '.$style_name;
+					}
+				}
+				else
+				{
+					$themes_default[$name] = $theme->getConfig('extra.name');
+				}
+
 			}
 
 			$form[strtolower($module_name).'.theme.default'] = array(
