@@ -2,6 +2,9 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use Swift_SendmailTransport;
+use Swift_Mailer;
+use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -141,25 +144,24 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 					$this->builder->createLayout('email');
 					$this->builder->getProps()->setTitle([$title]);
-					$this->builder->createPartial('body', 'account/email/activation', [
-						'title' => $title,
-						'site' => \Preferences::get('foolframe.gen.website_title'),
-						'username' => $input['username'],
-						'link' => \Uri::create('admin/account/activate/'.$id.'/'.$activation_key)
-					]);
+					$this->builder->createPartial('body', 'account/email/activation')
+						->getParamManager()->setParams([
+							'title' => $title,
+							'site' => \Preferences::get('foolframe.gen.website_title'),
+							'username' => $input['username'],
+							'link' => \Uri::create('admin/account/activate/'.$id.'/'.$activation_key)
+						]);
 
-					\Package::load('email');
-					$sendmail = \Email::forge();
-					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
-						->subject($title)
-						->to($input['email'])
-						->html_body($this->builder->build());
+					$message = Swift_Message::newInstance()
+						->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
+						->setTo($input['email'])
+						->setSubject($title)
+						->setBody($this->builder->build());
 
-					try
-					{
-						$sendmail->send();
-					}
-					catch(\EmailSendingFailedException $e)
+					$mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
+					$result = $mailer->send($message);
+
+					if ($result != 1)
 					{
 						// the email driver was unable to send the email. the account will be activated automatically.
 						\Auth::activate_user($id, $activation_key);
@@ -244,7 +246,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 	public function action_change_password($id = null, $password_key = null)
 	{
-		if ($id != null && $password_key != null)
+		if ($id !== null && $password_key !== null)
 		{
 			if (\Auth::check_new_password_key($id, $password_key))
 			{
@@ -384,20 +386,20 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 							'link' => \Uri::create('admin/account/change_email/'.$user->id.'/'.$change_email_key)
 						]);
 
-					\Package::load('email');
-					$sendmail = \Email::forge();
-					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
-						->subject($title)
-						->to($input['email'])
-						->html_body($this->builder->build());
+					$message = Swift_Message::newInstance()
+						->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
+						->setTo($input['email'])
+						->setSubject($title)
+						->setBody($this->builder->build());
 
-					try
+					$mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
+					$result = $mailer->send($message);
+
+					if ($result == 1)
 					{
-						$sendmail->send();
 						\Notices::setFlash('success', __('An email has been sent to verify your new email address. The activation link will only be valid for 24 hours.'));
-
 					}
-					catch(\EmailSendingFailedException $e)
+					else
 					{
 						// the email driver was unable to send the email. the account's email address will not be changed.
 						\Notices::setFlash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));
@@ -489,19 +491,20 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 						'link' => \Uri::create('admin/account/delete/'.$user->id.'/'.$account_deletion_key)
 					]);
 
-					\Package::load('email');
-					$sendmail = \Email::forge();
-					$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
-						->subject($title)
-						->to($user->email)
-						->html_body($this->builder->build());
+					$message = Swift_Message::newInstance()
+						->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
+						->setTo($input['email'])
+						->setSubject($title)
+						->setBody($this->builder->build());
 
-					try
+					$mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
+					$result = $mailer->send($message);
+
+					if ($result == 1)
 					{
-						$sendmail->send();
 						\Notices::setFlash('success', __('An email has been sent to verify the deletion of your account. The verification link will only work for 15 minutes.'));
 					}
-					catch(\EmailSendingFailedException $e)
+					else
 					{
 						// the email driver was unable to send the email. the account will not be deleted.
 						\Notices::setFlash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));
@@ -542,26 +545,28 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
 		$this->builder->createLayout('email');
 		$this->builder->getProps()->setTitle([$title]);
-		$this->builder->createPartial('body', 'account/email/password_change', [
-			'title' => $title,
-			'site' => \Preferences::get('foolframe.gen.website_title'),
-			'username' => $user->username,
-			'link' => \Uri::create('admin/account/change_password/'.$user->id.'/'.$password_key)
-		]);
+		$this->builder->createPartial('body', 'account/email/password_change')
+			->getParamManager()->setParams([
+				'title' => $title,
+				'site' => \Preferences::get('foolframe.gen.website_title'),
+				'username' => $user->username,
+				'link' => \Uri::create('admin/account/change_password/'.$user->id.'/'.$password_key)
+			]);
 
-		\Package::load('email');
-		$sendmail = \Email::forge();
-		$sendmail->from($from, \Preferences::get('foolframe.gen.website_title'))
-			->subject($title)
-			->to($email)
-			->html_body($this->builder->build());
+		$message = Swift_Message::newInstance()
+			->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
+			->setTo($email)
+			->setSubject($title)
+			->setBody($this->builder->build());
 
-		try
+		$mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
+		$result = $mailer->send($message);
+
+		if ($result == 1)
 		{
-			$sendmail->send();
 			\Notices::setFlash('success', __('An email has been sent to verify that you wish to change your password. The verification link included will only work for the next 15 minutes.'));
 		}
-		catch(\EmailSendingFailedException $e)
+		else
 		{
 			// the email driver was unable to send the email. the account's password will not be changed..
 			\Notices::setFlash('error', __('An error was encountered and the system was unable to send the verification email. Please try again later.'));

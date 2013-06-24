@@ -31,7 +31,14 @@ class Admin extends Common
     {
 	    parent::before($request);
 
-		if ( ! \Auth::has_access('maccess.user') && ! in_array($request->getPathInfo(),
+	    $segments = explode('/', $request->getPathInfo());
+	    $path = '';
+	    if (count($segments) > 3)
+	    {
+		    $path = '/'.$segments[1].'/'.$segments[2].'/'.$segments[3].'/';
+	    }
+
+		if ( ! \Auth::has_access('maccess.user') && ! in_array($path,
 			['/admin/account/register/', '/admin/account/activate/', '/admin/account/login/',
 				'/admin/account/change_password/', '/admin/account/forgot_password/']))
 		{

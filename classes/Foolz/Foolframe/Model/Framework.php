@@ -243,24 +243,11 @@ class Framework extends HttpKernel
 				$lang = \Preferences::get('foolframe.lang.default');
 			}
 
-			$locale = $lang . '.utf8';
-			putenv('LANG=' . $locale);
-			putenv('LANGUAGE=' . $locale);
-			if ($locale !== "tr_TR.utf8") // long standing PHP bug
-			{
-				setlocale(LC_ALL, $locale);
-			}
-			else // workaround to make turkish work
-			{
-				setlocale(LC_COLLATE, $locale);
-				setlocale(LC_MONETARY, $locale);
-				setlocale(LC_NUMERIC, $locale);
-				setlocale(LC_TIME, $locale);
-				setlocale(LC_MESSAGES, $locale);
-				setlocale(LC_CTYPE, "sk_SK.utf8");
-			}
-
-			bindtextdomain($lang, DOCROOT . "assets/locale");
+			$locale = $lang.'.utf8';
+			putenv('LANG='.$locale);
+			putenv('LANGUAGE='.$locale);
+			setlocale(LC_ALL, $locale);
+			bindtextdomain($lang, DOCROOT."assets/locale");
 			bind_textdomain_codeset($lang, 'UTF-8');
 			textdomain($lang);
 

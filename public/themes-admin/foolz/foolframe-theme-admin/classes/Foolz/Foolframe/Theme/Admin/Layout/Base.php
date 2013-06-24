@@ -118,7 +118,7 @@ class Base extends \Foolz\Theme\View
 						<?php endforeach; ?>
 					</div>
 
-					<?= $this->getBuilder()->getPartial('body')->build() ?>
+					<?= $this->getBuilder()->isPartial('body') ? $this->getBuilder()->getPartial('body')->build() : '' ?>
 				</div>
 				<div style="clear:both"></div>
 			</div>
