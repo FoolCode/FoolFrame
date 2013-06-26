@@ -38,8 +38,8 @@ class Install
 		$this->param_manager = $this->builder->getParamManager();
 		$this->builder->createLayout('base');
 
-		$this->builder->getProps()->addTitle(__('FoolFrame Installation'));
-		$this->param_manager->setParam('controller_title', __('FoolFrame Installation'));
+		$this->builder->getProps()->addTitle(_i('FoolFrame Installation'));
+		$this->param_manager->setParam('controller_title', _i('FoolFrame Installation'));
 
 		$this->builder->createPartial('navbar', 'install/navbar');
 	}
@@ -47,12 +47,12 @@ class Install
 	public function process($action)
 	{
 		$procedure = [
-			'welcome' => __('Welcome'),
-			'system_check' => __('System Check'),
-			'database_setup' => __('Database Setup'),
-			'create_admin' => __('Admin Account'),
-			'modules' => __('Install Modules'),
-			'complete' => __('Congratulations'),
+			'welcome' => _i('Welcome'),
+			'system_check' => _i('System Check'),
+			'database_setup' => _i('Database Setup'),
+			'create_admin' => _i('Admin Account'),
+			'modules' => _i('Install Modules'),
+			'complete' => _i('Congratulations'),
 		];
 
 		$this->builder->createPartial('sidebar', 'install/sidebar')
@@ -61,14 +61,14 @@ class Install
 
 	public function action_404()
 	{
-		Notices::set('warning', __('Page not found.'));
+		Notices::set('warning', _i('Page not found.'));
 		return new Response($this->builder->build(), 404);
 	}
 
 	public function action_index()
 	{
 		$this->process('welcome');
-		$this->param_manager->setParam('method_title', __('Welcome'));
+		$this->param_manager->setParam('method_title', _i('Welcome'));
 
 		$this->builder->createPartial('body', 'install/welcome');
 		return new Response($this->builder->build());
@@ -80,7 +80,7 @@ class Install
 		$data['system'] = \Foolz\Foolframe\Model\System::environment();
 
 		$this->process('system_check');
-		$this->param_manager->setParam('method_title', __('System Check'));
+		$this->param_manager->setParam('method_title', _i('System Check'));
 
 		$this->builder->createPartial('body', 'install/system_check')
 			->getParamManager()->setParams($data);
@@ -93,10 +93,10 @@ class Install
 		if (\Input::post())
 		{
 			$val = \Validation::forge('database');
-			$val->add_field('hostname', __('Hostname'), 'required|trim');
-			$val->add_field('prefix', __('Prefix'), 'trim');
-			$val->add_field('username', __('Username'), 'required|trim');
-			$val->add_field('database', __('Database name'), 'required|trim');
+			$val->add_field('hostname', _i('Hostname'), 'required|trim');
+			$val->add_field('prefix', _i('Prefix'), 'trim');
+			$val->add_field('username', _i('Username'), 'required|trim');
+			$val->add_field('database', _i('Database Name'), 'required|trim');
 
 			if ($val->run())
 			{
@@ -118,7 +118,7 @@ class Install
 				}
 				else
 				{
-					Notices::set('warning', __('Connection to specified database failed. Please check your connection details again.'));
+					Notices::set('warning', _i('Connection to specified database failed. Please check your connection details again.'));
 				}
 			}
 			else
@@ -128,7 +128,7 @@ class Install
 		}
 
 		$this->process('database_setup');
-		$this->param_manager->setParam('method_title', __('Database Setup'));
+		$this->param_manager->setParam('method_title', _i('Database Setup'));
 
 		$this->builder->createPartial('body', 'install/database_setup');
 		return new Response($this->builder->build());
@@ -148,10 +148,10 @@ class Install
 		if (\Input::post())
 		{
 			$val = \Validation::forge('database');
-			$val->add_field('username', __('Username'), 'required|trim|min_length[4]|max_length[32]');
-			$val->add_field('email', __('Email'), 'required|trim|valid_email');
-			$val->add_field('password', __('Password'), 'required|min_length[4]|max_length[32]');
-			$val->add_field('confirm_password', __('Confirm password'), 'required|match_field[password]');
+			$val->add_field('username', _i('Username'), 'required|trim|min_length[4]|max_length[32]');
+			$val->add_field('email', _i('Email'), 'required|trim|valid_email');
+			$val->add_field('password', _i('Password'), 'required|min_length[4]|max_length[32]');
+			$val->add_field('confirm_password', _i('Confirm Password'), 'required|match_field[password]');
 
 			if ($val->run())
 			{
@@ -172,7 +172,7 @@ class Install
 		}
 
 		$this->process('create_admin');
-		$this->param_manager->setParam('method_title', __('Admin Account'));
+		$this->param_manager->setParam('method_title', _i('Admin Account'));
 
 		$this->builder->createPartial('body', 'install/create_admin');
 		return new Response($this->builder->build());
@@ -222,12 +222,12 @@ class Install
 			}
 			else
 			{
-				Notices::set('warning', __('Please select at least one module.'));
+				Notices::set('warning', _i('Please select at least one module.'));
 			}
 		}
 
 		$this->process('modules');
-		$this->param_manager->setParam('method_title', __('Install Modules'));
+		$this->param_manager->setParam('method_title', _i('Install Modules'));
 
 		$this->builder->createPartial('body', 'install/modules')
 			->getParamManager()->setParams($data);
@@ -242,7 +242,7 @@ class Install
 		Config::save('foolz/foolframe', 'config');
 
 		$this->process('complete');
-		$this->param_manager->setParam('method_title', __('Congratulations'));
+		$this->param_manager->setParam('method_title', _i('Congratulations'));
 
 		$this->builder->createPartial('body', 'install/complete');
 		return new Response($this->builder->build());

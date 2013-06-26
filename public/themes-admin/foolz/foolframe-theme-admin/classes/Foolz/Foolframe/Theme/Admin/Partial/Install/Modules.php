@@ -9,7 +9,7 @@ class Modules extends \Foolz\Theme\View
 		$modules = $this->getParamManager()->getParam('modules');
 		?>
 		<p class="description">
-			<?= __('Congratulations, you have completed the installation and setup of FoolFrame. Please choose the module(s) you wish to install below:') ?>
+			<?= _i('Congratulations, you have completed the installation and setup of FoolFrame. Please choose the module(s) you wish to install below:') ?>
 		</p>
 
 		<?= \Form::open() ?>
@@ -28,7 +28,7 @@ class Modules extends \Foolz\Theme\View
 
 			<hr>
 
-			<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success pull-right')) ?>
+			<?= \Form::submit(array('name' => 'submit', 'value' => _i('Next'), 'class' => 'btn btn-success pull-right')) ?>
 		<?= \Form::close() ?>
 		<?php
 	}
