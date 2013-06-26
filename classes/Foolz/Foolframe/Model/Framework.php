@@ -211,8 +211,18 @@ class Framework extends HttpKernel
 		// check if FoolFrame is installed and in case it's not, allow reaching install
 		if ( ! Config::get('foolz/foolframe', 'config', 'install.installed'))
 		{
-			\Module::load('install', PKGPATH.'foolz/install/');
-			require PKGPATH.'foolz/install/bootstrap.php';
+			$this->routeCollection->add(
+				'foolframe.install', new Route(
+					'/install/{_suffix}',
+					[
+						'_suffix' => '',
+						'_controller' => '\Foolz\Foolframe\Controller\Install::*'
+					],
+					[
+						'_suffix' => '.*',
+					]
+				)
+			);
 		}
 		else
 		{

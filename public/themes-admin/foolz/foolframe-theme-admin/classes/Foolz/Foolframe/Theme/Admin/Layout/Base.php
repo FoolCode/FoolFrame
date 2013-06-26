@@ -13,7 +13,7 @@ class Base extends \Foolz\Theme\View
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title><?= __('Control Panel').' - '.Preferences::get('foolframe.gen.website_title') ?></title>
+		<title><?= $this->getBuilder()->getProps()->getTitle() ?></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<link rel="stylesheet" type="text/css" href="<?= $this->getAssetManager()->getAssetLink('bootstrap2/css/bootstrap.min.css') ?>" />
@@ -60,7 +60,7 @@ class Base extends \Foolz\Theme\View
 	</head>
 
 	<body>
-		<?= $this->getBuilder()->getPartial('navbar')->build() ?>
+		<?= $this->getBuilder()->isPartial('navbar') ? $this->getBuilder()->getPartial('navbar')->build() : '' ?>
 
 		<div class="container-fluid">
 			<div class="row-fluid">

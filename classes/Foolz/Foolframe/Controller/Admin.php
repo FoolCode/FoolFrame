@@ -56,6 +56,8 @@ class Admin extends Common
 	    $this->param_manager = $this->builder->getParamManager();
 	    $this->builder->createLayout('base');
 
+	    $this->builder->getProps()->addTitle(_i('Control Panel').' - '.Preferences::get('foolframe.gen.website_title'));
+
 
 		// returns the hardcoded sidebar array (can't use functions when declaring a class variable)
 		self::$sidebar = static::get_sidebar_values();

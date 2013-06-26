@@ -3,6 +3,7 @@
 namespace Foolz\Foolframe\Model;
 
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\ControllerResolver
@@ -21,7 +22,7 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 	 *
 	 * @param LoggerInterface $logger A LoggerInterface instance
 	 */
-	public function __construct(\Symfony\Component\HttpFoundation\LoggerInterface $logger = null)
+	public function __construct(LoggerInterface $logger = null)
 	{
 		$this->logger = $logger;
 	}
@@ -85,7 +86,6 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
 			}
 
 		}
-
 		if (method_exists($controller, 'before')) {
 			$controller->before($request, $method);
 		}
