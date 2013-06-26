@@ -156,7 +156,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 						->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
 						->setTo($input['email'])
 						->setSubject($title)
-						->setBody($this->builder->build());
+						->setBody($this->builder->build(), 'text/html');
 
 					$mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
 					$result = $mailer->send($message);
@@ -390,7 +390,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 						->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
 						->setTo($input['email'])
 						->setSubject($title)
-						->setBody($this->builder->build());
+						->setBody($this->builder->build(), 'text/html');
 
 					$mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
 					$result = $mailer->send($message);
@@ -495,7 +495,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 						->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
 						->setTo($input['email'])
 						->setSubject($title)
-						->setBody($this->builder->build());
+						->setBody($this->builder->build(), 'text/html');
 
 					$mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
 					$result = $mailer->send($message);
@@ -557,7 +557,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 			->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
 			->setTo($email)
 			->setSubject($title)
-			->setBody($this->builder->build());
+			->setBody($this->builder->build(), 'text/html');
 
 		$mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
 		$result = $mailer->send($message);
