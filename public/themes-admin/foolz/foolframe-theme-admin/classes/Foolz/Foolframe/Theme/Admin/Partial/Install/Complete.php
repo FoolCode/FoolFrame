@@ -11,7 +11,7 @@ class Complete extends \Foolz\Theme\View
 			<?= __('Congratulations! The installation is complete!') ?>
 		</p>
 
-		<hr/>
+		<hr>
 
 		<a href="<?= \Uri::create('admin') ?>" class="btn btn-info pull-right"><?= __('Log In') ?></a>
 		<?php

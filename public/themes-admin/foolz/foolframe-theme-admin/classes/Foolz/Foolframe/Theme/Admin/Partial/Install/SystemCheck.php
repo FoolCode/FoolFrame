@@ -71,7 +71,7 @@ class SystemCheck extends \Foolz\Theme\View
 		<p class="text-success"
 		   style="text-align: center;"><?= e(__('Congratulations! Your server environment meets all of the minimum requirements to run the software properly.')) ?></p>
 
-		<hr/>
+		<hr>
 
 		<a href="<?= \Uri::create('install/database_setup') ?>" class="btn btn-success pull-right"><?= __('Next') ?></a>
 	<?php endif;

@@ -62,7 +62,7 @@ class DatabaseSetup extends \Foolz\Theme\View
 						</div>
 					</div>
 
-					<hr/>
+					<hr>
 
 					<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success pull-right')) ?>
 				</fieldset>

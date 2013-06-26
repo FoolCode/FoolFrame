@@ -26,7 +26,7 @@ class Modules extends \Foolz\Theme\View
 				<p style="font-size: 0.8em; padding-left: 20px"><?= $info['description'] ?></p>
 			<?php endforeach; ?>
 
-			<hr />
+			<hr>
 
 			<?= \Form::submit(array('name' => 'submit', 'value' => __('Next'), 'class' => 'btn btn-success pull-right')) ?>
 		<?= \Form::close() ?>
