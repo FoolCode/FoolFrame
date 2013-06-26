@@ -223,6 +223,16 @@ class Framework extends HttpKernel
 					]
 				)
 			);
+
+			$this->routeCollection->add('foolframe.install.index', new Route(
+				'/',
+				['_controller' => '\Foolz\Foolframe\Controller\Install::index']
+			));
+
+			$this->routeCollection->add('404', new Route(
+				'',
+				['_controller' => '\Foolz\Foolframe\Controller\Install::404']
+			));
 		}
 		else
 		{

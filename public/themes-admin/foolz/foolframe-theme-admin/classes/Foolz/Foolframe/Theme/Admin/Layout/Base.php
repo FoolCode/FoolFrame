@@ -65,7 +65,7 @@ class Base extends \Foolz\Theme\View
 		<div class="container-fluid">
 			<div class="row-fluid">
 				<div class="span3">
-					<?= $this->getBuilder()->getPartial('sidebar')->build() ?>
+					<?= $this->getBuilder()->isPartial('sidebar') ? $this->getBuilder()->getPartial('sidebar')->build() : '' ?>
 				</div>
 
 				<div class="span9">

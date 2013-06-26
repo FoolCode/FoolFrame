@@ -6,6 +6,7 @@ use \Foolz\Config\Config;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 use Foolz\Foolframe\Model\Notices;
 use \Foolz\Foolframe\Model\System as System;
+use Foolz\Foolframe\Model\Uri;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,19 +46,24 @@ class Install
 
 	public function process($action)
 	{
-		$procedure = array(
+		$procedure = [
 			'welcome' => __('Welcome'),
 			'system_check' => __('System Check'),
 			'database_setup' => __('Database Setup'),
 			'create_admin' => __('Admin Account'),
 			'modules' => __('Install Modules'),
 			'complete' => __('Congratulations'),
-		);
+		];
 
 		$this->builder->createPartial('sidebar', 'install/sidebar')
 			->getParamManager()->setParams(['sidebar' => $procedure, 'current' => $action]);
 	}
 
+	public function action_404()
+	{
+		Notices::set('warning', __('Page not found.'));
+		return new Response($this->builder->build(), 404);
+	}
 
 	public function action_index()
 	{
