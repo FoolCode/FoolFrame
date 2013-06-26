@@ -2,6 +2,7 @@
 
 namespace Foolz\Foolframe\Model;
 
+use Foolz\Config\Config;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
 class UsersWrongIdException extends \Exception {}
@@ -21,7 +22,7 @@ class Users
 
 		$result = DC::qb()
 			->select('*')
-			->from(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
 			->where('t.id = :id')
 			->setParameter(':id', $id)
 			->execute()
@@ -45,7 +46,7 @@ class Users
 	{
 		$result = DC::qb()
 			->select('*')
-			->from(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
 			->where($field.' = '.DC::forge()->quote($id))
 			->execute()
 			->fetch();
@@ -69,7 +70,7 @@ class Users
 	{
 		$users = DC::qb()
 			->select('*')
-			->from(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
 			->setMaxResults($limit)
 			->setFirstResult(($page * $limit) - $limit)
 			->execute()
@@ -79,7 +80,7 @@ class Users
 
 		$count = DC::qb()
 			->select('COUNT(*) as count')
-			->from(DC::p(\Foolz\Config\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+			->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
 			->execute()
 			->fetch();
 

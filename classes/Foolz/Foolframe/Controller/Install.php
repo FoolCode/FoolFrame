@@ -61,13 +61,10 @@ class Install
 
 	public function action_index()
 	{
-		$data = [];
-
 		$this->process('welcome');
 		$this->param_manager->setParam('method_title', __('Welcome'));
 
-		$this->builder->createPartial('body', 'install/welcome')
-			->getParamManager()->setParams($data);
+		$this->builder->createPartial('body', 'install/welcome');
 		return new Response($this->builder->build());
 	}
 
@@ -79,7 +76,8 @@ class Install
 		$this->process('system_check');
 		$this->param_manager->setParam('method_title', __('System Check'));
 
-		$this->builder->createPartial('body', 'install/system_check');
+		$this->builder->createPartial('body', 'install/system_check')
+			->getParamManager()->setParams($data);
 		return new Response($this->builder->build());
 	}
 
@@ -134,7 +132,6 @@ class Install
 	public function action_create_admin()
 	{
 		// if an admin account exists, lock down this step and redirect to the next step instead
-		Config::load('foolauth', 'foolauth');
 		$check_users = \Foolz\Foolframe\Model\Users::getAll();
 
 		if ($check_users['count'] > 0)
@@ -171,15 +168,14 @@ class Install
 		$this->process('create_admin');
 		$this->param_manager->setParam('method_title', __('Admin Account'));
 
-		$this->builder->createPartial('body', 'install/database_setup');
+		$this->builder->createPartial('body', 'install/create_admin');
 		return new Response($this->builder->build());
 	}
 
 
 	public function action_modules()
 	{
-		$data = [];
-		$data['modules'] = \Foolz\Foolframe\Model\Install::modules();
+		$data = ['modules' => \Foolz\Foolframe\Model\Install::modules()];
 
 		if (\Input::post())
 		{
@@ -225,10 +221,11 @@ class Install
 		}
 
 		$this->process('modules');
-		$this->_view_data['method_title'] = __('Install Modules');
-		$this->_view_data['main_content_view'] = \View::forge('install::install/modules', $data);
+		$this->param_manager->setParam('method_title', __('Install Modules'));
 
-		return \Response::forge(\View::forge('install::default', $this->_view_data));
+		$this->builder->createPartial('body', 'install/modules')
+			->getParamManager()->setParams($data);
+		return new Response($this->builder->build());
 	}
 
 
@@ -239,10 +236,10 @@ class Install
 		Config::save('foolz/foolframe', 'config');
 
 		$this->process('complete');
-		$this->_view_data['method_title'] = __('Congratulations');
-		$this->_view_data['main_content_view'] = \View::forge('install::install/complete');
+		$this->param_manager->setParam('method_title', __('Congratulations'));
 
-		return \Response::forge(\View::forge('install::default', $this->_view_data));
+		$this->builder->createPartial('body', 'install/complete');
+		return new Response($this->builder->build());
 	}
 
 }

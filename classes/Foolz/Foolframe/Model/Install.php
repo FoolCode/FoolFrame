@@ -79,32 +79,7 @@ class Install
 
 		Config::set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
 		Config::save('foolz/foolframe', 'cache');
-
-		$crypt = [];
-
-		foreach(['crypto_key', 'crypto_iv', 'crypto_hmac'] as $key)
-		{
-			$crypto = '';
-			for ($i = 0; $i < 8; $i++)
-			{
-				$crypto .= static::safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
-			}
-
-			$crypt[$key] = $crypto;
-		}
-
-		\Config::set('crypt', $crypt);
-		\Config::save(\Fuel::$env.DS.'crypt', 'crypt');
 	}
-
-
-	private static function safe_b64encode($value)
-	{
-		$data = base64_encode($value);
-		$data = str_replace(array('+','/','='), array('-','_',''), $data);
-		return $data;
-	}
-
 
 	public static function modules()
 	{

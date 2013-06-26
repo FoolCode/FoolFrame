@@ -86,7 +86,7 @@ return [
 	 */
 	'login_hash_salt' => 'put_some_salt_in_here',
 
-	'salt' => 'vQMRaiF92DqdmSHjbrNkdTCk',
+	'salt' => 'salt_free',
 
 	/**
 	 * $_POST key for login username
