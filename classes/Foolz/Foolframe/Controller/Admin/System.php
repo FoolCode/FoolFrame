@@ -18,14 +18,14 @@ class System extends \Foolz\Foolframe\Controller\Admin
 		}
 
 		// set controller title
-		$this->param_manager->setParam('controller_title', __('System'));
+		$this->param_manager->setParam('controller_title', _i('System'));
 	}
 
 	public function action_information()
 	{
 		$data = ['info' => \System::environment()];
 
-		$this->param_manager->setParam('method_title', __('Information'));
+		$this->param_manager->setParam('method_title', _i('Information'));
 		$this->builder->createPartial('body', 'system/information')
 			->getParamManager()->setParams($data);
 

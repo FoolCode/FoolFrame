@@ -19,12 +19,12 @@ class Preferences extends Admin
 		}
 
 		// set controller title
-		$this->param_manager->setParam('controller_title', __('Preferences'));
+		$this->param_manager->setParam('controller_title', _i('Preferences'));
 	}
 
 	function action_general()
 	{
-		$this->param_manager->setParam('method_title', __('General'));
+		$this->param_manager->setParam('method_title', _i('General'));
 
 		$form = [];
 
@@ -39,7 +39,7 @@ class Preferences extends Admin
 			'class' => 'span3',
 			'preferences' => true,
 			'validate' => 'trim|max_length[32]',
-			'help' => __('Sets the title of your site.')
+			'help' => _i('Sets the title of your site.')
 		);
 
 		// build the array for the form
@@ -49,13 +49,13 @@ class Preferences extends Admin
 			'class' => 'span3',
 			'preferences' => true,
 			'validate' => 'trim|max_length[32]',
-			'help' => __('Sets the title displayed in the index page.')
+			'help' => _i('Sets the title displayed in the index page.')
 		);
 
 		$form['foolframe.lang.default'] = array(
 			'type' => 'select',
-			'label' => __('Default language'),
-			'help' => __('The language the users will see as they reach your site.'),
+			'label' => _i('Default language'),
+			'help' => _i('The language the users will see as they reach your site.'),
 			'options' => Config::get('foolz/foolframe', 'package', 'preferences.lang.available'),
 			'preferences' => true,
 		);
@@ -84,7 +84,7 @@ class Preferences extends Admin
 				$theme_checkboxes[] = array(
 					'type' => 'checkbox_array_value',
 					'label' => $theme->getConfig('name'),
-					'help' => sprintf(__('Enable %s theme'), $theme->getConfig('extra.name')),
+					'help' => sprintf(_i('Enable %s theme'), $theme->getConfig('extra.name')),
 					'array_key' => $theme->getConfig('name'),
 					'preferences' => true
 				);
@@ -92,9 +92,9 @@ class Preferences extends Admin
 
 			$form[strtolower($module_name).'.theme.active_themes'] = array(
 				'type' => 'checkbox_array',
-				'label' => __('Active themes'),
-				'help' => \Str::tr(__('Choose the themes to make available to the users for :module. Admins are able to access any of them even if disabled.'),
-					array('module' => '<strong>'.$module_name.'</strong>')),
+				'label' => _i('Active themes'),
+				'help' => _i('Choose the themes to make available to the users for %s. Admins are able to access any of them even if disabled.',
+					'<strong>'.$module_name.'</strong>'),
 				'checkboxes' => $theme_checkboxes
 			);
 
@@ -118,8 +118,8 @@ class Preferences extends Admin
 
 			$form[strtolower($module_name).'.theme.default'] = array(
 				'type' => 'select',
-				'label' => \Str::tr(__('Default theme for :module'), array('module' => '<strong>'.$module_name.'</strong>')),
-				'help' => \Str::tr(__('The theme the users will see as they reach :module.'), array('module' => '<strong>'.$module_name.'</strong>')),
+				'label' => _i('Default theme for %s', '<strong>'.$module_name.'</strong>'),
+				'help' => _i('The theme the users will see as they reach %s.', '<strong>'.$module_name.'</strong>'),
 				'options' => $themes_default,
 				'preferences' => true,
 			);
@@ -127,10 +127,10 @@ class Preferences extends Admin
 
 		$form['foolframe.theme.google_analytics'] = array(
 			'type' => 'input',
-			'label' => __('Google Analytics code'),
+			'label' => _i('Google Analytics code'),
 			'placeholder' => 'UX-XXXXXXX-X',
 			'preferences' => true,
-			'help' => __("Insert your Google Analytics code."),
+			'help' => _i("Insert your Google Analytics code."),
 			'class' => 'span2'
 		);
 
@@ -140,33 +140,33 @@ class Preferences extends Admin
 
 		$form['foolframe.theme.header_text'] = array(
 			'type' => 'textarea',
-			'label' => __('Header Text ("notices")'),
+			'label' => _i('Header Text ("notices")'),
 			'preferences' => true,
-			'help' => __("Inserts the text above in the header, below the navigation links."),
+			'help' => _i("Inserts the text above in the header, below the navigation links."),
 			'class' => 'span5'
 		);
 
 		$form['foolframe.theme.header_code'] = array(
 			'type' => 'textarea',
-			'label' => __('Header Code'),
+			'label' => _i('Header Code'),
 			'preferences' => true,
-			'help' => __("This will insert the HTML code inside the &lt;HEAD&gt;."),
+			'help' => _i("This will insert the HTML code inside the &lt;HEAD&gt;."),
 			'class' => 'span5'
 		);
 
 		$form['foolframe.theme.footer_text'] = array(
 			'type' => 'textarea',
-			'label' => __('Footer Text'),
+			'label' => _i('Footer Text'),
 			'preferences' => true,
-			'help' => __('The text to put in the footer, such as credits and similar.'),
+			'help' => _i('The text to put in the footer, such as credits and similar.'),
 			'class' => 'span5'
 		);
 
 		$form['foolframe.theme.footer_code'] = array(
 			'type' => 'textarea',
-			'label' => __('Footer Code'),
+			'label' => _i('Footer Code'),
 			'preferences' => true,
-			'help' => __("This will insert the HTML code above after the &lt;BODY&gt;."),
+			'help' => _i("This will insert the HTML code above after the &lt;BODY&gt;."),
 			'class' => 'span5'
 		);
 
@@ -176,7 +176,7 @@ class Preferences extends Admin
 
 		$form['submit'] = array(
 			'type' => 'submit',
-			'value' => __('Submit'),
+			'value' => _i('Submit'),
 			'class' => 'btn btn-primary'
 		);
 
@@ -196,7 +196,7 @@ class Preferences extends Admin
 
 	function action_advertising()
 	{
-		$this->param_manager->setParam('method_title', __('Advertising'));
+		$this->param_manager->setParam('method_title', _i('Advertising'));
 
 		$form = [];
 
@@ -206,8 +206,8 @@ class Preferences extends Admin
 
 		$form['foolframe.ads_top_banner'] = array(
 			'type' => 'textarea',
-			'label' => __('Top banner'),
-			'help' => __('Insert the HTML code provided by your advertiser.'),
+			'label' => _i('Top banner'),
+			'help' => _i('Insert the HTML code provided by your advertiser.'),
 			'preferences' => true,
 			'validation' => 'trim',
 			'class' => 'span5'
@@ -216,13 +216,13 @@ class Preferences extends Admin
 		$form['foolframe.ads_top_banner_active'] = array(
 			'type' => 'checkbox',
 			'preferences' => true,
-			'help' => __('Enable top banner')
+			'help' => _i('Enable top banner')
 		);
 
 		$form['foolframe.ads_bottom_banner'] = array(
 			'type' => 'textarea',
-			'label' => __('Bottom banner'),
-			'help' => __('Insert the HTML code provided by your advertiser.'),
+			'label' => _i('Bottom banner'),
+			'help' => _i('Insert the HTML code provided by your advertiser.'),
 			'preferences' => true,
 			'validation' => 'trim',
 			'class' => 'span5'
@@ -231,7 +231,7 @@ class Preferences extends Admin
 		$form['foolframe.ads_bottom_banner_active'] = array(
 			'type' => 'checkbox',
 			'preferences' => true,
-			'help' => __('Enable bottom banner')
+			'help' => _i('Enable bottom banner')
 		);
 
 		$form['separator'] = array(
@@ -240,7 +240,7 @@ class Preferences extends Admin
 
 		$form['submit'] = array(
 			'type' => 'submit',
-			'value' => __('Submit'),
+			'value' => _i('Submit'),
 			'class' => 'btn btn-primary'
 		);
 
@@ -260,7 +260,7 @@ class Preferences extends Admin
 
 	function action_registration()
 	{
-		$this->param_manager->setParam('method_title', __('Registration'));
+		$this->param_manager->setParam('method_title', _i('Registration'));
 
 		$form = [];
 
@@ -271,12 +271,12 @@ class Preferences extends Admin
 		$form['foolframe.auth.disable_registration'] = array(
 			'type' => 'checkbox',
 			'preferences' => true,
-			'help' => __('Disable New User Registrations')
+			'help' => _i('Disable New User Registrations')
 		);
 		$form['foolframe.auth.disable_registration_email'] = array(
 			'type' => 'checkbox',
 			'preferences' => true,
-			'help' => __('Disable Email Activation')
+			'help' => _i('Disable Email Activation')
 		);
 
 		$form['separator'] = array(
@@ -285,23 +285,23 @@ class Preferences extends Admin
 
 		$form['paragraph'] = array(
 			'type' => 'paragraph',
-			'help' => __('In order to use reCAPTCHA&trade; you need to sign up for the service at <a href="http://www.google.com/recaptcha">reCAPTCHA&trade;</a>, which will provide you with a public and a private key.')
+			'help' => _i('In order to use reCAPTCHA&trade; you need to sign up for the service at <a href="http://www.google.com/recaptcha">reCAPTCHA&trade;</a>, which will provide you with a public and a private key.')
 		);
 
 		$form['foolframe.auth.recaptcha_public'] = array(
 			'type' => 'input',
-			'label' => __('reCaptcha&trade; Public Key'),
+			'label' => _i('reCaptcha&trade; Public Key'),
 			'preferences' => true,
-			'help' => __('Insert the public key provided by reCAPTCHA&trade;.'),
+			'help' => _i('Insert the public key provided by reCAPTCHA&trade;.'),
 			'validation' => 'trim',
 			'class' => 'span4'
 		);
 
 		$form['foolframe.auth.recaptcha_private'] = array(
 			'type' => 'input',
-			'label' => __('reCaptcha&trade; Prvate Key'),
+			'label' => _i('reCaptcha&trade; Prvate Key'),
 			'preferences' => true,
-			'help' => __('Insert the private key provided by reCAPTCHA&trade;.'),
+			'help' => _i('Insert the private key provided by reCAPTCHA&trade;.'),
 			'validation' => 'trim',
 			'class' => 'span4'
 		);
@@ -312,7 +312,7 @@ class Preferences extends Admin
 
 		$form['submit'] = array(
 			'type' => 'submit',
-			'value' => __('Submit'),
+			'value' => _i('Submit'),
 			'class' => 'btn btn-primary'
 		);
 

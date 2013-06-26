@@ -14,7 +14,7 @@ public function toString()
 				<?= \Preferences::get('foolframe.gen.website_title') ?>
 			</a>
 			<ul class="nav pull-right">
-				<li><a href="<?= \Uri::base('@default') ?>"><?= __('Boards') ?></a></li>
+				<li><a href="<?= \Uri::base('@default') ?>"><?= _i('Boards') ?></a></li>
 				<li class="divider-vertical"></li>
 				<?php if (\Auth::has_access('maccess.user')) : ?>
 					<li class="dropdown">
@@ -25,17 +25,17 @@ public function toString()
 						<ul class="dropdown-menu">
 							<li>
 								<a href="<?= \Uri::create('admin/account/change_email') ?>">
-									<?= __('Profile') ?>
+									<?= _i('Profile') ?>
 								</a>
 							</li>
 							<li>
 								<a href="<?= \Uri::create('/admin/account/logout').'?token='.\Security::fetch_token() ?>">
-									<?= __('Logout') ?>
+									<?= _i('Logout') ?>
 								</a>
 							</li>
 							<li>
 								<a href="<?= \Uri::create('/admin/account/logout_all').'?token='.\Security::fetch_token() ?>">
-									<?= __('Logout on All Devices') ?>
+									<?= _i('Logout on All Devices') ?>
 								</a>
 							</li>
 						</ul>
@@ -43,7 +43,7 @@ public function toString()
 				<?php else : ?>
 					<li>
 						<a href="<?= \Uri::create('admin/account/login') ?>">
-							<?= __('Login') ?>
+							<?= _i('Login') ?>
 						</a>
 					</li>
 				<?php endif; ?>

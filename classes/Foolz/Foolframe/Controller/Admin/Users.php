@@ -19,7 +19,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		parent::before($request);
 
-		$this->param_manager->setParam('controller_title', __('Users'));
+		$this->param_manager->setParam('controller_title', _i('Users'));
 	}
 
 	public function action_manage($page = 1)
@@ -34,7 +34,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		$data['users'] = $users_data['result'];
 		$data['count'] = $users_data['count'];
 
-		$this->param_manager->setParam('method_title', __('Manage'));
+		$this->param_manager->setParam('method_title', _i('Manage'));
 		$this->builder->createPartial('body', 'users/manage')
 			->getParamManager()->setParams($data);
 
@@ -66,14 +66,14 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		$form['paragraph'] = array(
 			'type' => 'paragraph',
-			'help' => __('You can customize your account here.')
+			'help' => _i('You can customize your account here.')
 		);
 
 		$form['paragraph-2'] = array(
 			'type' => 'paragraph',
 			'help' => '<img src="'.\Gravatar::get_gravatar($data['object']->email).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
-				\Str::tr(__('The avatar is automatically fetched from :gravatar, based on the user\'s registration email.'),
-				array('gravatar' => '<a href="http://gravatar.com" target="_blank">Gravatar</a>'))
+				_i('The avatar is automatically fetched from %s, based on the user\'s registration email.',
+				'<a href="http://gravatar.com" target="_blank">Gravatar</a>')
 		);
 
 		if (\Auth::has_access('users.change_credentials'))
@@ -81,27 +81,27 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 			$form['username'] = array(
 				'type' => 'input',
 				'database' => true,
-				'label' => __('Username'),
+				'label' => _i('Username'),
 				'class' => 'span3',
-				'help' => __('Change the username'),
+				'help' => _i('Change the username'),
 				'validation' => 'trim|max_length[32]'
 			);
 
 			$form['email'] = array(
 				'type' => 'input',
 				'database' => true,
-				'label' => __('Email'),
+				'label' => _i('Email'),
 				'class' => 'span3',
-				'help' => __('Change the email'),
+				'help' => _i('Change the email'),
 				'validation' => 'trim|max_length[32]'
 			);
 
 			$form['password'] = array(
 				'type' => 'password',
 				'database' => true,
-				'label' => __('Password'),
+				'label' => _i('Password'),
 				'class' => 'span3',
-				'help' => __('Change the password (leave empty to not change it)'),
+				'help' => _i('Change the password (leave empty to not change it)'),
 			);
 		}
 
@@ -111,7 +111,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 			'label' => 'Bio',
 			'style' => 'height:150px;',
 			'class' => 'span5',
-			'help' => __('Some details about you'),
+			'help' => _i('Some details about you'),
 			'validation' => 'trim|max_length[360]'
 		);
 
@@ -120,7 +120,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 			'database' => true,
 			'label' => 'Twitter',
 			'class' => 'span3',
-			'help' => __('Your twitter nickname'),
+			'help' => _i('Your twitter nickname'),
 			'validation' => 'trim|max_length[32]'
 		);
 
@@ -129,7 +129,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 			'database' => true,
 			'label' => 'Display name',
 			'class' => 'span3',
-			'help' => __('Alternative name in place of login username'),
+			'help' => _i('Alternative name in place of login username'),
 			'validation' => 'trim|max_length[32]'
 		);
 
@@ -147,7 +147,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 				'type' => 'radio',
 				'database' => true,
 				'label' => 'Display name',
-				'help' => __('Change the group of the user'),
+				'help' => _i('Change the group of the user'),
 				'radio_values' => $group_ids
 			);
 		}
@@ -155,7 +155,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		$form['submit'] = array(
 			'type' => 'submit',
 			'class' => 'btn btn-primary',
-			'value' => __('Submit')
+			'value' => _i('Submit')
 		);
 
 		$form['close'] = array(
@@ -166,7 +166,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
 		if (\Input::post() && ! \Security::check_token())
 		{
-			\Notices::set('warning', __('The security token wasn\'t found. Try resubmitting.'));
+			\Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
 		}
 		elseif (\Input::post())
 		{
@@ -183,7 +183,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 					\Notices::set('warning', $result['warning']);
 				}
 
-				\Notices::set('success', __('Preferences updated.'));
+				\Notices::set('success', _i('Preferences updated.'));
 
 				$user = \Foolz\Foolframe\Model\Users::getUserBy('id', $id);
 
@@ -194,7 +194,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 		}
 
 		// create a form
-		$this->param_manager->setParam('method_title', [__('Manage'), __('Edit'), $data['object']->username]);
+		$this->param_manager->setParam('method_title', [_i('Manage'), _i('Edit'), $data['object']->username]);
 		$this->builder->createPartial('body', 'form_creator')
 			->getParamManager()->setParams($data);
 

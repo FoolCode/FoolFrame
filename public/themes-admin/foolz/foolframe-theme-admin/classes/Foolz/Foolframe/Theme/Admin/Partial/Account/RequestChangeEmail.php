@@ -7,13 +7,13 @@ class RequestChangeEmail extends \Foolz\Theme\View
 	public function toString()
 	{ ?>
 <div class="admin-container">
-	<div class="admin-container-header"><?= __('Change Email Address') ?></div>
+	<div class="admin-container-header"><?= _i('Change Email Address') ?></div>
 	<p>
 		<?= \Form::open(['onsubmit' => 'fuel_set_csrf_token(this);']) ?>
 		<?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()) ?>
 
 		<div class="control-group">
-			<label class="control-label" for="new-email"><?= __('New Email Address') ?></label>
+			<label class="control-label" for="new-email"><?= _i('New Email Address') ?></label>
 			<div class="controls">
 				<?= \Form::input([
 					'id' => 'new-email',
@@ -27,12 +27,12 @@ class RequestChangeEmail extends \Foolz\Theme\View
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="password"><?= __('Password') ?></label>
+			<label class="control-label" for="password"><?= _i('Password') ?></label>
 			<div class="controls">
 				<?= \Form::password([
 					'id' => 'password',
 					'name' => 'password',
-					'placeholder' => __('Password'),
+					'placeholder' => _i('Password'),
 					'required' => true
 				]) ?>
 			</div>
@@ -40,7 +40,7 @@ class RequestChangeEmail extends \Foolz\Theme\View
 
 		<div class="control-group">
 			<div class="controls">
-				<?= \Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => __('Submit')]) ?>
+				<?= \Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => _i('Submit')]) ?>
 			</div>
 		</div>
 

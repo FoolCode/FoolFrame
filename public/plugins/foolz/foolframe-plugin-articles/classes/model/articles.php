@@ -92,7 +92,7 @@ class Articles
 
 		if ( ! $result)
 		{
-			throw new ArticlesArticleNotFoundException(__('The article you were looking for does not exist.'));
+			throw new ArticlesArticleNotFoundException(_i('The article you were looking for does not exist.'));
 		}
 
 		return $result;
@@ -165,7 +165,7 @@ class Articles
 			return;
 		}
 
-		$nav['articles'] = array('title' => __('Articles'), 'elements' => array());
+		$nav['articles'] = array('title' => _i('Articles'), 'elements' => array());
 
 		foreach($res as $article)
 		{

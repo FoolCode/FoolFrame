@@ -30,7 +30,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 			);
 
 			\Plugins::registerSidebarElement('admin', 'articles', array(
-					'name' => __('Articles'),
+					'name' => _i('Articles'),
 					'default' => 'manage',
 					'position' => array(
 						'beforeafter' => 'before',
@@ -38,7 +38,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 					),
 					'level' => 'admin',
 					'content' => array(
-						'manage' => array('level' => 'admin', 'name' => __('Articles'), 'icon' => 'icon-font'),
+						'manage' => array('level' => 'admin', 'name' => _i('Articles'), 'icon' => 'icon-font'),
 					)
 				)
 			);

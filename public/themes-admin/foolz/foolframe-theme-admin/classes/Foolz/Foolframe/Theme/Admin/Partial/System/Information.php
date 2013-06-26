@@ -13,7 +13,7 @@ class Information extends \Foolz\Theme\View
 		<thead>
 			<tr>
 				<th class="span6"></th>
-				<th class="span6"><?= __('Value') ?></th>
+				<th class="span6"><?= _i('Value') ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -32,7 +32,7 @@ class Information extends \Foolz\Theme\View
 						<?php if (isset($i['alert']) && $i['alert']['condition'] === false) : ?>
 							<i class="icon-ok text-success"></i>
 						<?php elseif (isset($i['alert']) && $i['alert']['condition'] === true) : ?>
-							<a href="#<?= $key ?>" rel="popover" data-placement="right" data-trigger="hover" data-title="<?= htmlspecialchars(__($i['alert']['title'])) ?>" data-content="<?= htmlspecialchars(__($i['alert']['string'])) ?>">
+							<a href="#<?= $key ?>" rel="popover" data-placement="right" data-trigger="hover" data-title="<?= htmlspecialchars(_i($i['alert']['title'])) ?>" data-content="<?= htmlspecialchars(_i($i['alert']['string'])) ?>">
 								<?php if ($i['alert']['type'] == 'info') : ?>
 									<i class="icon-exclamation-sign text-info"></i>
 								<?php elseif ($i['alert']['type'] == 'warning') : ?>
