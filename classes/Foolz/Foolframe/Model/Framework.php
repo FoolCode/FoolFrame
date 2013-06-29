@@ -5,7 +5,9 @@ namespace Foolz\Foolframe\Model;
 use Foolz\Config\Config;
 use Foolz\Plugin\Hook;
 use Foolz\Foolframe\Model\ExceptionHandler;
+use Foolz\Profiler\Profiler;
 use Monolog\Handler\ChromePHPHandler;
+use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
@@ -58,6 +60,11 @@ class Framework extends HttpKernel
 	 */
 	public $exception_handler;
 
+    /**
+     * @var Profiler
+     */
+    public $profiler;
+
 	/**
 	 * Called directly from index.php
 	 * Starts up the Symfony components and the FoolFrame components
@@ -76,9 +83,9 @@ class Framework extends HttpKernel
 		$this->logger_trace->pushProcessor(new WebProcessor());
 
 		// there's a mistyped docblock on register(), remove the following when it's fixed
-		/** @var  $error_handler \Symfony\Component\Debug\ErrorHandler */
 		if ('cli' !== php_sapi_name())
 		{
+            /** @var  $this->error_handler \Symfony\Component\Debug\ErrorHandler */
 			error_reporting(-1);
 			$this->error_handler = ErrorHandler::register();
 			$this->error_handler->setLogger($this->logger_trace);
@@ -93,6 +100,10 @@ class Framework extends HttpKernel
 
 		$request = Request::createFromGlobals();
 		Uri::setRequest($request);
+
+        class_alias('\Foolz\Foolframe\Model\Profiler', 'Profiler');
+        $this->profiler = new Profiler();
+        \Profiler::forge($this->profiler);
 
 		$this->setupCache();
 		$this->setupClassAliases();
@@ -120,7 +131,20 @@ class Framework extends HttpKernel
 		$this->session = new Session();
 		\Notices::init($this->session);
 
-		$request = $this->request;
+        // actually start up the profiler if it's an admin browsing
+        if (!$this->profiler->isEnabled()) {
+            if ($this->session->get('can_see_profiler')) {
+                $this->profiler->pushHandler(new ChromePHPHandler());
+                $this->profiler->pushHandler(new FirePHPHandler());
+                $this->profiler->enable();
+            }
+        }
+
+        if (\Auth::has_access('maccess.admin')) {
+            $this->session->set('can_see_profiler', true);
+        }
+
+        $request = $this->request;
 
 		try
 		{
