@@ -8,12 +8,12 @@ class Complete extends \Foolz\Theme\View
 	{
 		?>
 		<p class="text-success">
-			<?= __('Congratulations! The installation is complete!') ?>
+			<?= _i('Congratulations! The installation is complete!') ?>
 		</p>
 
 		<hr>
 
-		<a href="<?= \Uri::create('admin') ?>" class="btn btn-info pull-right"><?= __('Log In') ?></a>
+		<a href="<?= \Uri::create('admin') ?>" class="btn btn-info pull-right"><?= _i('Log In') ?></a>
 		<?php
 	}
 }

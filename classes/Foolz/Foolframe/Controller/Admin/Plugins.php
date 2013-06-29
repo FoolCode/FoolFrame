@@ -27,9 +27,11 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 	{
 		$data = [];
 		$data['plugins'] = PluginsModel::getAll();
+
 		$this->param_manager->setParam('method_title', _i('Manage'));
 		$this->builder->createPartial('body', 'plugins/manage')
 			->getParamManager()->setParams($data);
+
 		return new Response($this->builder->build());
 	}
 
