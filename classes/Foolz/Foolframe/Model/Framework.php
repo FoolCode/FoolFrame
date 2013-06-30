@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Model;
 
-use Foolz\Config\Config;
+use Foolz\Foolframe\Model\Config;
 use Foolz\Plugin\Hook;
 use Foolz\Foolframe\Model\ExceptionHandler;
 use Foolz\Profiler\Profiler;
@@ -71,6 +71,11 @@ class Framework extends HttpKernel
      */
     public function __construct()
     {
+        class_alias('\Foolz\Foolframe\Model\Profiler', 'Profiler');
+        $this->profiler = new Profiler();
+        $this->profiler->enable();
+        \Profiler::forge($this->profiler);
+
         $this->logger = new Logger('foolframe');
         $this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, Logger::WARNING));
         $this->logger->pushProcessor(new IntrospectionProcessor());
@@ -96,11 +101,11 @@ class Framework extends HttpKernel
         }
 
         $request = Request::createFromGlobals();
-        Uri::setRequest($request);
+        if (!$request->hasPreviousSession()) {
+            $request->setSession(new Session());
+        }
 
-        class_alias('\Foolz\Foolframe\Model\Profiler', 'Profiler');
-        $this->profiler = new Profiler();
-        \Profiler::forge($this->profiler);
+        Uri::setRequest($request);
 
         $this->setupCache();
         $this->setupClassAliases();
@@ -124,32 +129,27 @@ class Framework extends HttpKernel
 
     public function handleWeb()
     {
-        // the session isn't actually started until a read/write happens
-        $this->session = new Session();
-        \Notices::init($this->session);
-
-        // actually start up the profiler if it's an admin browsing
-        if (!$this->profiler->isEnabled()) {
-            if ($this->session->get('can_see_profiler')) {
-                $this->profiler->pushHandler(new ChromePHPHandler());
-                $this->profiler->pushHandler(new FirePHPHandler());
-                $this->profiler->enable();
-            }
-        }
-
-        if (\Auth::has_access('maccess.admin')) {
-            $this->session->set('can_see_profiler', true);
-        }
-
         $request = $this->request;
+        \Notices::init($request->getSession());
 
         try {
+            $this->profiler->log('Request handling start');
             $response = $this->handle($request);
+            $this->profiler->log('Request handling end');
         } catch (NotFoundHttpException $e) {
             $controller_404 = $this->routeCollection->get('404')->getDefault('_controller');
             $request = new Request();
             $request->attributes->add(['_controller' => $controller_404]);
             $response = $this->handle($request);
+        }
+
+        // stick the html of the profiler at the end
+        if (\Auth::has_access('maccess.admin')) {
+            $content = explode('</body>', $response->getContent());
+            if (count($content) == 2) {
+                $this->profiler->log('Execution end');
+                $response->setContent($content[0].$this->profiler->getHtml().$content[1]);
+            }
         }
 
         $response->send();

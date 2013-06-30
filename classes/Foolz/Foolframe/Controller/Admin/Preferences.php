@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
-use \Foolz\Config\Config;
+use \Foolz\Foolframe\Model\Config;
 use Foolz\Foolframe\Controller\Admin;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

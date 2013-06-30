@@ -39,7 +39,7 @@ class DoctrineConnection
 
         $config->setSQLLogger(new DoctrineLogger());
 
-        $db_data = \Foolz\Config\Config::get('foolz/foolframe', 'db', $instance);
+        $db_data = \Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'db', $instance);
 
         if ($db_data === false) {
             throw new \DomainException('The specified database configuration is not available.');

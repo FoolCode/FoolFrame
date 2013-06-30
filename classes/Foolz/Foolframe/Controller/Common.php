@@ -9,7 +9,7 @@ class Common
 {
     public function before(Request $request)
     {
-        if (!\Foolz\Config\Config::get('foolz/foolframe', 'config', 'install.installed')) {
+        if (!\Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'config', 'install.installed')) {
             throw new NotFoundHttpException;
         }
     }

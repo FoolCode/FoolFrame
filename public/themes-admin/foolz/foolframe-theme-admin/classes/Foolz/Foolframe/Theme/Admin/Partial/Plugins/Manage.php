@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Plugins;
 
-use Foolz\Config\Config;
+use Foolz\Foolframe\Model\Config;
 
 class Manage extends \Foolz\Theme\View
 {

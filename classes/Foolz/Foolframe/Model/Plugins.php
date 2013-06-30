@@ -33,8 +33,8 @@ class Plugins
         static::$loader = new Loader();
 
         // store all the relevant data from the modules
-        foreach (\Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            $dir = VENDPATH.$module.'/'.\Foolz\Config\Config::get($module, 'package', 'directories.plugins');
+        foreach (\Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
+            $dir = VENDPATH.$module.'/'.\Foolz\Foolframe\Model\Config::get($module, 'package', 'directories.plugins');
             static::$loader->addDir($dir);
             $dir = VAPPPATH.$module.'/plugins';
             static::$loader->addDir($dir);
