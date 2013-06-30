@@ -8,27 +8,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class System extends \Foolz\Foolframe\Controller\Admin
 {
-	public function before(Request $request)
-	{
-		parent::before($request);
+    public function before(Request $request)
+    {
+        parent::before($request);
 
-		if( ! \Auth::has_access('maccess.admin'))
-		{
-			Response::redirect('admin');
-		}
+        if(!\Auth::has_access('maccess.admin')) {
+            Response::redirect('admin');
+        }
 
-		// set controller title
-		$this->param_manager->setParam('controller_title', _i('System'));
-	}
+        // set controller title
+        $this->param_manager->setParam('controller_title', _i('System'));
+    }
 
-	public function action_information()
-	{
-		$data = ['info' => \System::environment()];
+    public function action_information()
+    {
+        $data = ['info' => \System::environment()];
 
-		$this->param_manager->setParam('method_title', _i('Information'));
-		$this->builder->createPartial('body', 'system/information')
-			->getParamManager()->setParams($data);
+        $this->param_manager->setParam('method_title', _i('Information'));
+        $this->builder->createPartial('body', 'system/information')
+            ->getParamManager()->setParams($data);
 
-		return new Response($this->builder->build());
-	}
+        return new Response($this->builder->build());
+    }
 }

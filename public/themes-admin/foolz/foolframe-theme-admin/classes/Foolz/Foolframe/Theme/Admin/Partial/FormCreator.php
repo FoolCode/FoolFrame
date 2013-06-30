@@ -54,427 +54,363 @@ class FormCreator extends \Foolz\Theme\View
 
 public function toString()
 {
-	extract($this->getParamManager()->getParams());
-	?>
+    extract($this->getParamManager()->getParams());
+    ?>
 
 <div class="admin-container"<?php echo (isset($parent))?' data-form-parent="' . $parent . '"':'';
-	echo ((isset($hide) && $hide === TRUE)?' style="display:none"':'');
+    echo ((isset($hide) && $hide === TRUE)?' style="display:none"':'');
 ?>>
 
-	<?php
-	foreach ($form as $name => $item) :
+    <?php
+    foreach ($form as $name => $item) :
 
-		// separate up the array so we can put the rest in the form function
-		$not_input = array(
-			'help',
-			'label',
-			'validation',
-			'validation_func',
-			'preferences',
-			'array',
-			'sub',
-			'sub_inverse',
-			'checkboxes',
-			'checked',
-			'array_key',
-			'boards_preferences',
-			'default_value'
-		);
-		$helpers = array();
-		foreach ($not_input as $not)
-		{
-			if (isset($item[$not]))
-			{
-				$helpers[$not] = $item[$not];
-				unset($item[$not]);
-			}
-		}
+        // separate up the array so we can put the rest in the form function
+        $not_input = array(
+            'help',
+            'label',
+            'validation',
+            'validation_func',
+            'preferences',
+            'array',
+            'sub',
+            'sub_inverse',
+            'checkboxes',
+            'checked',
+            'array_key',
+            'boards_preferences',
+            'default_value'
+        );
+        $helpers = array();
+        foreach ($not_input as $not) {
+            if (isset($item[$not])) {
+                $helpers[$not] = $item[$not];
+                unset($item[$not]);
+            }
+        }
 
-		// PHP doesn't allow periods in POST array
-		$name = str_replace('.', ',', $name);;
-		if (isset($item['name']))
-		{
-			$item['name'] = str_replace('.', ',', $item['name']);
-		}
+        // PHP doesn't allow periods in POST array
+        $name = str_replace('.', ',', $name);;
+        if (isset($item['name'])) {
+            $item['name'] = str_replace('.', ',', $item['name']);
+        }
 
-		// support for HTML form arrays
-		if(isset($helpers['array']) && $helpers['array'])
-		{
-			$item['name'] = $name . '[]';
+        // support for HTML form arrays
+        if(isset($helpers['array']) && $helpers['array']) {
+            $item['name'] = $name . '[]';
 
-			$item['value_array'] = array();
+            $item['value_array'] = array();
 
-			if (\Input::post($item['name']))
-			{
-				$item['value_array'] = \Input::post($item['name']);
-				$item['value_array'] = array_filter($item['value_array']);
-			}
-			else
-			{
-				if(isset($item['value']))
-					$item['value_array'] = unserialize($item['value_array']);
-			}
+            if (\Input::post($item['name'])) {
+                $item['value_array'] = \Input::post($item['name']);
+                $item['value_array'] = array_filter($item['value_array']);
+            } else {
+                if(isset($item['value']))
+                    $item['value_array'] = unserialize($item['value_array']);
+            }
 
 
 
-			$count = count($item['value_array'])+1;
-		}
-		else
-		{
-			$item['name'] = $name;
+            $count = count($item['value_array'])+1;
+        } else {
+            $item['name'] = $name;
 
-			if (\Input::post($item['name']))
-			{
-				$item['value'] = \Input::post($item['name']);
-			}
+            if (\Input::post($item['name'])) {
+                $item['value'] = \Input::post($item['name']);
+            }
 
-			$count = 1;
-		}
+            $count = 1;
+        }
 
 
-		// loop all the array to generate the html
-		if (isset($item['type'])) :
-			for($i = 0; $i < $count; $i++) :
-				if(isset($item['value_array']))
-				{
-					//$item['value'] = $item['value_array'][$i];
-				}
+        // loop all the array to generate the html
+        if (isset($item['type'])) :
+            for($i = 0; $i < $count; $i++) :
+                if(isset($item['value_array'])) {
+                    //$item['value'] = $item['value_array'][$i];
+                }
 
-				switch ($item['type']):
+                switch ($item['type']):
 
-					// internal variable that goes into database but is not public in any way
-					case 'internal':
-						break;
+                    // internal variable that goes into database but is not public in any way
+                    case 'internal':
+                        break;
 
-					case 'separator':
-						?>
-						<br/><br/>
-						<?php
-						break;
+                    case 'separator':
+                        ?>
+                        <br/><br/>
+                        <?php
+                        break;
 
-					case 'separator-short':
-						?>
-						<br/>
-						<?php
-						break;
-
-
-					case 'paragraph':
-						?>
-						<p><?php echo $helpers['help'] ?></p>
-						<?php
-						break;
+                    case 'separator-short':
+                        ?>
+                        <br/>
+                        <?php
+                        break;
 
 
-					case 'open':
-						$open_default_attr = array('onsubmit' => 'fuel_set_csrf_token(this);');
-						echo \Form::open(
-							isset($item['attributes']) ? merge($item['attributes'], $open_default_attr) : $open_default_attr,
-							isset($item['hidden']) ? $item['hidden'] : array()
-						);
-
-						echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
-						break;
+                    case 'paragraph':
+                        ?>
+                        <p><?php echo $helpers['help'] ?></p>
+                        <?php
+                        break;
 
 
-					case 'close':
-						echo \Form::close(); // I know there's a variable there but it's useless
-						break;
+                    case 'open':
+                        $open_default_attr = array('onsubmit' => 'fuel_set_csrf_token(this);');
+                        echo \Form::open(
+                            isset($item['attributes']) ? merge($item['attributes'], $open_default_attr) : $open_default_attr,
+                            isset($item['hidden']) ? $item['hidden'] : array()
+                        );
+
+                        echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
+                        break;
 
 
-					case 'hidden':
-						// to keep maximum functionality we want one value per hidden
-						if (isset($item['value']) && is_array($item['value']))
-						{
-							// better not supporting it, things might get messy
-							throw new \BadFunctionCallException('Not implemented.');
-						}
+                    case 'close':
+                        echo \Form::close(); // I know there's a variable there but it's useless
+                        break;
 
 
-						// this is outputted only if we actually have a value
-						// it will never be inserted by the user so don't take care of repopulation
-						if (isset($object->$name))
-						{
-							$item['value'] = $object->$name;
-						}
-
-						if (isset($item['value']))
-						{
-							echo \Form::hidden($name, $item['value']);
-						}
-						break;
+                    case 'hidden':
+                        // to keep maximum functionality we want one value per hidden
+                        if (isset($item['value']) && is_array($item['value'])) {
+                            // better not supporting it, things might get messy
+                            throw new \BadFunctionCallException('Not implemented.');
+                        }
 
 
-					case 'submit':
-					case 'reset':
-						echo call_user_func('Form::' . $item['type'], $item);
-						break;
+                        // this is outputted only if we actually have a value
+                        // it will never be inserted by the user so don't take care of repopulation
+                        if (isset($object->$name)) {
+                            $item['value'] = $object->$name;
+                        }
 
+                        if (isset($item['value'])) {
+                            echo \Form::hidden($name, $item['value']);
+                        }
+                        break;
 
-					case 'radio':
-						?>
-						<div style="margin: 0px 0px 15px;">
-							<?php
-							echo '<label>'.$helpers['help'].'</label>';
-							foreach ($item['radio_values'] as $radio_key => $radio_value)
-							{
-								if (isset($object->$name) && $object->$name == $radio_key)
-								{
-									$checked = TRUE;
-								}
-								else
-								{
-									$checked = FALSE;
-								}
+                    case 'submit':
+                    case 'reset':
+                        echo call_user_func('Form::' . $item['type'], $item);
+                        break;
 
-								?>
-								<label class="radio">
-									<?php
-									echo \Form::radio($name, $radio_key, $checked)
-									?>
-									<?php echo $radio_value ?>
-								</label>
-								<?php
-							}
-							?>
-						</div>
-						<?php
-						break;
+                    case 'radio':
+                        ?>
+                        <div style="margin: 0px 0px 15px;">
+                            <?php
+                            echo '<label>'.$helpers['help'].'</label>';
+                            foreach ($item['radio_values'] as $radio_key => $radio_value) {
+                                if (isset($object->$name) && $object->$name == $radio_key) {
+                                    $checked = TRUE;
+                                } else {
+                                    $checked = FALSE;
+                                }
 
+                                ?>
+                                <label class="radio">
+                                    <?php
+                                    echo \Form::radio($name, $radio_key, $checked)
+                                    ?>
+                                    <?php echo $radio_value ?>
+                                </label>
+                                <?php
+                            }
+                            ?>
+                        </div>
+                        <?php
+                        break;
 
-					case 'checkbox':
-						if (!isset($item['value']))
-						{
-							$item['value'] = 1;
-						}
+                    case 'checkbox':
+                        if (!isset($item['value'])) {
+                            $item['value'] = 1;
+                        }
 
-						if (isset($helpers['preferences']) && $helpers['preferences'])
-						{
-							$checked = \Preferences::get(str_replace(',', '.', $name));
+                        if (isset($helpers['preferences']) && $helpers['preferences']) {
+                            $checked = \Preferences::get(str_replace(',', '.', $name));
 
-							if(isset($helpers['array_key']))
-							{
-								$checked = @unserialize($checked);
+                            if(isset($helpers['array_key'])) {
+                                $checked = @unserialize($checked);
 
-								if(isset($checked[$helpers['array_key']]))
-								{
-									$checked = $checked[$helpers['array_key']];
-								}
-								else
-								{
-									// do we have a fallback in the array?
-									if(isset($helpers['checked']) && $helpers['checked'])
-									{
-										$checked = true;
-									}
-									else
-									{
-										$checked = false;
-									}
-								}
-							}
-						}
-						else
-						{
-							$checked = isset($object->$name) ? $object->$name : false;
-						}
+                                if(isset($checked[$helpers['array_key']])) {
+                                    $checked = $checked[$helpers['array_key']];
+                                } else {
+                                    // do we have a fallback in the array?
+                                    if(isset($helpers['checked']) && $helpers['checked']) {
+                                        $checked = true;
+                                    } else {
+                                        $checked = false;
+                                    }
+                                }
+                            }
+                        } else {
+                            $checked = isset($object->$name) ? $object->$name : false;
+                        }
 
-						$extra = array();
-						if(isset($helpers['sub']))
-						{
-							$extra['data-function'] = 'hasSubForm';
-						}
+                        $extra = array();
+                        if(isset($helpers['sub'])) {
+                            $extra['data-function'] = 'hasSubForm';
+                        }
 
-						if(isset($item['disabled']))
-						{
-							$extra['disabled'] = 'disabled';
-						}
-						?>
-						<label class="checkbox">
-							<?php
-							echo \Form::checkbox($name, $item['value'], $checked, $extra)
-							?>
-							<?php echo $helpers['help'] ?>
-						</label>
-						<?php
+                        if(isset($item['disabled'])) {
+                            $extra['disabled'] = 'disabled';
+                        }
+                        ?>
+                        <label class="checkbox">
+                            <?php
+                            echo \Form::checkbox($name, $item['value'], $checked, $extra)
+                            ?>
+                            <?php echo $helpers['help'] ?>
+                        </label>
+                        <?php
 
-						// sub and sub_inverse, respectively popup and appear by default
-						if(isset($helpers['sub']))
-						{
-							$data = array('form' => $helpers['sub']);
-							if(!$checked)
-								$data['hide'] = TRUE;
-							else
-								$data['hide'] = FALSE;
-							if (isset($object)) $data['object'] = $object;
-							$data['parent'] = $name;
-							$partial = $this->getBuilder()->createPartial('form_creator_inner', 'form_creator');
-							$partial->getParamManager()->setParams($data);
-							echo $partial->build();
-						}
+                        // sub and sub_inverse, respectively popup and appear by default
+                        if(isset($helpers['sub'])) {
+                            $data = array('form' => $helpers['sub']);
+                            if(!$checked)
+                                $data['hide'] = TRUE;
+                            else
+                                $data['hide'] = FALSE;
+                            if (isset($object)) $data['object'] = $object;
+                            $data['parent'] = $name;
+                            $partial = $this->getBuilder()->createPartial('form_creator_inner', 'form_creator');
+                            $partial->getParamManager()->setParams($data);
+                            echo $partial->build();
+                        }
 
-						if(isset($helpers['sub_inverse']))
-						{
-							$data = array('form' => $helpers['sub_inverse']);
-							if($checked)
-								$data['hide'] = TRUE;
-							else
-								$data['hide'] = FALSE;
-							if (isset($object)) $data['object'] = $object;
-							$data['parent'] = $name . '_inverse';
-							$partial = $this->getBuilder()->createPartial('form_creator_inner', 'form_creator');
-							$partial->getParamManager()->setParams($data);
-							echo $partial->build();
-						}
+                        if(isset($helpers['sub_inverse'])) {
+                            $data = array('form' => $helpers['sub_inverse']);
+                            if($checked)
+                                $data['hide'] = TRUE;
+                            else
+                                $data['hide'] = FALSE;
+                            if (isset($object)) $data['object'] = $object;
+                            $data['parent'] = $name . '_inverse';
+                            $partial = $this->getBuilder()->createPartial('form_creator_inner', 'form_creator');
+                            $partial->getParamManager()->setParams($data);
+                            echo $partial->build();
+                        }
 
-						break;
+                        break;
 
-					case 'checkbox_array':
-						$data_form = array();
-						if (!isset($item['value']))
-						{
-							if($unserialized = unserialize(\Preferences::get(str_replace(',', '.', $name))))
-							{
-								$item['value'] = $unserialized;
-							}
-							else
-							{
-								$item['value'] = array();
-							}
-						}
+                    case 'checkbox_array':
+                        $data_form = array();
+                        if (!isset($item['value'])) {
+                            if($unserialized = unserialize(\Preferences::get(str_replace(',', '.', $name)))) {
+                                $item['value'] = $unserialized;
+                            } else {
+                                $item['value'] = array();
+                            }
+                        }
 
-						foreach($helpers['checkboxes'] as $checkbox)
-						{
-							$checked = FALSE;
-							if(isset($item['value'][$checkbox['array_key']]))
-							{
-								$checked = (bool) $item['value'][$checkbox['array_key']];
-							}
-							elseif(isset($checkbox['checked']))
-							{
-								$checked = $checkbox['checked'];
-							}
+                        foreach($helpers['checkboxes'] as $checkbox) {
+                            $checked = FALSE;
+                            if(isset($item['value'][$checkbox['array_key']])) {
+                                $checked = (bool) $item['value'][$checkbox['array_key']];
+                            } elseif(isset($checkbox['checked'])) {
+                                $checked = $checkbox['checked'];
+                            }
 
-							$data_form[$item['name'].'[' . $checkbox['array_key'] . ']'] =
-								array_merge($checkbox, array(
-									'type' => 'checkbox', 'value' => 1, 'checked' => $checked
-								)
-							);
-						}
-						echo $helpers['help'];
-						$partial = $this->getBuilder()->createPartial('form_creator_inner', 'form_creator');
-						$partial->getParamManager()->setParam('form', $data_form);
-						echo $partial->build();
-						break;
+                            $data_form[$item['name'].'[' . $checkbox['array_key'] . ']'] =
+                                array_merge($checkbox, array(
+                                    'type' => 'checkbox', 'value' => 1, 'checked' => $checked
+                                )
+                            );
+                        }
+                        echo $helpers['help'];
+                        $partial = $this->getBuilder()->createPartial('form_creator_inner', 'form_creator');
+                        $partial->getParamManager()->setParam('form', $data_form);
+                        echo $partial->build();
+                        break;
 
-					case 'select':
-						if (isset($helpers['label'])) :
-						?>
-						<label><?php echo $helpers['label'] ?></label>
-						<?php
-						endif;
-						if (isset($helpers['preferences']) && $helpers['preferences'])
-						{
-							$item['selected'] = \Preferences::get(str_replace(',', '.', $name));
-						}
-						elseif (isset($item['value']))
-						{
-							$item['selected'] = $item['value'];
-						}
-						elseif (isset($object->$name))
-						{
-							$item['selected'] = $object->$name;
-						}
-						elseif (isset($helpers['default_value']))
-						{
-							$item['selected'] = $helpers['default_value'];
-						}
+                    case 'select':
+                        if (isset($helpers['label'])) :
+                        ?>
+                        <label><?php echo $helpers['label'] ?></label>
+                        <?php
+                        endif;
+                        if (isset($helpers['preferences']) && $helpers['preferences']) {
+                            $item['selected'] = \Preferences::get(str_replace(',', '.', $name));
+                        } elseif (isset($item['value'])) {
+                            $item['selected'] = $item['value'];
+                        } elseif (isset($object->$name)) {
+                            $item['selected'] = $object->$name;
+                        } elseif (isset($helpers['default_value'])) {
+                            $item['selected'] = $helpers['default_value'];
+                        }
 
-						echo \Form::select($name, $item['selected'], $item['options']);
-						?>
-						<span class="help-inline">
-							<?php
-							echo isset($helpers['help']) ? $helpers['help'] : NULL;
-							?>
-						</span><div></div>
-						<?php
-						break;
+                        echo \Form::select($name, $item['selected'], $item['options']);
+                        ?>
+                        <span class="help-inline">
+                            <?php
+                            echo isset($helpers['help']) ? $helpers['help'] : NULL;
+                            ?>
+                        </span><div></div>
+                        <?php
+                        break;
 
+                    case 'input':
+                    case 'password':
+                    case 'upload':
+                    case 'textarea':
+                    case 'multiselect':
+                    case 'button':
 
-					case 'input':
-					case 'password':
-					case 'upload':
-					case 'textarea':
-					case 'multiselect':
-					case 'button':
+                        $helper['type'] = $item['type'];
+                        unset($item['type']);
 
-						$helper['type'] = $item['type'];
-						unset($item['type']);
+                        if (!isset($item['value'])) {
+                            if (isset($helpers['preferences']) && $helpers['preferences']) {
+                                $item['value'] = \Preferences::get(str_replace(',', '.', $name));
+                                if(isset($helpers['array']) && $helpers['array']) {
+                                    $item['value'] = unserialize($item['value']);
 
-						if (!isset($item['value']))
-						{
-							if (isset($helpers['preferences']) && $helpers['preferences'])
-							{
-								$item['value'] = \Preferences::get(str_replace(',', '.', $name));
-								if(isset($helpers['array']) && $helpers['array'])
-								{
-									$item['value'] = unserialize($item['value']);
+                                    if(is_array($item['value']) && isset($item['value'][$i])) {
+                                        $item['value'] = $item['value'][$i];
+                                        $count++;
+                                    } else {
+                                        $item['value'] = '';
+                                    }
+                                }
+                            } elseif (isset($object->$name)) {
+                                $item['value'] = $object->$name;
+                            } elseif (isset($helpers['default_value'])) {
+                                $item['value'] = $helpers['default_value'];
+                            } else {
+                                $item['value'] = '';
+                            }
+                        }
 
-									if(is_array($item['value']) && isset($item['value'][$i]))
-									{
-										$item['value'] = $item['value'][$i];
-										$count++;
-									}
-									else
-									{
-										$item['value'] = '';
-									}
-								}
-							}
-							elseif (isset($object->$name))
-							{
-								$item['value'] = $object->$name;
-							}
-							elseif (isset($helpers['default_value']))
-							{
-								$item['value'] = $helpers['default_value'];
-							}
-							else
-							{
-								$item['value'] = '';
-							}
-						}
+                        ?>
+                        <?php
+                            // if help is not set, put the label in help-inline
+                            if (isset($helpers['help'])) : ?><label><?php echo $helpers['label'] ?></label><?php endif; ?>
+                        <?php
+                        echo \Form::$helper['type']($item);
+                        ?>
+                        <span class="help-inline">
+                            <?php
+                            echo (isset($helpers['help']) ? $helpers['help'] : '');
+                            echo (!isset($helpers['help']) ? $helpers['label'] : '');
+                            ?>
+                        </span>
+                        <br/>
 
-						?>
-						<?php
-							// if help is not set, put the label in help-inline
-							if (isset($helpers['help'])) : ?><label><?php echo $helpers['label'] ?></label><?php endif; ?>
-						<?php
-						echo \Form::$helper['type']($item);
-						?>
-						<span class="help-inline">
-							<?php
-							echo (isset($helpers['help']) ? $helpers['help'] : '');
-							echo (!isset($helpers['help']) ? $helpers['label'] : '');
-							?>
-						</span>
-						<br/>
+                        <?php
+                        break;
 
-						<?php
-						break;
+                    default:
+                        break;
 
-					default:
-						break;
+                endswitch;
+                unset($item['value']);
+            endfor;
+        endif;
+        ?>
 
-				endswitch;
-				unset($item['value']);
-			endfor;
-		endif;
-		?>
-
-	<?php endforeach; ?>
+    <?php endforeach; ?>
 
 </div>
 <?php
-	}
+    }
 }

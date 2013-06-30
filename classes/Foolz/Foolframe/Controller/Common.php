@@ -7,11 +7,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Common
 {
-	public function before(Request $request)
-	{
-		if ( ! \Foolz\Config\Config::get('foolz/foolframe', 'config', 'install.installed'))
-		{
-			throw new NotFoundHttpException;
-		}
-	}
+    public function before(Request $request)
+    {
+        if (!\Foolz\Config\Config::get('foolz/foolframe', 'config', 'install.installed')) {
+            throw new NotFoundHttpException;
+        }
+    }
 }

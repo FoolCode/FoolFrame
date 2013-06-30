@@ -7,187 +7,164 @@ use \Foolz\Cache\Cache;
 
 class Preferences
 {
-	protected static $_preferences = [];
+    protected static $_preferences = [];
 
-	protected static $_modules = [];
+    protected static $_modules = [];
 
-	protected static $loaded = false;
+    protected static $loaded = false;
 
-	public static function load($reload = false)
-	{
-		\Profiler::mark('Preferences::load Start');
-		if ($reload === true)
-		{
-			Cache::item('foolframe.model.preferences.settings')->delete();
-		}
+    public static function load($reload = false)
+    {
+        \Profiler::mark('Preferences::load Start');
+        if ($reload === true) {
+            Cache::item('foolframe.model.preferences.settings')->delete();
+        }
 
-		static::$_modules = \Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed');
+        static::$_modules = \Foolz\Config\Config::get('foolz/foolframe', 'config', 'modules.installed');
 
-		try
-		{
-			static::$_preferences = Cache::item('foolframe.model.preferences.settings')->get();
-		}
-		catch (\OutOfBoundsException $e)
-		{
-			$preferences = DC::qb()
-				->select('*')
-				->from(DC::p('preferences'), 'p')
-				->execute()
-				->fetchAll();
+        try {
+            static::$_preferences = Cache::item('foolframe.model.preferences.settings')->get();
+        } catch (\OutOfBoundsException $e) {
+            $preferences = DC::qb()
+                ->select('*')
+                ->from(DC::p('preferences'), 'p')
+                ->execute()
+                ->fetchAll();
 
-			foreach($preferences as $pref)
-			{
-				// fix the PHP issue where . is changed to _ in the $_POST array
-				static::$_preferences[$pref['name']] = $pref['value'];
-			}
+            foreach($preferences as $pref) {
+                // fix the PHP issue where . is changed to _ in the $_POST array
+                static::$_preferences[$pref['name']] = $pref['value'];
+            }
 
-			Cache::item('foolframe.model.preferences.settings')->set(static::$_preferences, 3600);
-		}
+            Cache::item('foolframe.model.preferences.settings')->set(static::$_preferences, 3600);
+        }
 
-		\Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');
-		\Profiler::mark('Preferences::load End');
+        \Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');
+        \Profiler::mark('Preferences::load End');
 
-		static::$loaded = true;
+        static::$loaded = true;
 
-		return static::$_preferences;
-	}
+        return static::$_preferences;
+    }
 
-	public static function get($setting, $fallback = null)
-	{
-		if ( ! static::$loaded)
-		{
-			static::load();
-		}
+    public static function get($setting, $fallback = null)
+    {
+        if (!static::$loaded) {
+            static::load();
+        }
 
-		if (isset(static::$_preferences[$setting]) && static::$_preferences[$setting] !== '')
-		{
-			return static::$_preferences[$setting];
-		}
+        if (isset(static::$_preferences[$setting]) && static::$_preferences[$setting] !== '') {
+            return static::$_preferences[$setting];
+        }
 
-		if ($fallback !== null)
-		{
-			return $fallback;
-		}
+        if ($fallback !== null) {
+            return $fallback;
+        }
 
-		$segments = explode('.', $setting);
-		$identifier = array_shift($segments);
-		$query = implode('.', $segments);
+        $segments = explode('.', $setting);
+        $identifier = array_shift($segments);
+        $query = implode('.', $segments);
 
-		return \Foolz\Config\Config::get(static::$_modules[$identifier], 'package', 'preferences.'.$query);
-	}
+        return \Foolz\Config\Config::get(static::$_modules[$identifier], 'package', 'preferences.'.$query);
+    }
 
-	public static function set($setting, $value, $reload = true)
-	{
-		// if array, serialize value
-		if (is_array($value))
-		{
-			$value = serialize($value);
-		}
+    public static function set($setting, $value, $reload = true)
+    {
+        // if array, serialize value
+        if (is_array($value)) {
+            $value = serialize($value);
+        }
 
-		$count = DC::qb()
-			->select('COUNT(*) as count')
-			->from(DC::p('preferences'), 'p')
-			->where('p.name = :name')
-			->setParameter(':name', $setting)
-			->execute()
-			->fetch()['count'];
+        $count = DC::qb()
+            ->select('COUNT(*) as count')
+            ->from(DC::p('preferences'), 'p')
+            ->where('p.name = :name')
+            ->setParameter(':name', $setting)
+            ->execute()
+            ->fetch()['count'];
 
-		if ($count > 0)
-		{
-			DC::qb()
-				->update(DC::p('preferences'))
-				->set('value', ':value')
-				->where('name = :name')
-				->setParameters([':value' => $value, ':name' => $setting])
-				->execute();
-		}
-		else
-		{
-			DC::forge()->insert(DC::p('preferences'), ['name' => $setting, 'value' => $value]);
-		}
+        if ($count > 0) {
+            DC::qb()
+                ->update(DC::p('preferences'))
+                ->set('value', ':value')
+                ->where('name = :name')
+                ->setParameters([':value' => $value, ':name' => $setting])
+                ->execute();
+        } else {
+            DC::forge()->insert(DC::p('preferences'), ['name' => $setting, 'value' => $value]);
+        }
 
-		if ($reload)
-		{
-			return static::load(true);
-		}
+        if ($reload) {
+            return static::load(true);
+        }
 
-		return static::$_preferences;
-	}
+        return static::$_preferences;
+    }
 
-	/**
-	 * Save in the preferences table the name/value pairs
-	 *
-	 * @param array $data name => value
-	 */
-	public static function submit($data)
-	{
-		foreach ($data as $name => $value)
-		{
-			// in case it's an array of values from name="thename[]"
-			if(is_array($value))
-			{
-				// remove also empty values with array_filter
-				// but we want to keep 0s
-				$value = serialize(array_filter($value, function($var) {
-					if($var === 0)
-					{
-						return true;
-					}
+    /**
+     * Save in the preferences table the name/value pairs
+     *
+     * @param array $data name => value
+     */
+    public static function submit($data)
+    {
+        foreach ($data as $name => $value) {
+            // in case it's an array of values from name="thename[]"
+            if(is_array($value)) {
+                // remove also empty values with array_filter
+                // but we want to keep 0s
+                $value = serialize(array_filter($value, function($var) {
+                    if($var === 0) {
+                        return true;
+                    }
 
-					return $var;
-				}));
-			}
+                    return $var;
+                }));
+            }
 
-			static::set($name, $value, false);
-		}
+            static::set($name, $value, false);
+        }
 
-		// reload those preferences
-		static::load(true);
-	}
+        // reload those preferences
+        static::load(true);
+    }
 
-	/**
-	 * A lazy way to submit the preference panel input, saves some code in controller
-	 *
-	 * This function runs the custom validation function that uses the $form array
-	 * to first run the original FuelPHP validation and then the anonymous
-	 * functions included in the $form array. It sets a proper notice for the
-	 * admin interface on conclusion.
-	 *
-	 * @param array $form
-	 */
-	public static function submit_auto($form)
-	{
-		if (\Input::post())
-		{
-			if ( ! \Security::check_token())
-			{
-				\Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
-				return false;
-			}
+    /**
+     * A lazy way to submit the preference panel input, saves some code in controller
+     *
+     * This function runs the custom validation function that uses the $form array
+     * to first run the original FuelPHP validation and then the anonymous
+     * functions included in the $form array. It sets a proper notice for the
+     * admin interface on conclusion.
+     *
+     * @param array $form
+     */
+    public static function submit_auto($form)
+    {
+        if (\Input::post()) {
+            if (!\Security::check_token()) {
+                \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
+                return false;
+            }
 
-			$post = [];
+            $post = [];
 
-			foreach (\Input::post() as $key => $item)
-			{
-				// PHP doesn't allow periods in POST array
-				$post[str_replace(',', '.', $key)] = $item;
-			}
+            foreach (\Input::post() as $key => $item) {
+                // PHP doesn't allow periods in POST array
+                $post[str_replace(',', '.', $key)] = $item;
+            }
 
-			$result = \Validation::form_validate($form, $post);
-			if (isset($result['error']))
-			{
-				\Notices::set('warning', $result['error']);
-			}
-			else
-			{
-				if (isset($result['warning']))
-				{
-					\Notices::set('warning', $result['warning']);
-				}
+            $result = \Validation::form_validate($form, $post);
+            if (isset($result['error'])) {
+                \Notices::set('warning', $result['error']);
+            } else {
+                if (isset($result['warning'])) {
+                    \Notices::set('warning', $result['warning']);
+                }
 
-				\Notices::set('success', _i('Preferences updated.'));
-				static::submit($result['success']);
-			}
-		}
-	}
+                \Notices::set('success', _i('Preferences updated.'));
+                static::submit($result['success']);
+            }
+        }
+    }
 }

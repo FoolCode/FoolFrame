@@ -7,99 +7,96 @@ namespace Foolz\Foolframe\Model;
  */
 class DoctrineConnection
 {
-	/**
-	 * The connections to the database
-	 *
-	 * @var  array
-	 */
-	protected static $instances = [];
+    /**
+     * The connections to the database
+     *
+     * @var  array
+     */
+    protected static $instances = [];
 
-	/**
-	 * The prefixes by instance
-	 *
-	 * @var  array
-	 */
-	protected static $prefixes = [];
+    /**
+     * The prefixes by instance
+     *
+     * @var  array
+     */
+    protected static $prefixes = [];
 
-	/**
-	 * Creates a new \Doctrine\DBAL\Connection or returns the existing instance
-	 *
-	 * @param  string  $instance  The name of the instance
-	 *
-	 * @return  \Doctrine\DBAL\Connection
-	 * @throws  \DomainException  If the database configuration doesn't exist
-	 */
-	public static function forge($instance = 'default')
-	{
-		if (isset(static::$instances[$instance]))
-		{
-			return static::$instances[$instance];
-		}
+    /**
+     * Creates a new \Doctrine\DBAL\Connection or returns the existing instance
+     *
+     * @param  string  $instance  The name of the instance
+     *
+     * @return  \Doctrine\DBAL\Connection
+     * @throws  \DomainException  If the database configuration doesn't exist
+     */
+    public static function forge($instance = 'default')
+    {
+        if (isset(static::$instances[$instance])) {
+            return static::$instances[$instance];
+        }
 
-		$config = new \Doctrine\DBAL\Configuration();
+        $config = new \Doctrine\DBAL\Configuration();
 
-		$config->setSQLLogger(new DoctrineLogger());
+        $config->setSQLLogger(new DoctrineLogger());
 
-		$db_data = \Foolz\Config\Config::get('foolz/foolframe', 'db', $instance);
+        $db_data = \Foolz\Config\Config::get('foolz/foolframe', 'db', $instance);
 
-		if ($db_data === false)
-		{
-			throw new \DomainException('The specified database configuration is not available.');
-		}
+        if ($db_data === false) {
+            throw new \DomainException('The specified database configuration is not available.');
+        }
 
-		$data = [
-			'dbname' => $db_data['dbname'],
-			'user' => $db_data['user'],
-			'password' => $db_data['password'],
-			'host' => $db_data['host'],
-			'driver' => $db_data['driver'],
-		];
+        $data = [
+            'dbname' => $db_data['dbname'],
+            'user' => $db_data['user'],
+            'password' => $db_data['password'],
+            'host' => $db_data['host'],
+            'driver' => $db_data['driver'],
+        ];
 
-		if ($db_data['driver'] == 'pdo_mysql')
-		{
-			$data['charset'] = $db_data['charset'];
-		}
+        if ($db_data['driver'] == 'pdo_mysql') {
+            $data['charset'] = $db_data['charset'];
+        }
 
-		static::$prefixes[$instance] = $db_data['prefix'];
+        static::$prefixes[$instance] = $db_data['prefix'];
 
-		return static::$instances[$instance] = \Doctrine\DBAL\DriverManager::getConnection($data, $config);
-	}
+        return static::$instances[$instance] = \Doctrine\DBAL\DriverManager::getConnection($data, $config);
+    }
 
-	/**
-	 * Returns a Query Builder
-	 *
-	 * @param  string  $instance  The named instance
-	 *
-	 * @return  \Doctrine\DBAL\Query\QueryBuilder
-	 * @throws  \DomainException  If the database configuration doesn't exist
-	 */
-	public static function qb($instance = 'default')
-	{
-		return static::forge($instance)->createQueryBuilder();
-	}
+    /**
+     * Returns a Query Builder
+     *
+     * @param  string  $instance  The named instance
+     *
+     * @return  \Doctrine\DBAL\Query\QueryBuilder
+     * @throws  \DomainException  If the database configuration doesn't exist
+     */
+    public static function qb($instance = 'default')
+    {
+        return static::forge($instance)->createQueryBuilder();
+    }
 
-	/**
-	 * Returns the prefix
-	 *
-	 * @param  string  $instance  The named instance
-	 *
-	 * @return string  The prefix for the instance
-	 */
-	public static function getPrefix($instance = 'default')
-	{
-		return static::$prefixes[$instance];
-	}
+    /**
+     * Returns the prefix
+     *
+     * @param  string  $instance  The named instance
+     *
+     * @return string  The prefix for the instance
+     */
+    public static function getPrefix($instance = 'default')
+    {
+        return static::$prefixes[$instance];
+    }
 
-	/**
-	 * Returns the table name with the prefix
-	 *
-	 * @param   string  $table The table name
-	 * @param   string  $instance  The named instance
-	 *
-	 * @return  string the table name with the prefix
-	 */
-	public static function p($table, $instance = 'default')
-	{
-		return static::$prefixes[$instance].$table;
-	}
+    /**
+     * Returns the table name with the prefix
+     *
+     * @param   string  $table The table name
+     * @param   string  $instance  The named instance
+     *
+     * @return  string the table name with the prefix
+     */
+    public static function p($table, $instance = 'default')
+    {
+        return static::$prefixes[$instance].$table;
+    }
 }

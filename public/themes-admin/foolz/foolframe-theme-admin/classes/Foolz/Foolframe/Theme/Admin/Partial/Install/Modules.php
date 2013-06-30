@@ -4,32 +4,32 @@ namespace Foolz\Foolframe\Theme\Admin\Partial\Install;
 
 class Modules extends \Foolz\Theme\View
 {
-	public function toString()
-	{
-		$modules = $this->getParamManager()->getParam('modules');
-		?>
-		<p class="description">
-			<?= _i('Congratulations, you have completed the installation and setup of FoolFrame. Please choose the module(s) you wish to install below:') ?>
-		</p>
+    public function toString()
+    {
+        $modules = $this->getParamManager()->getParam('modules');
+        ?>
+        <p class="description">
+            <?= _i('Congratulations, you have completed the installation and setup of FoolFrame. Please choose the module(s) you wish to install below:') ?>
+        </p>
 
-		<?= \Form::open() ?>
+        <?= \Form::open() ?>
 
-			<?php foreach ($modules as $module => $info) : ?>
-				<label class="checkbox">
-					<?php if ($info['disabled']) : ?>
-						<input type="checkbox" name="<?= $module ?>" disabled="disabled" />
-					<?php else : ?>
-						<input type="checkbox" name="<?= $module ?>" />
-					<?php endif; ?>
-					<?= $info['title'] ?>
-				</label>
-				<p style="font-size: 0.8em; padding-left: 20px"><?= $info['description'] ?></p>
-			<?php endforeach; ?>
+            <?php foreach ($modules as $module => $info) : ?>
+                <label class="checkbox">
+                    <?php if ($info['disabled']) : ?>
+                        <input type="checkbox" name="<?= $module ?>" disabled="disabled" />
+                    <?php else : ?>
+                        <input type="checkbox" name="<?= $module ?>" />
+                    <?php endif; ?>
+                    <?= $info['title'] ?>
+                </label>
+                <p style="font-size: 0.8em; padding-left: 20px"><?= $info['description'] ?></p>
+            <?php endforeach; ?>
 
-			<hr>
+            <hr>
 
-			<?= \Form::submit(array('name' => 'submit', 'value' => _i('Next'), 'class' => 'btn btn-success pull-right')) ?>
-		<?= \Form::close() ?>
-		<?php
-	}
+            <?= \Form::submit(array('name' => 'submit', 'value' => _i('Next'), 'class' => 'btn btn-success pull-right')) ?>
+        <?= \Form::close() ?>
+        <?php
+    }
 }

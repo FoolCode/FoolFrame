@@ -4,8 +4,8 @@ namespace Foolz\Foolframe\Theme\Admin\Partial\Account\Email;
 
 class PasswordChange extends \Foolz\Theme\View
 {
-	public function toString()
-	{ ?>
+    public function toString()
+    { ?>
 <h2><?= $this->getParamManager()->getParam('title') ?></h2>
 
 <h4>Hello <?= $this->getParamManager()->getParam('username') ?>!</h4>
@@ -21,5 +21,5 @@ If the link is not working, copy and paste the following addres into your browse
 <hr/>
 The <?= $this->getParamManager()->getParam('site') ?> team.
 <?php
-	}
+    }
 }

@@ -4,8 +4,8 @@ namespace Foolz\Foolframe\Theme\Admin\Partial\Account\Email;
 
 class Activation extends \Foolz\Theme\View
 {
-	public function toString()
-	{ ?>
+    public function toString()
+    { ?>
 
 <h2><?= $this->getParamManager()->getParam('title') ?></h2>
 
@@ -23,5 +23,5 @@ Thanks for joining us! ｷﾀ━━━━(ﾟ∀ﾟ)━━━━ !!!!! Your regi
 <hr/>
 The <?= $this->getParamManager()->getParam('site') ?> team.
 <?php
-	}
+    }
 }

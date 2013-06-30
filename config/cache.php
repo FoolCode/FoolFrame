@@ -1,11 +1,11 @@
 <?php
 
 return [
-	'type' => 'dummy',
+    'type' => 'dummy',
 
-	'format' => 'smart_json',
+    'format' => 'smart_json',
 
-	'prefix' => '',
+    'prefix' => '',
 
-	'servers' => []
+    'servers' => []
 ];
