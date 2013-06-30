@@ -144,7 +144,7 @@ class Framework extends HttpKernel
         }
 
         // stick the html of the profiler at the end
-        if (\Auth::has_access('maccess.admin')) {
+        if ($request->getRequestFormat() == 'html' && \Auth::has_access('maccess.admin')) {
             $content = explode('</body>', $response->getContent());
             if (count($content) == 2) {
                 $this->profiler->log('Execution end');
