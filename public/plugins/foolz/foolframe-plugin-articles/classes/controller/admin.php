@@ -82,7 +82,6 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
                         // no change?
                         if ($input['slug'] == $result['slug']) {
-                            // no change
                             return array('success' => true);
                         }
                     }
@@ -112,7 +111,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
                 'help' => _i('If you set this, the article link will be an outlink.'),
                 'validation' => 'trim'
             ),
-            'article' => array(
+            'content' => array(
                 'type' => 'textarea',
                 'database' => true,
                 'style' => 'height:350px; width: 90%',
@@ -122,16 +121,22 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
             'separator-1' => array(
                 'type' => 'separator'
             ),
+            'hidden' => array(
+                'type' => 'checkbox',
+                'database' => true,
+                'help' => _i('Disable access to the article.')
+            ),
+            'separator-1' => array(
+                'type' => 'separator'
+            ),
             'top' => array(
                 'type' => 'checkbox',
                 'database' => true,
-                'label' => _i('Display the article link on the top of the page'),
                 'help' => _i('Display the article link on the top of the page')
             ),
             'bottom' => array(
                 'type' => 'checkbox',
                 'database' => true,
-                'label' => _i('Display the article link on the bottom of the page'),
                 'help' => _i('Display the article link on the bottom of the page')
             ),
             'separator-2' => array(
@@ -158,7 +163,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
         ob_start();
         ?>
 
-            <a href="<?php echo \Uri::create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?php echo _i('New article') ?></a>
+            <a href="<?= \Uri::create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?= _i('New article') ?></a>
 
             <table class="table table-bordered table-striped table-condensed">
                 <thead>
@@ -174,16 +179,16 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
                     foreach($articles as $article) : ?>
                     <tr>
                         <td>
-                            <?php echo htmlentities($article['title']) ?>
+                            <?= htmlentities($article['title']) ?>
                         </td>
                         <td>
-                            <a href="<?php echo \Uri::create('_/articles/' . $article['slug']) ?>" target="_blank"><?php echo $article['slug'] ?></a>
+                            <a href="<?= \Uri::create('_/articles/' . $article['slug']) ?>" target="_blank"><?= $article['slug'] ?></a>
                         </td>
                         <td>
-                            <a href="<?php echo \Uri::create('admin/articles/edit/'.$article['slug']) ?>" class="btn btn-mini btn-primary"><?php echo _i('Edit') ?></a>
+                            <a href="<?= \Uri::create('admin/articles/edit/'.$article['slug']) ?>" class="btn btn-mini btn-primary"><?= _i('Edit') ?></a>
                         </td>
                         <td>
-                            <a href="<?php echo \Uri::create('admin/articles/remove/'.$article['id']) ?>" class="btn btn-mini btn-danger"><?php echo _i('Remove') ?></a>
+                            <a href="<?= \Uri::create('admin/articles/remove/'.$article['id']) ?>" class="btn btn-mini btn-danger"><?= _i('Remove') ?></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

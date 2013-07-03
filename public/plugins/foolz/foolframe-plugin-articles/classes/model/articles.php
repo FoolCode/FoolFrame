@@ -40,10 +40,11 @@ class Articles
             ->from(DC::p('plugin_ff_articles'), 'a');
 
         if (!\Auth::has_access('maccess.mod')) {
-            $query->where('(top = 1 OR bottom = 1)');
+            $query->where('hidden = 0');
         }
 
-        $result = $query->execute()
+        $result = $query->orderBy('title', 'asc')
+            ->execute()
             ->fetchAll();
 
         return $result;
@@ -58,7 +59,7 @@ class Articles
             ->setParameter(':id', $id);
 
         if (!\Auth::has_access('maccess.mod')) {
-            $query->andWhere('(top = 1 OR bottom = 1)');
+            $query->andWhere('hidden = 0');
         }
 
         $result = $query->execute()
@@ -80,7 +81,7 @@ class Articles
             ->setParameter(':slug', $slug);
 
         if (!\Auth::has_access('maccess.mod')) {
-            $query->andWhere('(top = 1 OR bottom = 1)');
+            $query->andWhere('hidden = 0');
         }
 
         $result = $query->execute()
@@ -141,6 +142,7 @@ class Articles
             $res = DC::qb()
                 ->select('slug, title')
                 ->from(DC::p('plugin_ff_articles'), 'a')
+                ->orderBy('title', 'asc')
                 ->execute()
                 ->fetchAll();
 
@@ -168,8 +170,10 @@ class Articles
         if (isset($data['id'])) {
             $query = DC::qb()
                 ->update(DC::p('plugin_ff_articles'))
+                ->set('timestamp', ':time')
                 ->where('id = :id')
-                ->setParameter(':id', $data['id']);
+                ->setParameter(':id', $data['id'])
+                ->setParameter(':time', time());
 
             foreach ($data as $k => $i) {
                 if ($k !== 'id') {
@@ -179,6 +183,8 @@ class Articles
 
             $query->execute();
         } else {
+            $data['timestamp'] = time();
+
             DC::forge()
                 ->insert(DC::p('plugin_ff_articles'), $data);
         }

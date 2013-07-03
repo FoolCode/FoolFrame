@@ -20,7 +20,7 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
                     '/admin/articles/{_suffix}',
                     [
                         '_suffix' => 'manage',
-                        '_controller' => '\Foolz\Foolframe\Controller\Admin\Articles::*'
+                        '_controller' => '\Foolz\Foolframe\Controller\Admin\Articles::articles'
                     ],
                     [
                         '_suffix' => '.*'
@@ -93,10 +93,12 @@ use \Foolz\Foolframe\Model\DoctrineConnection as DC;
         $table->addColumn('slug', 'string', ['length' => 128]);
         $table->addColumn('title', 'string', ['length' => 256]);
         $table->addColumn('url', 'string', ['length' => 256]);
-        $table->addColumn('article', 'text', ['length' => 65532]);
-        $table->addColumn('active', 'smallint', ['unsigned' => true, 'default' => 0]);
+        $table->addColumn('content', 'text', ['length' => 65532]);
+        $table->addColumn('hidden', 'smallint', ['unsigned' => true, 'default' => 0]);
         $table->addColumn('top', 'smallint', ['unsigned' => true, 'default' => 0]);
         $table->addColumn('bottom', 'smallint', ['unsigned' => true, 'default' => 0]);
+        $table->addColumn('timestamp', 'integer', ['unsigned' => true]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['slug'], DC::p('plugin_ff_articles_slug_index'));
+        $table->addIndex(['title'], DC::p('plugin_ff_articles_title_index'));
     });
