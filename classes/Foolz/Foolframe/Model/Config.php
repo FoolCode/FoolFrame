@@ -138,7 +138,6 @@ class Config
     {
         static::load($package_name, $file);
 
-        // @todo rewrite this to decouple from fuelphp
         static::arrSet(static::$packages[$package_name]['data'][$file], $key, $value);
     }
 
@@ -181,7 +180,7 @@ class Config
     }
 
     /**
-     * Save the configuration array (it will be saved in the enviroment folder)
+     * Save the configuration array (it will be saved in the environment folder)
      *
      * @param  string $package_name  The name of the package (vendor/package format)
      * @param  string $file          The filename where the config is located (without extension)

@@ -195,9 +195,14 @@ class Install
 
             if (count($modules) > 1) {
                 Config::set('foolz/foolframe', 'config', 'modules.installed', $modules);
+                Config::set('foolz/foolframe', 'config', 'install.installed', true);
                 Config::save('foolz/foolframe', 'config');
 
-                \Response::redirect('install/complete');
+                $this->process('complete');
+                $this->param_manager->setParam('method_title', _i('Congratulations'));
+
+                $this->builder->createPartial('body', 'install/complete');
+                return new Response($this->builder->build());
             } else {
                 Notices::set('warning', _i('Please select at least one module.'));
             }
@@ -210,18 +215,4 @@ class Install
             ->getParamManager()->setParams($data);
         return new Response($this->builder->build());
     }
-
-    public function action_complete()
-    {
-        // lock down the install system
-        Config::set('foolz/foolframe', 'config', 'install.installed', true);
-        Config::save('foolz/foolframe', 'config');
-
-        $this->process('complete');
-        $this->param_manager->setParam('method_title', _i('Congratulations'));
-
-        $this->builder->createPartial('body', 'install/complete');
-        return new Response($this->builder->build());
-    }
-
 }
