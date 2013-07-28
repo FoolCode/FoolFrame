@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\EventListener\ResponseListener;
 
-class Framework extends HttpKernel
+class Context extends HttpKernel
 {
     /**
      * RouteCollection that stores all of the Framework's Routes set before controllers
@@ -159,7 +159,7 @@ class Framework extends HttpKernel
     {
         $application = new Application();
 
-        Hook::forge('Foolz\Foolframe\Model\Framework::handleConsole.add')
+        Hook::forge('Foolz\Foolframe\Model\Context::handleConsole.add')
             ->setParam('application', $application)
             ->setObject($this)
             ->execute();
@@ -261,8 +261,8 @@ class Framework extends HttpKernel
                         $class .= ucfirst($str).'\\';
                     }
 
-                    $class .= 'Model\Framework';
-                    $frameworks[] = new $class($this);
+                    $class .= 'Model\Context';
+                    $contextes[] = new $class($this);
                 }
             }
 
@@ -284,8 +284,8 @@ class Framework extends HttpKernel
             Plugins::instantiate($this);
 
             // we must run this later else the plugins have no change to correctly set the
-            foreach ($frameworks as $framework) {
-                $framework->routes();
+            foreach ($contextes as $context) {
+                $context->routes();
             }
 
             foreach(['account', 'plugins', 'preferences', 'system', 'users'] as $location) {

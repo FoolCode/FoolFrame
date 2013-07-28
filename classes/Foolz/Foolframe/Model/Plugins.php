@@ -28,7 +28,7 @@ class Plugins
 
     protected static $_admin_sidebars = [];
 
-    public static function instantiate(Framework $framework)
+    public static function instantiate(Context $framework)
     {
         static::$loader = new Loader();
 

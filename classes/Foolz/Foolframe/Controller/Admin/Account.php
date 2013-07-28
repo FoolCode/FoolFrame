@@ -8,6 +8,8 @@ use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Account extends \Foolz\Foolframe\Controller\Admin
 {
@@ -93,17 +95,25 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif (\Input::post()) {
 
-            $val = \Validation::forge('register');
-            $val->add_field('username', _i('Username'), 'required|trim|min_length[4]|max_length[32]');
-            $val->add_field('email', _i('Email'), 'required|trim|valid_email');
-            $val->add_field('password', _i('Password'), 'required|min_length[4]|max_length[32]');
-            $val->add_field('confirm_password', _i('Confirm password'), 'required|match_field[password]');
+            $input = \Input::post();
 
-            $recaptcha = ! \ReCaptcha::available() || \ReCaptcha::instance()->check_answer(\Input::ip(), \Input::post('recaptcha_challenge_field'), \Input::post('recaptcha_response_field'));
+            $validator = Validation::createValidator();
+            $constraint = new Assert\Collection([
+                'username' => [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 32])],
+                'email' => [new Assert\NotBlank(), new Assert\Email()],
+                'password' => [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])],
+                'confirm_password' => [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])],
+            ]);
+            $constraint->allowExtraFields = true;
 
-            if($val->run() && $recaptcha) {
-                $input = $val->input();
+            $recaptcha = ! \ReCaptcha::available()
+                || \ReCaptcha::instance()->check_answer(
+                    \Input::ip(), \Input::post('recaptcha_challenge_field'), \Input::post('recaptcha_response_field')
+                    );
 
+            $violations = $validator->validateValue($input, $constraint);
+
+            if(!$violations->count() && $recaptcha && $input['password'] === $input['confirm_password']) {
                 try {
                     list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
                 } catch (\Auth\FoolUserUpdateException $e) {
