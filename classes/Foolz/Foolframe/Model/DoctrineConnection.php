@@ -24,12 +24,14 @@ class DoctrineConnection
     /**
      * Creates a new \Doctrine\DBAL\Connection or returns the existing instance
      *
-     * @param  string  $instance  The name of the instance
+     * @param  string $instance  The name of the instance
+     * @param  string $from_config The config file from where to pick up connection data
+     * @param  array $override  Allows overriding connection data
      *
+     * @throws \DomainException If the database configuration doesn't exist
      * @return  \Doctrine\DBAL\Connection
-     * @throws  \DomainException  If the database configuration doesn't exist
      */
-    public static function forge($instance = 'default')
+    public static function forge($instance = 'default', $from_config = 'default', $override = [])
     {
         if (isset(static::$instances[$instance])) {
             return static::$instances[$instance];
@@ -39,7 +41,9 @@ class DoctrineConnection
 
         $config->setSQLLogger(new DoctrineLogger());
 
-        $db_data = \Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'db', $instance);
+        $db_data = \Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'db', $from_config);
+
+        $db_data += $override;
 
         if ($db_data === false) {
             throw new \DomainException('The specified database configuration is not available.');

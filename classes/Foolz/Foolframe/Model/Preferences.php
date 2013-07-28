@@ -47,13 +47,13 @@ class Preferences
         return static::$_preferences;
     }
 
-    public static function get($setting, $fallback = null)
+    public static function get($setting, $fallback = null, $show_empty_string = false)
     {
         if (!static::$loaded) {
             static::load();
         }
 
-        if (isset(static::$_preferences[$setting]) && static::$_preferences[$setting] !== '') {
+        if (isset(static::$_preferences[$setting]) && ($show_empty_string || static::$_preferences[$setting] !== '')) {
             return static::$_preferences[$setting];
         }
 
