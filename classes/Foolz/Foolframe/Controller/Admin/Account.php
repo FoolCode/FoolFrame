@@ -2,13 +2,13 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use Foolz\Foolframe\Model\Validation;
 use Swift_SendmailTransport;
 use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Account extends \Foolz\Foolframe\Controller\Admin
@@ -97,21 +97,26 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
             $input = \Input::post();
 
-            $validator = Validation::createValidator();
-            $constraint = new Assert\Collection([
+            $constraints = [
                 'username' => [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 32])],
                 'email' => [new Assert\NotBlank(), new Assert\Email()],
                 'password' => [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])],
                 'confirm_password' => [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])],
-            ]);
-            $constraint->allowExtraFields = true;
+            ];
+
+            $labels = [
+                'username' => _i('Username'),
+                'email' => _i('Email'),
+                'password' => _i('Password'),
+                'confirm_password' => _i('Confirm password'),
+            ];
 
             $recaptcha = ! \ReCaptcha::available()
                 || \ReCaptcha::instance()->check_answer(
                     \Input::ip(), \Input::post('recaptcha_challenge_field'), \Input::post('recaptcha_response_field')
                     );
 
-            $violations = $validator->validateValue($input, $constraint);
+            $violations = Validation::validateValues($input, $constraints, $labels);
 
             if(!$violations->count() && $recaptcha && $input['password'] === $input['confirm_password']) {
                 try {
@@ -161,12 +166,11 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                 \Response::redirect('admin/account/login');
             } else {
-                $error = $val->error();
                 if (!$recaptcha) {
-                    $error[] = _i('The reCAPTCHA code entered does not match the one displayed.');
+                    \Notices::set('error', _i('The reCAPTCHA code entered does not match the one displayed.'));
+                } else {
+                    \Notices::set('error', $violations->toHtml());
                 }
-
-                \Notices::set('error', implode(' ', $error));
             }
         }
 

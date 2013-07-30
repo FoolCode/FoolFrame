@@ -7,6 +7,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Validation
 {
+    public static function validateValues(Array $data, $constraints, $labels) {
+        $validator = SymfonyValidation::createValidator();
+        $violations_arr = [];
+
+        foreach ($constraints as $key => $constraint) {
+            if (isset($data[$key])) {
+                $violations = $validator->validateValue($data[$key], $constraint);
+                if ($violations->count() > 0) {
+                    $violations_arr[$key] = new Violation($violations, $key, isset($labels[$key]) ? $labels[$key] : '');
+                }
+            }
+        }
+
+        return new ViolationCollection($violations_arr);
+    }
+
     /**
      * Checks the form for and returns either a compiled array of values or
      * the error
