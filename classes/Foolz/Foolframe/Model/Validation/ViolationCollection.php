@@ -1,6 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\Foolframe\Model\Validation;
+
+use Foolz\Foolframe\Model\Validation\Violation;
 
 class ViolationCollection {
 
@@ -33,12 +35,24 @@ class ViolationCollection {
     /**
      * @return string
      */
-    public function toHtml() {
+    public function getHtml() {
         $array = [];
         foreach ($this->violations as $violation) {
             $array[] = $violation->getLabel().': '.$violation->getViolationsString();
         }
 
         return implode('<br>', $array);
+    }
+
+    /**
+     * @return string
+     */
+    public function getText() {
+        $array = [];
+        foreach ($this->violations as $violation) {
+            $array[] = $violation->getLabel().': '.$violation->getViolationsString();
+        }
+
+        return implode("\n", $array);
     }
 }

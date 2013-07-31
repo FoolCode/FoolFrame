@@ -50,7 +50,7 @@ class Notices
      * @param  string  $level    The level of the message: success, warning, danger
      * @param  string  $message  The message
      */
-    public static function set($level, $message)
+    public static function set($level, $message, $escape = false)
     {
         static::$notices[] = ['level' => $level, 'message' => $message];
     }
