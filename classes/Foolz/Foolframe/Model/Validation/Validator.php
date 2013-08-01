@@ -62,7 +62,7 @@ class Validator
 
         foreach ($this->constraints as $key => $constraint) {
             // we always keep the variables set someway
-            if (isset($this->final_values[$key])) {
+            if (!isset($this->final_values[$key])) {
                 $this->final_values[$key] = false;
             }
 
@@ -157,20 +157,24 @@ class Validator
             }
         }
 
-        $validator = SymfonyValidation::createValidator();
-        $constraint_arr = [];
+        $validator = new static();
+
         foreach ($form as $name => $item) {
             if (isset($item['validation'])) {
-                // set the rules and add [] to the name if array
-                $constraint_arr[$name . ((isset($item['array']) && $item['array']) ? '[]' : '')] = $item['validation'];
+                $validator->add($name, $item['label'], $item['validation']);
             }
         }
 
-        $constraint = new Assert\Collection($constraint_arr);
-        $constraint->allowExtraFields = true;
+        $validator->validate($input);
 
-        // we need to run both validation and closures
-        $violations = $validator->validateValue($input, $constraint);
+        /*
+            $constraint_arr = [];
+            if (isset($item['validation'])) {
+                // set the rules and add [] to the name if array
+                $constraint_arr[$name . ((isset($item['array']) && $item['array']) ? '[]' : '')] = ;
+            }
+        }*/
+
 
         $validation_func = array();
         // we run this after form_validation in case form_validation edited the POST data
@@ -217,16 +221,11 @@ class Validator
             }
         }
 
-        if ($violations->count() || count($validation_func_errors)) {
-            $errors = [];
-
-            foreach ($violations as $violation) {
-                $errors[] = $form[substr($violation->getPropertyPath(), 1, -1)]['label'].': '.$violation->getMessage().' ';
-            }
-
+        if ($validator->getViolations()->count() || count($validation_func_errors)) {
+            $errors = [$validator->getViolations()->getText()];
             $errors += $validation_func_errors;
 
-            return array('error' => implode(' ', $errors));
+            return array('error' => implode("\n", $errors));
         } else {
             // get rid of all the uninteresting inputs and simplify
             $result = array();

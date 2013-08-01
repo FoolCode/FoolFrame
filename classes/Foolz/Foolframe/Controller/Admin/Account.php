@@ -209,7 +209,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                 return static::send_change_password_email($input['email']);
             } else {
-                \Notices::set('error', implode(' ', $validator->getViolations()->getText()));
+                \Notices::set('error', $validator->getViolations()->getText());
             }
         }
 
@@ -242,7 +242,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                             \Notices::set('warning', _i('It appears that you are trying to access an invalid link or your activation key has expired.'));
                         }
                     } else {
-                        \Notices::set('error', implode(' ', $validator->getViolations()->getText()));
+                        \Notices::set('error', $validator->getViolations()->getText());
                     }
                 } else {
                     $this->builder->createPartial('body', 'account/change_password');
@@ -293,12 +293,14 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             if (\Input::post() && !\Security::check_token()) {
                 \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             } elseif (\Input::post()) {
-                $val = \Validation::forge('change_password');
-                $val->add_field('password', _i('Password'), 'required');
-                $val->add_field('email', _i('Email'), 'required|trim|valid_email');
+                $validator = new Validator();
+                $validator
+                    ->add('password', _i('Password'), [new Assert\NotBlank()])
+                    ->add('email', _i('Email'), [new Trim(), new Assert\NotBlank(), new Assert\Email()])
+                    ->validate(\Input::post());
 
-                if($val->run()) {
-                    $input = $val->input();
+                if(!$validator->getViolations()->count()) {
+                    $input = $validator->getFinalValues();
 
                     try {
                         $change_email_key = \Auth::create_change_email_key($input['email'], $input['password']);
@@ -346,7 +348,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                     \Response::redirect('admin/account/login');
 
                 } else {
-                    \Notices::set('error', $val->error());
+                    \Notices::set('error', $validator->getViolations()->getText());
                 }
             }
 
@@ -383,11 +385,13 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             if (\Input::post() && !\Security::check_token()) {
                 \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             } elseif (\Input::post()) {
-                $val = \Validation::forge('change_password');
-                $val->add_field('password', _i('Password'), 'required');
+                $validator = new Validator();
+                $validator
+                    ->add('password', _i('Password'), [new Assert\NotBlank()])
+                    ->validate(\Input::post());
 
-                if ($val->run()) {
-                    $input = $val->input();
+                if (!$validator->getViolations()->count()) {
+                    $input = $validator->getFinalValues();
 
                     try {
                         $account_deletion_key = \Auth::create_account_deletion_key($input['password']);
@@ -430,7 +434,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                     \Response::redirect('admin/account/delete');
                 } else {
-                    \Notices::set('error', implode(' ', $val->error()));
+                    \Notices::set('error', $validator->getViolations()->getText());
                 }
 
             }
@@ -512,7 +516,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             'label' => _i('Display Name'),
             'class' => 'span3',
             'help' => _i('Alternative name in place of login username'),
-            'validation' => 'trim|max_length[32]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 32])]
         );
 
         $form['bio'] = array(
@@ -522,7 +526,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             'style' => 'height:150px;',
             'class' => 'span5',
             'help' => _i('Some details about you'),
-            'validation' => 'trim|max_length[360]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 360])]
         );
 
         $form['twitter'] = array(
@@ -531,7 +535,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             'label' => 'Twitter',
             'class' => 'span3',
             'help' => _i('Your twitter nickname'),
-            'validation' => 'trim|max_length[32]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 32])]
         );
 
         $form['submit'] = array(
@@ -549,7 +553,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
         if (\Input::post() && !\Security::check_token()) {
             \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif (\Input::post()) {
-            $result = \Validation::form_validate($form);
+            $result = Validator::form_validate($form);
 
             if (isset($result['error'])) {
                 \Notices::set('warning', $result['error']);
