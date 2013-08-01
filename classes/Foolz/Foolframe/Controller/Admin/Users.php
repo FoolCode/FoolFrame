@@ -3,9 +3,13 @@
 namespace Foolz\Foolframe\Controller\Admin;
 
 use \Foolz\Foolframe\Model\Config;
+use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
+use Foolz\Foolframe\Model\Validation\Validator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 class Users extends \Foolz\Foolframe\Controller\Admin
 {
@@ -77,7 +81,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
                 'label' => _i('Username'),
                 'class' => 'span3',
                 'help' => _i('Change the username'),
-                'validation' => 'trim|max_length[32]'
+                'validation' => [new Trim(), new Assert\Length(['max' => 32])]
             );
 
             $form['email'] = array(
@@ -86,7 +90,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
                 'label' => _i('Email'),
                 'class' => 'span3',
                 'help' => _i('Change the email'),
-                'validation' => 'trim|max_length[32]'
+                'validation' => [new Trim(), new Assert\Length(['max' => 32])]
             );
 
             $form['password'] = array(
@@ -105,7 +109,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
             'style' => 'height:150px;',
             'class' => 'span5',
             'help' => _i('Some details about you'),
-            'validation' => 'trim|max_length[360]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 360])]
         );
 
         $form['twitter'] = array(
@@ -114,7 +118,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
             'label' => 'Twitter',
             'class' => 'span3',
             'help' => _i('Your twitter nickname'),
-            'validation' => 'trim|max_length[32]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 32])]
         );
 
         $form['display_name'] = array(
@@ -123,7 +127,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
             'label' => 'Display name',
             'class' => 'span3',
             'help' => _i('Alternative name in place of login username'),
-            'validation' => 'trim|max_length[32]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 32])]
         );
 
         if (\Auth::has_access('users.change_group')) {
@@ -158,7 +162,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
         if (\Input::post() && !\Security::check_token()) {
             \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif (\Input::post()) {
-            $result = \Validation::form_validate($form);
+            $result = Validator::form_validate($form);
 
             if (isset($result['error'])) {
                 \Notices::set('warning', $result['error']);

@@ -4,8 +4,11 @@ namespace Foolz\Foolframe\Controller\Admin;
 
 use \Foolz\Foolframe\Model\Config;
 use Foolz\Foolframe\Controller\Admin;
+use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 class Preferences extends Admin
 {
@@ -47,7 +50,7 @@ class Preferences extends Admin
             'label' => 'Index title',
             'class' => 'span3',
             'preferences' => true,
-            'validate' => 'trim|max_length[32]',
+            'validate' => [new Trim(), new Assert\Length(['max' => 32])],
             'help' => _i('Sets the title displayed in the index page.')
         );
 
@@ -200,7 +203,7 @@ class Preferences extends Admin
             'label' => _i('Top banner'),
             'help' => _i('Insert the HTML code provided by your advertiser.'),
             'preferences' => true,
-            'validation' => 'trim',
+            'validation' => [new Trim()],
             'class' => 'span5'
         );
 
@@ -215,7 +218,7 @@ class Preferences extends Admin
             'label' => _i('Bottom banner'),
             'help' => _i('Insert the HTML code provided by your advertiser.'),
             'preferences' => true,
-            'validation' => 'trim',
+            'validation' => [new Trim()],
             'class' => 'span5'
         );
 
@@ -284,7 +287,7 @@ class Preferences extends Admin
             'label' => _i('reCaptcha&trade; Public Key'),
             'preferences' => true,
             'help' => _i('Insert the public key provided by reCAPTCHA&trade;.'),
-            'validation' => 'trim',
+            'validation' => [new Trim()],
             'class' => 'span4'
         );
 
@@ -293,7 +296,7 @@ class Preferences extends Admin
             'label' => _i('reCaptcha&trade; Prvate Key'),
             'preferences' => true,
             'help' => _i('Insert the private key provided by reCAPTCHA&trade;.'),
-            'validation' => 'trim',
+            'validation' => [new Trim()],
             'class' => 'span4'
         );
 
