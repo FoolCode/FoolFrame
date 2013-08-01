@@ -6,9 +6,11 @@ use \Foolz\Foolframe\Model\Config;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 use Foolz\Foolframe\Model\Notices;
 use \Foolz\Foolframe\Model\System as System;
-use Foolz\Foolframe\Model\Uri;
+use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
+use Foolz\Foolframe\Model\Validation\Validator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Install
 {
@@ -89,14 +91,17 @@ class Install
     public function action_database_setup()
     {
         if (\Input::post()) {
-            $val = \Validation::forge('database');
-            $val->add_field('hostname', _i('Hostname'), 'required|trim');
-            $val->add_field('prefix', _i('Prefix'), 'trim');
-            $val->add_field('username', _i('Username'), 'required|trim');
-            $val->add_field('database', _i('Database Name'), 'required|trim');
+            $validator = new Validator();
+            $validator
+                ->add('hostname', _i('Database Hostname'), [new Trim(), new Assert\NotBlank()])
+                ->add('prefix', _i('Table Prefix'), [new Trim()])
+                ->add('username', _i('Username'), [new Trim(), new Assert\NotBlank()])
+                ->add('database', _i('Database name'), [new Trim(), new Assert\NotBlank()]);
 
-            if ($val->run()) {
-                $input = $val->input();
+            $validator->validate(\Input::post());
+
+            if (!$validator->getViolations()->count()) {
+                $input = $validator->getFinalValues();
                 $input['password'] = \Input::post('password');
                 $input['type'] = \Input::post('type');
 
@@ -114,7 +119,7 @@ class Install
                     Notices::set('warning', _i('Connection to specified database failed. Please check your connection details again.'));
                 }
             } else {
-                Notices::set('warning', $val->error());
+                Notices::set('warning', $validator->getViolations()->getText());
             }
         }
 
@@ -135,14 +140,16 @@ class Install
         }
 
         if (\Input::post()) {
-            $val = \Validation::forge('database');
-            $val->add_field('username', _i('Username'), 'required|trim|min_length[4]|max_length[32]');
-            $val->add_field('email', _i('Email'), 'required|trim|valid_email');
-            $val->add_field('password', _i('Password'), 'required|min_length[4]|max_length[32]');
-            $val->add_field('confirm_password', _i('Confirm Password'), 'required|match_field[password]');
+            $validator = new Validator();
+            $validator
+                ->add('username', _i('Username'), [new Trim(), new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 32])])
+                ->add('email', _i('Email'), [new Trim(), new Assert\NotBlank(), new Assert\Email()])
+                ->add('password', _i('Password'), [new Trim(), new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])]);
 
-            if ($val->run()) {
-                $input = $val->input();
+            $validator->validate(\Input::post());
+
+            if (!$validator->getViolations()->count()) {
+                $input = $validator->getFinalValues();
 
                 list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
                 \Auth::activate_user($id, $activation_key);
@@ -152,7 +159,7 @@ class Install
 
                 \Response::redirect('install/modules');
             } else {
-                Notices::set('warning', $val->error());
+                Notices::set('warning', $validator->getViolations()->getText());
             }
         }
 

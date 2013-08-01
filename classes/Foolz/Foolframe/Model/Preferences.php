@@ -4,6 +4,7 @@ namespace Foolz\Foolframe\Model;
 
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 use \Foolz\Cache\Cache;
+use Foolz\Foolframe\Model\Validation\Validator;
 
 class Preferences
 {
@@ -154,7 +155,7 @@ class Preferences
                 $post[str_replace(',', '.', $key)] = $item;
             }
 
-            $result = \Validation::form_validate($form, $post);
+            $result = Validator::form_validate($form, $post);
             if (isset($result['error'])) {
                 \Notices::set('warning', $result['error']);
             } else {

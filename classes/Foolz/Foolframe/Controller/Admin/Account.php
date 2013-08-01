@@ -2,12 +2,17 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use Foolz\Foolframe\Model\Notices;
+use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
+use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
+use Foolz\Foolframe\Model\Validation\Validator;
 use Swift_SendmailTransport;
 use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Account extends \Foolz\Foolframe\Controller\Admin
 {
@@ -93,70 +98,74 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif (\Input::post()) {
 
-            $val = \Validation::forge('register');
-            $val->add_field('username', _i('Username'), 'required|trim|min_length[4]|max_length[32]');
-            $val->add_field('email', _i('Email'), 'required|trim|valid_email');
-            $val->add_field('password', _i('Password'), 'required|min_length[4]|max_length[32]');
-            $val->add_field('confirm_password', _i('Confirm password'), 'required|match_field[password]');
+            $input = \Input::post();
 
-            $recaptcha = ! \ReCaptcha::available() || \ReCaptcha::instance()->check_answer(\Input::ip(), \Input::post('recaptcha_challenge_field'), \Input::post('recaptcha_response_field'));
+            $recaptcha = ! \ReCaptcha::available()
+                || \ReCaptcha::instance()->check_answer(
+                    \Input::ip(), \Input::post('recaptcha_challenge_field'), \Input::post('recaptcha_response_field')
+                );
 
-            if($val->run() && $recaptcha) {
-                $input = $val->input();
+            if (!$recaptcha) {
+                \Notices::set('error', _i('The reCAPTCHA code entered does not match the one displayed.'));
+            } else {
+                $validator = new Validator();
+                $validator
+                    ->add('username', _i('Username'), [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 32])])
+                    ->add('email', _i('Email'), [new Assert\NotBlank(), new Assert\Email()])
+                    ->add('password', _i('Password'), [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])])
+                    ->add('confirm_password', _i('Password'), [new EqualsField(_i('Password'), \Input::post('password'))])
+                    ->validate($input);
 
-                try {
-                    list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
-                } catch (\Auth\FoolUserUpdateException $e) {
-                    \Notices::setFlash('error', $e->getMessage());
-                    \Response::redirect('admin/account/register');
-                }
-
-                // activate or send activation email
-                if (!$activation_key) {
-                    \Notices::setFlash('success', _i('Congratulations! You have successfully registered.'));
-                } else {
-                    $from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
-
-                    $title = \Preferences::get('foolframe.gen.website_title').' - '._i('Account Activation');
-
-                    $this->builder->createLayout('email');
-                    $this->builder->getProps()->setTitle([$title]);
-                    $this->builder->createPartial('body', 'account/email/activation')
-                        ->getParamManager()->setParams([
-                            'title' => $title,
-                            'site' => \Preferences::get('foolframe.gen.website_title'),
-                            'username' => $input['username'],
-                            'link' => \Uri::create('admin/account/activate/'.$id.'/'.$activation_key)
-                        ]);
-
-                    $message = Swift_Message::newInstance()
-                        ->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
-                        ->setTo($input['email'])
-                        ->setSubject($title)
-                        ->setBody($this->builder->build(), 'text/html');
-
-                    $mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
-                    $result = $mailer->send($message);
-
-                    if ($result != 1) {
-                        // the email driver was unable to send the email. the account will be activated automatically.
-                        \Auth::activate_user($id, $activation_key);
-                        \Notices::setFlash('success', _i('Congratulations! You have successfully registered.'));
-                        \Log::error('The system was unable to send an activation email to '.$username.'. The account was activated automatically.');
-                        \Response::redirect('admin/account/login');
+                if(!$validator->getViolations()->count() && $input['password'] === $input['confirm_password']) {
+                    try {
+                        list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
+                    } catch (\Auth\FoolUserUpdateException $e) {
+                        \Notices::setFlash('error', $e->getMessage());
+                        \Response::redirect('admin/account/register');
                     }
 
-                    \Notices::setFlash('success', _i('Congratulations! You have successfully registered. Please check your email to activate your account.'));
-                }
+                    // activate or send activation email
+                    if (!$activation_key) {
+                        \Notices::setFlash('success', _i('Congratulations! You have successfully registered.'));
+                    } else {
+                        $from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
-                \Response::redirect('admin/account/login');
-            } else {
-                $error = $val->error();
-                if (!$recaptcha) {
-                    $error[] = _i('The reCAPTCHA code entered does not match the one displayed.');
-                }
+                        $title = \Preferences::get('foolframe.gen.website_title').' - '._i('Account Activation');
 
-                \Notices::set('error', implode(' ', $error));
+                        $this->builder->createLayout('email');
+                        $this->builder->getProps()->setTitle([$title]);
+                        $this->builder->createPartial('body', 'account/email/activation')
+                            ->getParamManager()->setParams([
+                                'title' => $title,
+                                'site' => \Preferences::get('foolframe.gen.website_title'),
+                                'username' => $input['username'],
+                                'link' => \Uri::create('admin/account/activate/'.$id.'/'.$activation_key)
+                            ]);
+
+                        $message = Swift_Message::newInstance()
+                            ->setFrom([$from => \Preferences::get('foolframe.gen.website_title')])
+                            ->setTo($input['email'])
+                            ->setSubject($title)
+                            ->setBody($this->builder->build(), 'text/html');
+
+                        $mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
+                        $result = $mailer->send($message);
+
+                        if ($result != 1) {
+                            // the email driver was unable to send the email. the account will be activated automatically.
+                            \Auth::activate_user($id, $activation_key);
+                            \Notices::setFlash('success', _i('Congratulations! You have successfully registered.'));
+                            \Log::error('The system was unable to send an activation email to '.$input['username'].'. The account was activated automatically.');
+                            \Response::redirect('admin/account/login');
+                        }
+
+                        \Notices::setFlash('success', _i('Congratulations! You have successfully registered. Please check your email to activate your account.'));
+                    }
+
+                    \Response::redirect('admin/account/login');
+                } else {
+                    Notices::set('error', $validator->getViolations()->getHtml());
+                }
             }
         }
 
@@ -190,15 +199,17 @@ class Account extends \Foolz\Foolframe\Controller\Admin
         if (\Input::post() && !\Security::check_token()) {
             \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif (\Input::post()) {
-            $val = \Validation::forge('forgotten_password');
-            $val->add_field('email', _i('Email'), 'required|trim|valid_email');
+            $validator = new Validator();
+            $validator
+                ->add('email', _i('Email'), [new Trim(), new Assert\NotBlank(), new Assert\Email()])
+                ->validate(\Input::post());
 
-            if($val->run()) {
-                $input = $val->input();
+            if(!$validator->getViolations()->count()) {
+                $input = $validator->getFinalValues();
 
                 return static::send_change_password_email($input['email']);
             } else {
-                \Notices::set('error', implode(' ', $val->error()));
+                \Notices::set('error', $validator->getViolations()->getText());
             }
         }
 
@@ -215,12 +226,14 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                 if (\Input::post() && !\Security::check_token()) {
                     \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
                 } elseif (\Input::post()) {
-                    $val = \Validation::forge('forgotten_password');
-                    $val->add_field('password', _i('Password'), 'required|min_length[4]|max_length[32]');
-                    $val->add_field('confirm_password', _i('Confirm password'), 'required|match_field[password]');
+                    $validator = new Validator();
+                    $validator
+                        ->add('password', _i('Password'), [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])])
+                        ->add('confirm_password', _i('Confirm Password'), [new EqualsField(_i('Password'), \Input::post('password'))])
+                        ->validate(\Input::post());
 
-                    if($val->run()) {
-                        $input = $val->input();
+                    if(!$validator->getViolations()->count()) {
+                        $input = $validator->getFinalValues();
 
                         try {
                             \Auth::change_password($id, $password_key, $input['password']);
@@ -229,7 +242,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                             \Notices::set('warning', _i('It appears that you are trying to access an invalid link or your activation key has expired.'));
                         }
                     } else {
-                        \Notices::set('error', implode(' ', $val->error()));
+                        \Notices::set('error', $validator->getViolations()->getText());
                     }
                 } else {
                     $this->builder->createPartial('body', 'account/change_password');
@@ -280,12 +293,14 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             if (\Input::post() && !\Security::check_token()) {
                 \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             } elseif (\Input::post()) {
-                $val = \Validation::forge('change_password');
-                $val->add_field('password', _i('Password'), 'required');
-                $val->add_field('email', _i('Email'), 'required|trim|valid_email');
+                $validator = new Validator();
+                $validator
+                    ->add('password', _i('Password'), [new Assert\NotBlank()])
+                    ->add('email', _i('Email'), [new Trim(), new Assert\NotBlank(), new Assert\Email()])
+                    ->validate(\Input::post());
 
-                if($val->run()) {
-                    $input = $val->input();
+                if(!$validator->getViolations()->count()) {
+                    $input = $validator->getFinalValues();
 
                     try {
                         $change_email_key = \Auth::create_change_email_key($input['email'], $input['password']);
@@ -333,7 +348,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                     \Response::redirect('admin/account/login');
 
                 } else {
-                    \Notices::set('error', $val->error());
+                    \Notices::set('error', $validator->getViolations()->getText());
                 }
             }
 
@@ -370,11 +385,13 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             if (\Input::post() && !\Security::check_token()) {
                 \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             } elseif (\Input::post()) {
-                $val = \Validation::forge('change_password');
-                $val->add_field('password', _i('Password'), 'required');
+                $validator = new Validator();
+                $validator
+                    ->add('password', _i('Password'), [new Assert\NotBlank()])
+                    ->validate(\Input::post());
 
-                if ($val->run()) {
-                    $input = $val->input();
+                if (!$validator->getViolations()->count()) {
+                    $input = $validator->getFinalValues();
 
                     try {
                         $account_deletion_key = \Auth::create_account_deletion_key($input['password']);
@@ -417,7 +434,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                     \Response::redirect('admin/account/delete');
                 } else {
-                    \Notices::set('error', implode(' ', $val->error()));
+                    \Notices::set('error', $validator->getViolations()->getText());
                 }
 
             }
@@ -499,7 +516,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             'label' => _i('Display Name'),
             'class' => 'span3',
             'help' => _i('Alternative name in place of login username'),
-            'validation' => 'trim|max_length[32]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 32])]
         );
 
         $form['bio'] = array(
@@ -509,7 +526,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             'style' => 'height:150px;',
             'class' => 'span5',
             'help' => _i('Some details about you'),
-            'validation' => 'trim|max_length[360]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 360])]
         );
 
         $form['twitter'] = array(
@@ -518,7 +535,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             'label' => 'Twitter',
             'class' => 'span3',
             'help' => _i('Your twitter nickname'),
-            'validation' => 'trim|max_length[32]'
+            'validation' => [new Trim(), new Assert\Length(['max' => 32])]
         );
 
         $form['submit'] = array(
@@ -536,7 +553,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
         if (\Input::post() && !\Security::check_token()) {
             \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif (\Input::post()) {
-            $result = \Validation::form_validate($form);
+            $result = Validator::form_validate($form);
 
             if (isset($result['error'])) {
                 \Notices::set('warning', $result['error']);

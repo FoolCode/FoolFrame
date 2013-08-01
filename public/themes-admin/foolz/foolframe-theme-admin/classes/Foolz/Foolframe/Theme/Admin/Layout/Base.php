@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Layout;
 
-use Foolz\Foolframe\Model\Preferences;
+use Foolz\Foolframe\Model\Notices;
 
 class Base extends \Foolz\Theme\View
 {
@@ -95,17 +95,17 @@ class Base extends \Foolz\Theme\View
                     </ul>
 
                     <div class="alerts">
-                        <?php $notices = array_merge(\Notices::get(), \Notices::getFlash()); ?>
+                        <?php $notices = array_merge(Notices::get(), Notices::getFlash()); ?>
                         <?php foreach ($notices as $notice) : ?>
                             <div class="alert alert-<?= $notice['level'] ?>">
                                 <?php if (is_array($notice['message'])) : ?>
                                     <ul>
                                         <?php foreach ($notice['message'] as $message) : ?>
-                                            <li><?= htmlentities($message, ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?></li>
+                                            <li><?= nl2br(htmlentities($message, ENT_COMPAT | ENT_IGNORE, 'UTF-8')) ?></li>
                                         <?php endforeach; ?>
                                     </ul>
                                 <?php else : ?>
-                                    <?= htmlentities($notice['message'], ENT_COMPAT | ENT_IGNORE, 'UTF-8') ?>
+                                    <?= nl2br(htmlentities($notice['message'], ENT_COMPAT | ENT_IGNORE, 'UTF-8')) ?>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
