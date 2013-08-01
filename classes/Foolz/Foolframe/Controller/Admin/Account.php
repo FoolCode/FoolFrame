@@ -113,7 +113,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                     ->add('username', _i('Username'), [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 32])])
                     ->add('email', _i('Email'), [new Assert\NotBlank(), new Assert\Email()])
                     ->add('password', _i('Password'), [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])])
-                    ->add('confirm_password', _i('Password'), [new EqualsField(_i('Password'), \Input::post('password'))])
+                    ->add('confirm_password', _i('Confirm Password'), [new EqualsField(['field' => _i('Password'), 'value' => \Input::post('password')])])
                     ->validate($input);
 
                 if(!$validator->getViolations()->count() && $input['password'] === $input['confirm_password']) {
@@ -229,7 +229,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                     $validator = new Validator();
                     $validator
                         ->add('password', _i('Password'), [new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])])
-                        ->add('confirm_password', _i('Confirm Password'), [new EqualsField(_i('Password'), \Input::post('password'))])
+                        ->add('confirm_password', _i('Confirm Password'), [new EqualsField(['field' => _i('Password'), 'value' => \Input::post('password')])])
                         ->validate(\Input::post());
 
                     if(!$validator->getViolations()->count()) {

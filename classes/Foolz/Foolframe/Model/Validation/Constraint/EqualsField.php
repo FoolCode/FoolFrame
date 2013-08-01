@@ -3,17 +3,32 @@
 namespace Foolz\Foolframe\Model\Validation\Constraint;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
-class EqualsField extends Constraint {
+class EqualsField extends Constraint
+{
+    public $message;
+    public $field;
+    public $value;
 
-    public $message = '';
+    public function __construct($options = null)
+    {
+        if (!isset($options['field'])) {
+            throw new ConstraintDefinitionException(sprintf(
+                'The %s constraint requires the "field" option to be set.',
+                get_class($this)
+            ));
+        }
 
-    public $field = '';
+        if (!isset($options['value'])) {
+            throw new ConstraintDefinitionException(sprintf(
+                'The %s constraint requires the "value" option to be set.',
+                get_class($this)
+            ));
+        }
 
-    public function __construct($field_label, $field_value) {
-        $this->field_label = $field_label;
-        $this->field_value = $field_value;
-        $this->message = _i('The field should match the content of {{ field }}.');
+        $this->message = _('This field should match the contents of {{ field }}.');
+
+        parent::__construct($options);
     }
-
 }
