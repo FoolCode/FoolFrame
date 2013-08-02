@@ -40,7 +40,7 @@ class Preferences extends Admin
             'label' => 'Title',
             'class' => 'span3',
             'preferences' => true,
-            'validate' => 'trim|max_length[32]',
+            'validation' => [new Trim(), new Assert\Length(['max' => 32])],
             'help' => _i('Sets the title of your site.')
         );
 
@@ -50,7 +50,7 @@ class Preferences extends Admin
             'label' => 'Index title',
             'class' => 'span3',
             'preferences' => true,
-            'validate' => [new Trim(), new Assert\Length(['max' => 32])],
+            'validation' => [new Trim(), new Assert\Length(['max' => 32])],
             'help' => _i('Sets the title displayed in the index page.')
         );
 
