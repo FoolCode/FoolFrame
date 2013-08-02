@@ -27,7 +27,7 @@ class EqualsField extends Constraint
             ));
         }
 
-        $this->message = _('This field should match the contents of {{ field }}.');
+        $this->message = _i('This field should match the contents of {{ field }}.');
 
         parent::__construct($options);
     }
