@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Model;
 
-use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
 use \Foolz\Cache\Cache;
 use \Foolz\Plugin\Loader;
 

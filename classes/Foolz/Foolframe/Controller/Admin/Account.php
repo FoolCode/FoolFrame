@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
-use Foolz\Foolframe\Model\Notices;
+use Foolz\Foolframe\Model\Legacy\Notices;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
 use Foolz\Foolframe\Model\Validation\Validator;
@@ -553,7 +553,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
         if (\Input::post() && !\Security::check_token()) {
             \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif (\Input::post()) {
-            $result = Validator::form_validate($form);
+            $result = Validator::formValidate($form);
 
             if (isset($result['error'])) {
                 \Notices::set('warning', $result['error']);

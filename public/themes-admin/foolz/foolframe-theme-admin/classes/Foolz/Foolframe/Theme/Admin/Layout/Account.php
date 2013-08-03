@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Layout;
 
-use Foolz\Foolframe\Model\Preferences;
+use Foolz\Foolframe\Model\Legacy\Preferences;
 
 class Account extends \Foolz\Theme\View
 {

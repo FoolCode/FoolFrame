@@ -2,60 +2,106 @@
 
 namespace Foolz\Foolframe\Model;
 
-use \Foolz\Foolframe\Model\DoctrineConnection as DC;
-use \Foolz\Cache\Cache;
+use Foolz\Cache\Cache;
+use Foolz\Foolframe\Model\Legacy\DoctrineConnection;
 use Foolz\Foolframe\Model\Validation\Validator;
 
-class Preferences
+class Preferences extends Model
 {
-    protected static $_preferences = [];
+    /**
+     * @var Config
+     */
+    protected $config;
 
-    protected static $_modules = [];
+    /**
+     * @var \Foolz\Profiler\Profiler
+     */
+    protected $profiler;
 
-    protected static $loaded = false;
+    /**
+     * @var Legacy\DoctrineConnection
+     */
+    protected $dc;
 
-    public static function load($reload = false)
+    /**
+     * @var Notices
+     */
+    protected $notices;
+
+    /**
+     * @var array
+     */
+    protected $modules = [];
+
+    /**
+     * @var array
+     */
+    protected $preferences = [];
+
+    /**
+     * @var bool
+     */
+    protected $loaded = false;
+
+    /**
+     * @param Context $context
+     */
+    public function __construct(Context $context)
     {
-        \Profiler::mark('Preferences::load Start');
+        parent::__construct($context);
+
+        $this->config = $context->getService('config');
+        $this->profiler = $context->getService('profiler');
+        $this->dc = $context->getService('doctrine');
+    }
+
+    /**
+     * @param bool $reload
+     * @return array|mixed
+     */
+    public function load($reload = false)
+    {
+        $this->profiler->log('Preferences::load Start');
+
         if ($reload === true) {
             Cache::item('foolframe.model.preferences.settings')->delete();
         }
 
-        static::$_modules = Legacy\Config::get('foolz/foolframe', 'config', 'modules.installed');
+        $this->modules = $this->config->get('foolz/foolframe', 'config', 'modules.installed');
 
         try {
-            static::$_preferences = Cache::item('foolframe.model.preferences.settings')->get();
+            $this->preferences = Cache::item('foolframe.model.preferences.settings')->get();
         } catch (\OutOfBoundsException $e) {
-            $preferences = DC::qb()
+            $preferences = $this->dc->qb()
                 ->select('*')
-                ->from(DC::p('preferences'), 'p')
+                ->from($this->dc->p('preferences'), 'p')
                 ->execute()
                 ->fetchAll();
 
             foreach($preferences as $pref) {
                 // fix the PHP issue where . is changed to _ in the $_POST array
-                static::$_preferences[$pref['name']] = $pref['value'];
+                $this->preferences[$pref['name']] = $pref['value'];
             }
 
-            Cache::item('foolframe.model.preferences.settings')->set(static::$_preferences, 3600);
+            Cache::item('foolframe.model.preferences.settings')->set($this->preferences, 3600);
         }
 
-        \Profiler::mark_memory(static::$_preferences, 'Preferences static::$_preferences');
-        \Profiler::mark('Preferences::load End');
+        $this->profiler->logMem('Preferences $preferences', $this->preferences);
+        $this->profiler->log('Preferences::load End');
 
-        static::$loaded = true;
+        $this->loaded = true;
 
-        return static::$_preferences;
+        return $this->preferences;
     }
 
-    public static function get($setting, $fallback = null, $show_empty_string = false)
+    public function get($setting, $fallback = null, $show_empty_string = false)
     {
-        if (!static::$loaded) {
-            static::load();
+        if (!$this->loaded) {
+            $this->load();
         }
 
-        if (isset(static::$_preferences[$setting]) && ($show_empty_string || static::$_preferences[$setting] !== '')) {
-            return static::$_preferences[$setting];
+        if (isset($this->preferences[$setting]) && ($show_empty_string || $this->preferences[$setting] !== '')) {
+            return $this->preferences[$setting];
         }
 
         if ($fallback !== null) {
@@ -66,40 +112,40 @@ class Preferences
         $identifier = array_shift($segments);
         $query = implode('.', $segments);
 
-        return Legacy\Config::get(static::$_modules[$identifier], 'package', 'preferences.'.$query);
+        return $this->config->get($this->modules[$identifier], 'package', 'preferences.'.$query);
     }
 
-    public static function set($setting, $value, $reload = true)
+    public function set($setting, $value, $reload = true)
     {
         // if array, serialize value
         if (is_array($value)) {
             $value = serialize($value);
         }
 
-        $count = DC::qb()
+        $count = $this->dc->qb()
             ->select('COUNT(*) as count')
-            ->from(DC::p('preferences'), 'p')
+            ->from($this->dc->p('preferences'), 'p')
             ->where('p.name = :name')
             ->setParameter(':name', $setting)
             ->execute()
             ->fetch()['count'];
 
         if ($count > 0) {
-            DC::qb()
-                ->update(DC::p('preferences'))
+            $this->dc->qb()
+                ->update($this->dc->p('preferences'))
                 ->set('value', ':value')
                 ->where('name = :name')
                 ->setParameters([':value' => $value, ':name' => $setting])
                 ->execute();
         } else {
-            DC::forge()->insert(DC::p('preferences'), ['name' => $setting, 'value' => $value]);
+            $this->dc->forge()->insert($this->dc->p('preferences'), ['name' => $setting, 'value' => $value]);
         }
 
         if ($reload) {
-            return static::load(true);
+            return $this->load(true);
         }
 
-        return static::$_preferences;
+        return $this->preferences;
     }
 
     /**
@@ -107,7 +153,7 @@ class Preferences
      *
      * @param array $data name => value
      */
-    public static function submit($data)
+    public function submit($data)
     {
         foreach ($data as $name => $value) {
             // in case it's an array of values from name="thename[]"
@@ -123,11 +169,11 @@ class Preferences
                 }));
             }
 
-            static::set($name, $value, false);
+            $this->set($name, $value, false);
         }
 
         // reload those preferences
-        static::load(true);
+        $this->load(true);
     }
 
     /**
@@ -139,32 +185,34 @@ class Preferences
      * admin interface on conclusion.
      *
      * @param array $form
+     * @param bool|array $input If it evaluates to false, content won't be submitted
      */
-    public static function submit_auto($form)
+    public function submit_auto($form, $input = false)
     {
-        if (\Input::post()) {
+        if ($input) {
+            $this->notices = $this->getContext()->getService('notices');
             if (!\Security::check_token()) {
-                \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
-                return false;
+                $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
+                return;
             }
 
             $post = [];
 
-            foreach (\Input::post() as $key => $item) {
+            foreach ($input as $key => $item) {
                 // PHP doesn't allow periods in POST array
                 $post[str_replace(',', '.', $key)] = $item;
             }
 
-            $result = Validator::form_validate($form, $post);
+            $result = Validator::formValidate($form, $post);
             if (isset($result['error'])) {
-                \Notices::set('warning', $result['error']);
+                $this->notices->set('warning', $result['error']);
             } else {
                 if (isset($result['warning'])) {
-                    \Notices::set('warning', $result['warning']);
+                    $this->notices->set('warning', $result['warning']);
                 }
 
-                \Notices::set('success', _i('Preferences updated.'));
-                static::submit($result['success']);
+                $this->notices->set('success', _i('Preferences updated.'));
+                $this->submit($result['success']);
             }
         }
     }

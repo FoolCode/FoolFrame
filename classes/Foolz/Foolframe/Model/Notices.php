@@ -3,66 +3,57 @@
 namespace Foolz\Foolframe\Model;
 
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class Notices
+class Notices extends Model
 {
     /**
-     * @var Session
+     * @var array
      */
-    protected static $session;
+    public $notices = [];
 
     /**
-     * Notices for the next page load
-     *
-     * @var  array
+     * @var array
      */
-    protected static $flash_notices = [];
+    public $flash_notices = [];
 
     /**
-     * Notices for the current page load
-     *
-     * @var  array
+     * @var \Symfony\Component\HttpFoundation\Session\Session
      */
-    protected static $notices = [];
+    protected $session;
 
     /**
-     * Sets the session
+     * @param Context $context
+     * @param Session $session
      */
-    public static function init(SessionInterface $session)
+    public function __construct(Context $context, Session $session)
     {
-        static::$session = $session;
+        parent::__construct($context);
+
+        $this->session = $session;
+    }
+
+    public function get()
+    {
+        return $this->notices;
     }
 
     /**
-     * Returns the notices that have been set during this load
-     *
-     * @return  array  The notices, can be empty
+     * @param string $level
+     * @param string $message
      */
-    public static function get()
+    public function set($level, $message)
     {
-        return static::$notices;
-    }
-
-    /**
-     * Set notices to be displayed during this load
-     *
-     * @param  string  $level    The level of the message: success, warning, danger
-     * @param  string  $message  The message
-     */
-    public static function set($level, $message, $escape = false)
-    {
-        static::$notices[] = ['level' => $level, 'message' => $message];
+        $this->notices[] = ['level' => $level, 'message' => $message];
     }
 
     /**
      * Get the flash notices
      *
-     * @return  array  The flash notices, can be empty
+     * @return array The flash notices, can be empty
      */
-    public static function getFlash()
+    public function getFlash()
     {
-        return $array = static::$session->getFlashBag()->get('notice', []);
+        return $this->session->getFlashBag()->get('notice', []);
     }
 
     /**
@@ -71,9 +62,9 @@ class Notices
      * @param  string  $level    The level of the message: success, warning, danger
      * @param  string  $message  The message
      */
-    public static function setFlash($level, $message)
+    public function setFlash($level, $message)
     {
-        static::$flash_notices[] = ['level' => $level, 'message' => $message];
-        static::$session->getFlashBag()->set('notice', static::$flash_notices);
+        $this->flash_notices[] = ['level' => $level, 'message' => $message];
+        $this->session->getFlashBag()->set('notice', $this->flash_notices);
     }
 }

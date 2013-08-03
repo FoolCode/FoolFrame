@@ -3,8 +3,8 @@
 namespace Foolz\Foolframe\Controller;
 
 use Foolz\Foolframe\Model\Legacy\Config;
-use \Foolz\Foolframe\Model\DoctrineConnection as DC;
-use Foolz\Foolframe\Model\Notices;
+use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
+use Foolz\Foolframe\Model\Legacy\Notices;
 use \Foolz\Foolframe\Model\System as System;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Foolz\Foolframe\Model\Validation\Validator;

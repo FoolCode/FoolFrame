@@ -3,7 +3,7 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Foolframe\Model\Legacy\Config;
-use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
 
 class UsersWrongIdException extends \Exception {}
 

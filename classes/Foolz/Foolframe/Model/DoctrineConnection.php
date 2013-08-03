@@ -2,52 +2,39 @@
 
 namespace Foolz\Foolframe\Model;
 
-/**
- * Doctrine Connection Manager for FoolFrame
- */
-class DoctrineConnection
+use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\DriverManager;
+
+class DoctrineConnection extends Model
 {
     /**
-     * The connections to the database
-     *
-     * @var  array
+     * @var string
      */
-    protected static $instances = [];
+    public $prefix = '';
 
     /**
-     * The prefixes by instance
-     *
-     * @var  array
+     * @var \Doctrine\DBAL\Connection
      */
-    protected static $prefixes = [];
+    public $connection;
 
     /**
-     * Creates a new \Doctrine\DBAL\Connection or returns the existing instance
+     * Creates a new connection to the database
      *
-     * @param  string $instance  The name of the instance
-     * @param  string $from_config The config file from where to pick up connection data
-     * @param  array $override  Allows overriding connection data
-     *
-     * @throws \DomainException If the database configuration doesn't exist
-     * @return  \Doctrine\DBAL\Connection
+     * @param Context $context
+     * @param array|Config $db_data
      */
-    public static function forge($instance = 'default', $from_config = 'default', $override = [])
+    public function __construct(Context $context, $db_data = [])
     {
-        if (isset(static::$instances[$instance])) {
-            return static::$instances[$instance];
+        parent::__construct($context);
+
+        // load the defaults if the config object has been passed
+        if ($db_data instanceof Config) {
+            $db_data = $db_data->get('foolz/foolframe', 'db', 'default');
         }
 
-        $config = new \Doctrine\DBAL\Configuration();
+        $config = new Configuration();
 
         $config->setSQLLogger(new DoctrineLogger());
-
-        $db_data = Legacy\Config::get('foolz/foolframe', 'db', $from_config);
-
-        $db_data += $override;
-
-        if ($db_data === false) {
-            throw new \DomainException('The specified database configuration is not available.');
-        }
 
         $data = [
             'dbname' => $db_data['dbname'],
@@ -61,46 +48,39 @@ class DoctrineConnection
             $data['charset'] = $db_data['charset'];
         }
 
-        static::$prefixes[$instance] = $db_data['prefix'];
+        $this->prefix = $db_data['prefix'];
 
-        return static::$instances[$instance] = \Doctrine\DBAL\DriverManager::getConnection($data, $config);
+        $this->connection = DriverManager::getConnection($data, $config);
     }
 
     /**
-     * Returns a Query Builder
+     * Returns a query builder
      *
-     * @param  string  $instance  The named instance
-     *
-     * @return  \Doctrine\DBAL\Query\QueryBuilder
-     * @throws  \DomainException  If the database configuration doesn't exist
+     * @return \Doctrine\DBAL\Query\QueryBuilder
      */
-    public static function qb($instance = 'default')
+    public function qb()
     {
-        return static::forge($instance)->createQueryBuilder();
+        return $this->connection->createQueryBuilder();
     }
 
     /**
      * Returns the prefix
      *
-     * @param  string  $instance  The named instance
-     *
-     * @return string  The prefix for the instance
+     * @return string
      */
-    public static function getPrefix($instance = 'default')
+    public function getPrefix()
     {
-        return static::$prefixes[$instance];
+        return $this->prefix;
     }
 
     /**
-     * Returns the table name with the prefix
+     * Adds a prefix to the table name
      *
-     * @param   string  $table The table name
-     * @param   string  $instance  The named instance
-     *
-     * @return  string the table name with the prefix
+     * @param $table
+     * @return string
      */
-    public static function p($table, $instance = 'default')
+    public function p($table = '')
     {
-        return static::$prefixes[$instance].$table;
+        return $this->prefix.$table;
     }
 }

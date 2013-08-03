@@ -2,6 +2,7 @@
 
 namespace Foolz\Foolframe\Model;
 
+use Foolz\Cache\Cache;
 use Foolz\Foolframe\Model\Legacy\Config;
 use Foolz\Foolframe\Model\Legacy\Uri;
 use Foolz\Plugin\Hook;
@@ -15,6 +16,7 @@ use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Debug\ErrorHandler;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
@@ -33,54 +35,64 @@ class Context implements ContextInterface
     /**
      * @var HttpKernel
      */
-    public $http_kernel;
+    protected $http_kernel;
 
     /**
      * @var ContainerBuilder
      */
-    public $container;
+    protected $container;
 
     /**
      * @var ContextInterface[]
      */
-    public $child_contextes = [];
+    protected $child_contextes = [];
 
     /**
      * RouteCollection that stores all of the Framework's Routes set before controllers
      *
      * @var \Symfony\Component\Routing\RouteCollection
      */
-    public $route_collection;
+    protected $route_collection;
 
     /**
      * @var \Monolog\Logger
      */
-    public $logger;
+    protected $logger;
 
     /**
      * @var \Monolog\Logger
      */
-    public $logger_trace;
+    protected $logger_trace;
 
     /**
      * @var Session
      */
-    public $session;
+    protected $session;
 
     /**
      * @var ErrorHandler
      */
-    public $error_handler;
+    protected $error_handler;
 
     /**
      * @var ExceptionHandler
      */
-    public $exception_handler;
+    protected $exception_handler;
 
     /**
      * @var Profiler
      */
-    public $profiler;
+    protected $profiler;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
+     * @var Preferences
+     */
+    protected $preferences;
 
     /**
      * Called directly from index.php
@@ -89,26 +101,27 @@ class Context implements ContextInterface
     public function __construct()
     {
         $this->container = new ContainerBuilder();
-        $this->route_collection = new RouteCollection();
+
+        $this->container->register('profiler', 'Foolz\Profiler\Profiler')
+            ->addMethodCall('enable', []);
+
+        $this->profiler = $this->container->get('profiler');
 
         class_alias('Foolz\Foolframe\Model\Legacy\Uri', 'Uri');
-        class_alias('Foolz\Foolframe\Model\DoctrineConnection', 'DoctrineConnection');
-        class_alias('Foolz\Foolframe\Model\Notices', 'Notices');
+        class_alias('Foolz\Foolframe\Model\Legacy\DoctrineConnection', 'DoctrineConnection');
+        class_alias('Foolz\Foolframe\Model\Legacy\Notices', 'Notices');
         class_alias('Foolz\Foolframe\Model\Plugins', 'Plugins');
-        class_alias('Foolz\Foolframe\Model\Preferences', 'Preferences');
+        class_alias('Foolz\Foolframe\Model\Legacy\Preferences', 'Preferences');
         class_alias('Foolz\Foolframe\Model\SchemaManager', 'SchemaManager');
         class_alias('Foolz\Foolframe\Model\System', 'System');
         class_alias('Foolz\Foolframe\Model\User', 'User');
         class_alias('Foolz\Foolframe\Model\Users', 'Users');
         class_alias('Foolz\Foolframe\Model\Profiler', 'Profiler');
 
-        $this->container->register('profiler', '\Foolz\Profiler\Profiler')
-            ->addMethodCall('enable', []);
-
-        $this->profiler = $this->container->get('profiler');
-
         // fallback for profiler
         \Profiler::forge($this->container->get('profiler'));
+
+        $this->route_collection = new RouteCollection();
 
         $this->logger = new Logger('foolframe');
         $this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, Logger::WARNING));
@@ -132,15 +145,28 @@ class Context implements ContextInterface
             ini_set('display_errors', 1);
         }
 
+        $this->container->register('config', 'Foolz\Foolframe\Model\Config')
+            ->addArgument($this);
+
+        $this->container->register('doctrine', 'Foolz\Foolframe\Model\DoctrineConnection')
+            ->addArgument($this)
+            ->addArgument(new Reference('config'));
+
+        $this->container->register('preferences', 'Foolz\Foolframe\Model\Preferences')
+            ->addArgument($this);
+
+        $this->config = $this->getService('config');
+        $this->preferences = $this->getService('preferences');
+
         // start up the caching system
-        $caching_config = Config::get('foolz/foolframe', 'cache', '');
+        $caching_config = $this->config->get('foolz/foolframe', 'cache', '');
         switch ($caching_config['type']) {
             case 'apc':
                 $apc_config = \Foolz\Cache\Config::forgeApc();
                 $apc_config->setFormat($caching_config['format']);
                 $apc_config->setPrefix($caching_config['prefix']);
                 $apc_config->setThrow(true);
-                \Foolz\Cache\Cache::instantiate($apc_config);
+                Cache::instantiate($apc_config);
                 break;
 
             case 'memcached':
@@ -149,7 +175,7 @@ class Context implements ContextInterface
                 $mem_config->setPrefix($caching_config['prefix']);
                 $mem_config->setServers($caching_config['servers']);
                 $mem_config->setThrow(true);
-                \Foolz\Cache\Cache::instantiate($mem_config);
+                Cache::instantiate($mem_config);
                 break;
 
             case 'dummy':
@@ -157,12 +183,12 @@ class Context implements ContextInterface
                 $dummy_config->setFormat($caching_config['format']);
                 $dummy_config->setPrefix($caching_config['prefix']);
                 $dummy_config->setThrow(true);
-                \Foolz\Cache\Cache::instantiate($dummy_config);
+                Cache::instantiate($dummy_config);
                 break;
         }
 
         // run the Framework class for each module
-        foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
+        foreach($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
             if ($module !== 'foolz/foolframe') {
                 $class_arr = explode('/', $module);
                 $class = '\\';
@@ -176,23 +202,17 @@ class Context implements ContextInterface
         }
 
         if (count($this->child_contextes)) {
-            $available_langs = Config::get('foolz/foolframe', 'package', 'preferences.lang.available');
-            $lang = \Cookie::get('language');
-
-            if(!$lang || !array_key_exists($lang, $available_langs)) {
-               $lang = \Preferences::get('foolframe.lang.default');
-            }
-
-            $locale = $lang.'.utf8';
-            putenv('LANG='.$locale);
-            putenv('LANGUAGE='.$locale);
-            setlocale(LC_ALL, $locale);
-            bindtextdomain($lang, DOCROOT."assets/locale");
-            bind_textdomain_codeset($lang, 'UTF-8');
-            textdomain($lang);
-
             Plugins::instantiate($this);
         }
+    }
+
+    /**
+     * @param $service
+     * @return object
+     */
+    public function getService($service)
+    {
+        return $this->container->get($service);
     }
 
     public function handleWeb(Request $request = null)
@@ -204,6 +224,7 @@ class Context implements ContextInterface
 
         $this->container
             ->register('uri', '\Foolz\Foolframe\Model\Uri')
+            ->addArgument($this)
             ->addArgument($request);
 
         // legacy
@@ -215,6 +236,21 @@ class Context implements ContextInterface
             // no app installed, we need to go to the install
             $this->loadInstallRoutes($this->route_collection);
         } else {
+            $available_langs = $this->config->get('foolz/foolframe', 'package', 'preferences.lang.available');
+            $lang = $request->cookies->get('language');
+
+            if(!$lang || !array_key_exists($lang, $available_langs)) {
+                $lang = $this->preferences->get('foolframe.lang.default');
+            }
+
+            $locale = $lang.'.utf8';
+            putenv('LANG='.$locale);
+            putenv('LANGUAGE='.$locale);
+            setlocale(LC_ALL, $locale);
+            bindtextdomain($lang, DOCROOT."assets/locale");
+            bind_textdomain_codeset($lang, 'UTF-8');
+            textdomain($lang);
+
             // load the routes from the child contextes first
 
             Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.route_collection')
@@ -233,6 +269,10 @@ class Context implements ContextInterface
         if (!$request->hasPreviousSession()) {
             $request->setSession(new Session());
         }
+
+        $this->container->register('notices', 'Foolz\Foolframe\Model\Notices')
+            ->addArgument($this)
+            ->addArgument($request->getSession());
 
         \Notices::init($request->getSession());
 

@@ -126,7 +126,7 @@ class Validator
      * @param $alternate array name/value pairs to use instead of the POST array
      * @return array
      */
-    public static function form_validate($form, $alternate = null)
+    public static function formValidate($form, $alternate = null)
     {
         // this gets a bit complex because we want to show all errors at the same
         // time, which means we have to run both core validation and custom, then

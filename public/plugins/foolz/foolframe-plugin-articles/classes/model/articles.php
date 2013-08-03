@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Plugins\Articles\Model;
 
-use \Foolz\Foolframe\Model\DoctrineConnection as DC;
+use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
 use \Foolz\Cache\Cache;
 
 class ArticlesArticleNotFoundException extends \Exception {};

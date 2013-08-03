@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Layout;
 
-use Foolz\Foolframe\Model\Notices;
+use Foolz\Foolframe\Model\Legacy\Notices;
 
 class Base extends \Foolz\Theme\View
 {

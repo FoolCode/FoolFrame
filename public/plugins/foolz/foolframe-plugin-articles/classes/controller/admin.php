@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
-use \Foolz\Foolframe\Model\DoctrineConnection as DC,
+use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC,
     \Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
     \Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
 use Symfony\Component\HttpFoundation\Request;

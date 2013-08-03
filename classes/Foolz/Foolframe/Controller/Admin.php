@@ -3,7 +3,7 @@
 namespace Foolz\Foolframe\Controller;
 
 use Foolz\Foolframe\Model\Plugins;
-use Foolz\Foolframe\Model\Preferences;
+use Foolz\Foolframe\Model\Legacy\Preferences;
 use Foolz\Theme\Loader;
 use Symfony\Component\HttpFoundation\Request;
 
