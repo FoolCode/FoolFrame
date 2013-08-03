@@ -12,13 +12,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class Articles extends \Foolz\Foolframe\Controller\Admin
 {
 
-    public function before(Request $request)
+    public function before()
     {
         if (!\Auth::has_access('maccess.mod')) {
             \Response::redirect('admin');
         }
 
-        parent::before($request);
+        parent::before();
     }
 
     public function structure()
