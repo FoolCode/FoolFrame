@@ -66,16 +66,16 @@ class Preferences extends Admin
             'type' => 'separator'
         );
 
-        foreach (Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
+        foreach ($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
             if ($module === 'foolz/foolframe') {
                 continue;
             }
 
             $theme_loader = new \Foolz\Theme\Loader();
-            $theme_loader->addDir(VENDPATH.$module.'/'.Config::get($module, 'package', 'directories.themes'));
+            $theme_loader->addDir(VENDPATH.$module.'/'.$this->config->get($module, 'package', 'directories.themes'));
             $themes = $theme_loader->getAll();
 
-            $module_name = Config::get($module, 'package', 'main.name');
+            $module_name = $this->config->get($module, 'package', 'main.name');
 
             $theme_checkboxes = [];
 
@@ -180,7 +180,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        \Preferences::submit_auto($form);
+        $this->preferences->submit_auto($form);
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')
@@ -244,7 +244,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        \Preferences::submit_auto($form);
+        $this->preferences->submit_auto($form);
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')
@@ -316,7 +316,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        \Preferences::submit_auto($form);
+        $this->preferences->submit_auto($form);
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')

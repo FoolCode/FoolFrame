@@ -159,6 +159,9 @@ class Context implements ContextInterface
         $this->container->register('preferences', 'Foolz\Foolframe\Model\Preferences')
             ->addArgument($this);
 
+        $this->container->register('users', 'Foolz\Foolframe\Model\Users')
+            ->addArgument($this);
+
         $this->config = $this->getService('config');
         $this->preferences = $this->getService('preferences');
 
@@ -234,12 +237,11 @@ class Context implements ContextInterface
         // legacy
         Uri::setRequest($request);
 
-        Plugins::handleWeb();
-
         if (!count($this->child_contextes)) {
             // no app installed, we need to go to the install
             $this->loadInstallRoutes($this->route_collection);
         } else {
+            Plugins::handleWeb();
             $available_langs = $this->config->get('foolz/foolframe', 'package', 'preferences.lang.available');
             $lang = $request->cookies->get('language');
 

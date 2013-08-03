@@ -2,7 +2,6 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
-use Foolz\Foolframe\Model\Legacy\Config;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Foolz\Foolframe\Model\Validation\Validator;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +31,9 @@ class Users extends \Foolz\Foolframe\Controller\Admin
         }
 
         $data = [];
-        $users_data = \Users::getAll($page, 40);
+        /** @var \Foolz\Foolframe\Model\Users $users */
+        $users = $this->getContext()->getService('users');
+        $users_data = $users->getAll($page, 40);
         $data['users'] = $users_data['result'];
         $data['count'] = $users_data['count'];
 
@@ -50,7 +51,9 @@ class Users extends \Foolz\Foolframe\Controller\Admin
         }
 
         try {
-            $data['object'] = \Foolz\Foolframe\Model\Users::getUserBy('id', $id);
+            /** @var \Foolz\Foolframe\Model\Users $users */
+            $users = $this->getContext()->getService('users');
+            $data['object'] = $users->getUserBy('id', $id);
             $data['object']->password = '';
         } catch (\Foolz\Foolframe\Model\UsersWrongIdException $e) {
             throw new NotFoundHttpException;
@@ -131,7 +134,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
         );
 
         if (\Auth::has_access('users.change_group')) {
-            $groups = Config::get('foolz/foolframe', 'foolauth', 'groups');
+            $groups = $this->config->get('foolz/foolframe', 'foolauth', 'groups');
             $group_ids = [];
 
             foreach ($groups as $level => $group) {
@@ -159,21 +162,21 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
         $data['form'] = $form;
 
-        if (\Input::post() && !\Security::check_token()) {
-            \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
-        } elseif (\Input::post()) {
+        if ($this->getPost() && !\Security::check_token()) {
+            $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
+        } elseif ($this->getPost()) {
             $result = Validator::formValidate($form);
 
             if (isset($result['error'])) {
-                \Notices::set('warning', $result['error']);
+                $this->notices->set('warning', $result['error']);
             } else {
                 if (isset($result['warning'])) {
-                    \Notices::set('warning', $result['warning']);
+                    $this->notices->set('warning', $result['warning']);
                 }
 
                 \Notices::set('success', _i('Preferences updated.'));
 
-                $user = \Foolz\Foolframe\Model\Users::getUserBy('id', $id);
+                $user = $users->getUserBy('id', $id);
 
                 $user->save($result['success']);
                 $data['object'] = $user;

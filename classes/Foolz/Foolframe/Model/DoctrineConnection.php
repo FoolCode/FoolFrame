@@ -55,6 +55,23 @@ class DoctrineConnection extends Model
     }
 
     /**
+     * Get rid of the connection on serialization
+     *
+     * @return array
+     */
+    public function __sleep() {
+        return [];
+    }
+
+    /**
+     * @return \Doctrine\DBAL\Connection
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
      * Returns a query builder
      *
      * @return \Doctrine\DBAL\Query\QueryBuilder

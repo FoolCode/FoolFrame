@@ -2,9 +2,7 @@
 
 namespace Foolz\Foolframe\Model;
 
-use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
-
-class User
+class User extends Model
 {
     /**
      * @var DoctrineConnection
@@ -51,6 +49,8 @@ class User
 
     public function __construct(Context $context, $data)
     {
+        parent::__construct($context);
+
         $this->dc = $context->getService('doctrine');
         $this->config = $context->getService('config');
 

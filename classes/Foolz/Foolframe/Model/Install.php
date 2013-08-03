@@ -2,12 +2,22 @@
 
 namespace Foolz\Foolframe\Model;
 
-use Foolz\Foolframe\Model\Legacy\Config;
-use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
-use \Foolz\Foolframe\Model\System as System;
+use Foolz\Foolframe\Model\Config;
 
-class Install
+class Install extends Model
 {
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    public function __construct(Context $context)
+    {
+        parent::__construct($context);
+
+        $this->config = $context->getService('config');
+    }
+
     public static function check_database($array)
     {
         switch ($array['type']) {
@@ -38,9 +48,9 @@ class Install
         }
     }
 
-    public static function setup_database($array)
+    public function setup_database($array)
     {
-        Config::set('foolz/foolframe', 'db', 'default', array(
+        $this->config->set('foolz/foolframe', 'db', 'default', array(
             'driver' => $array['type'],
             'host' => $array['hostname'],
             'port' => '3306',
@@ -51,29 +61,24 @@ class Install
             'charset' => 'utf8mb4',
         ));
 
-        Config::save('foolz/foolframe', 'db');
+        $this->config->save('foolz/foolframe', 'db');
     }
 
-    public static function create_salts()
+    public function create_salts()
     {
-        // config without slash is the custom foolz one, otherwise it's the fuelphp one
-        Config::set('foolz/foolframe', 'config', 'config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
-        Legacy\Config::save('foolz/foolframe', 'config');
+        // config without slash is the custom foolz one
+        $this->config->set('foolz/foolframe', 'config', 'config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
+        $this->config->save('foolz/foolframe', 'config');
 
-        // once we change hashes, the users table is useless
-        DC::qb()
-            ->delete(DC::p('users'))
-            ->execute();
+        $this->config->set('foolz/foolframe', 'foolauth', 'salt', \Str::random('alnum', 24));
+        $this->config->set('foolz/foolframe', 'foolauth', 'login_hash_salt', \Str::random('alnum', 24));
+        $this->config->save('foolz/foolframe', 'foolauth');
 
-        Legacy\Config::set('foolz/foolframe', 'foolauth', 'salt', \Str::random('alnum', 24));
-        Config::set('foolz/foolframe', 'foolauth', 'login_hash_salt', \Str::random('alnum', 24));
-        Legacy\Config::save('foolz/foolframe', 'foolauth');
-
-        Config::set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
-        Config::save('foolz/foolframe', 'cache');
+        $this->config->set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
+        $this->config->save('foolz/foolframe', 'cache');
     }
 
-    public static function modules()
+    public function modules()
     {
         $modules = array(
             'foolfuuka' => array(

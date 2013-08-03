@@ -12,7 +12,7 @@ class Users extends Model
     protected $dc;
 
     /**
-     * @var Confg
+     * @var Config
      */
     protected $config;
 
@@ -21,6 +21,8 @@ class Users extends Model
      */
     public function __construct(Context $context)
     {
+        parent::__construct($context);
+
         $this->dc = $context->getService('doctrine');
         $this->config = $context->getService('config');
     }

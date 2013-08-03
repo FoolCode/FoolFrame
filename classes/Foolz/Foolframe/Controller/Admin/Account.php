@@ -319,7 +319,9 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                         return $this->redirect('admin/account/change_email_request');
                     }
 
-                    $user = \Users::getUser();
+                    /** @var \Foolz\Foolframe\Model\Users $users */
+                    $users = $this->getContext()->getService('users');
+                    $user = $users->getUser();
 
                     $from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
@@ -406,7 +408,9 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                         return $this->redirect('admin/account/delete');
                     }
 
-                    $user = \Users::getUser();
+                    /** @var \Foolz\Foolframe\Model\Users $users */
+                    $users = $this->getContext()->getService('users');
+                    $user = $users->getUser();
 
                     $from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
@@ -459,7 +463,9 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             return $this->redirect('admin/account/forgotten_password');
         }
 
-        $user = \Users::getUserBy('email', $email);
+        /** @var \Foolz\Foolframe\Model\Users $users */
+        $users = $this->getContext()->getService('users');
+        $user = $users->getUserBy('email', $email);
 
         $from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
@@ -493,7 +499,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
         }
 
         \Auth::logout();
-        return $this->redirect('admin/account/login');
+        return $this->redirectToLogin();
     }
 
     public function action_profile()

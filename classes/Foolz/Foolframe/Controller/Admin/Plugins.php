@@ -36,20 +36,20 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
     function action_action()
     {
-        if (\Input::post() && !\Security::check_token()) {
-            \Notices::setFlash('warning', _i('The security token wasn\'t found. Try resubmitting.'));
-            \Response::redirect('admin/plugins/manage');
+        if ($this->getPost() && !\Security::check_token()) {
+            $this->notices->setFlash('warning', _i('The security token wasn\'t found. Try resubmitting.'));
+            return $this->redirect('admin/plugins/manage');
         }
 
-        if (!$slug = \Input::post('name')) {
+        if (!$slug = $this->getPost('name')) {
             throw new NotFoundHttpException;
         }
 
-        if (!\Input::post('action') || !in_array(\Input::post('action'), array('enable', 'disable', 'remove'))) {
+        if (!$this->getPost('action') || !in_array($this->getPost('action'), array('enable', 'disable', 'remove'))) {
             throw new NotFoundHttpException;
         }
 
-        $action = \Input::post('action');
+        $action = $this->getPost('action');
 
         $plugin = PluginsModel::getPlugin($slug);
 
@@ -62,11 +62,11 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
                 try {
                     PluginsModel::enable($slug);
                 } catch (PluginException $e) {
-                    \Notices::setFlash('error', _i('The plugin %s couldn\'t be enabled.', $plugin->getJsonConfig('extra.name')));
+                    $this->notices->setFlash('error', _i('The plugin %s couldn\'t be enabled.', $plugin->getJsonConfig('extra.name')));
                     break;
                 }
 
-                \Notices::setFlash('success', _i('The %s plugin is now enabled.', $plugin->getJsonConfig('extra.name')));
+                $this->notices->setFlash('success', _i('The %s plugin is now enabled.', $plugin->getJsonConfig('extra.name')));
 
                 break;
 
@@ -74,11 +74,11 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
                 try {
                     PluginsModel::disable($slug);
                 } catch (PluginException $e) {
-                    \Notices::setFlash('error', _i('The %s plugin couldn\'t be enabled.', $plugin->getJsonConfig('extra.name')));
+                    $this->notices->setFlash('error', _i('The %s plugin couldn\'t be enabled.', $plugin->getJsonConfig('extra.name')));
                     break;
                 }
 
-                \Notices::setFlash('success', _i('The %s plugin is now disabled.', $plugin->getJsonConfig('extra.name')));
+                $this->notices->setFlash('success', _i('The %s plugin is now disabled.', $plugin->getJsonConfig('extra.name')));
                 break;
 
             case 'upgrade':
@@ -88,13 +88,13 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
                 try {
                     PluginsModel::remove($slug);
                 } catch (PluginException $e) {
-                    \Notices::setFlash('error', _i('The :slug plugin couldn\'t be removed.', $plugin->getJsonConfig('extra.name')));
+                    $this->notices->setFlash('error', _i('The :slug plugin couldn\'t be removed.', $plugin->getJsonConfig('extra.name')));
                     break;
                 }
-                \Notices::setFlash('success', _i('The :slug plugin was removed.', $plugin->getJsonConfig('extra.name')));
+                $this->notices->setFlash('success', _i('The :slug plugin was removed.', $plugin->getJsonConfig('extra.name')));
                 break;
         }
 
-        \Response::redirect('admin/plugins/manage');
+        return $this->redirect('admin/plugins/manage');
     }
 }
