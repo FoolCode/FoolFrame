@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\Foolframe\Model\Legacy;
 
 use Symfony\Component\HttpFoundation\Request;
 

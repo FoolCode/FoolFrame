@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
-use \Foolz\Foolframe\Model\Config;
+use Foolz\Foolframe\Model\Legacy\Config;
 use Foolz\Foolframe\Controller\Admin;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Symfony\Component\HttpFoundation\Request;

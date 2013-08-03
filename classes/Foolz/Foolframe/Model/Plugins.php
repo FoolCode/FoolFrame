@@ -33,13 +33,11 @@ class Plugins
         static::$loader = new Loader();
 
         // store all the relevant data from the modules
-        foreach (\Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            $dir = VENDPATH.$module.'/'.\Foolz\Foolframe\Model\Config::get($module, 'package', 'directories.plugins');
+        foreach (Legacy\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
+            $dir = VENDPATH.$module.'/'. Legacy\Config::get($module, 'package', 'directories.plugins');
             static::$loader->addDir($dir);
             $dir = VAPPPATH.$module.'/plugins';
             static::$loader->addDir($dir);
-            static::$loader->setBaseUrl(\Uri::base().'foolfuuka/');
-            static::$loader->setPublicDir(DOCROOT.'foolfuuka/');
         }
 
         // public dir for plugins
@@ -60,6 +58,11 @@ class Plugins
 
             }
         }
+    }
+
+    public static function handleWeb() {
+        static::$loader->setPublicDir(DOCROOT.'foolframe/');
+        static::$loader->setBaseUrl(\Uri::base().'foolframe/');
     }
 
     public static function clearCache()

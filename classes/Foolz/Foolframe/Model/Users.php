@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Model;
 
-use Foolz\Foolframe\Model\Config;
+use Foolz\Foolframe\Model\Legacy\Config;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 
 class UsersWrongIdException extends \Exception {}
@@ -22,7 +22,7 @@ class Users
 
         $result = DC::qb()
             ->select('*')
-            ->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+            ->from(DC::p(Legacy\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
             ->where('t.id = :id')
             ->setParameter(':id', $id)
             ->execute()
@@ -78,7 +78,7 @@ class Users
 
         $count = DC::qb()
             ->select('COUNT(*) as count')
-            ->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+            ->from(DC::p(Legacy\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
             ->execute()
             ->fetch();
 

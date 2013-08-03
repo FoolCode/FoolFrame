@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Model;
 
-use \Foolz\Foolframe\Model\Config;
+use Foolz\Foolframe\Model\Legacy\Config;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 use \Foolz\Foolframe\Model\System as System;
 
@@ -58,16 +58,16 @@ class Install
     {
         // config without slash is the custom foolz one, otherwise it's the fuelphp one
         Config::set('foolz/foolframe', 'config', 'config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
-        Config::save('foolz/foolframe', 'config');
+        Legacy\Config::save('foolz/foolframe', 'config');
 
         // once we change hashes, the users table is useless
         DC::qb()
             ->delete(DC::p('users'))
             ->execute();
 
-        Config::set('foolz/foolframe', 'foolauth', 'salt', \Str::random('alnum', 24));
+        Legacy\Config::set('foolz/foolframe', 'foolauth', 'salt', \Str::random('alnum', 24));
         Config::set('foolz/foolframe', 'foolauth', 'login_hash_salt', \Str::random('alnum', 24));
-        Config::save('foolz/foolframe', 'foolauth');
+        Legacy\Config::save('foolz/foolframe', 'foolauth');
 
         Config::set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
         Config::save('foolz/foolframe', 'cache');

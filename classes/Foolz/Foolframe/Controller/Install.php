@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Controller;
 
-use \Foolz\Foolframe\Model\Config;
+use Foolz\Foolframe\Model\Legacy\Config;
 use \Foolz\Foolframe\Model\DoctrineConnection as DC;
 use Foolz\Foolframe\Model\Notices;
 use \Foolz\Foolframe\Model\System as System;

@@ -2,7 +2,8 @@
 
 namespace Foolz\Foolframe\Model;
 
-use Foolz\Foolframe\Model\Config;
+use Foolz\Foolframe\Model\Legacy\Config;
+use Foolz\Foolframe\Model\Legacy\Uri;
 use Foolz\Plugin\Hook;
 use Foolz\Foolframe\Model\ExceptionHandler;
 use Foolz\Profiler\Profiler;
@@ -25,15 +26,31 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\EventListener\ResponseListener;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class Context extends HttpKernel
+class Context implements ContextInterface
 {
+    /**
+     * @var HttpKernel
+     */
+    public $http_kernel;
+
+    /**
+     * @var ContainerBuilder
+     */
+    public $container;
+
+    /**
+     * @var ContextInterface[]
+     */
+    public $child_contextes = [];
+
     /**
      * RouteCollection that stores all of the Framework's Routes set before controllers
      *
      * @var \Symfony\Component\Routing\RouteCollection
      */
-    public $routeCollection;
+    public $route_collection;
 
     /**
      * @var \Monolog\Logger
@@ -71,10 +88,27 @@ class Context extends HttpKernel
      */
     public function __construct()
     {
-        class_alias('\Foolz\Foolframe\Model\Profiler', 'Profiler');
-        $this->profiler = new Profiler();
-        $this->profiler->enable();
-        \Profiler::forge($this->profiler);
+        $this->container = new ContainerBuilder();
+        $this->route_collection = new RouteCollection();
+
+        class_alias('Foolz\Foolframe\Model\Legacy\Uri', 'Uri');
+        class_alias('Foolz\Foolframe\Model\DoctrineConnection', 'DoctrineConnection');
+        class_alias('Foolz\Foolframe\Model\Notices', 'Notices');
+        class_alias('Foolz\Foolframe\Model\Plugins', 'Plugins');
+        class_alias('Foolz\Foolframe\Model\Preferences', 'Preferences');
+        class_alias('Foolz\Foolframe\Model\SchemaManager', 'SchemaManager');
+        class_alias('Foolz\Foolframe\Model\System', 'System');
+        class_alias('Foolz\Foolframe\Model\User', 'User');
+        class_alias('Foolz\Foolframe\Model\Users', 'Users');
+        class_alias('Foolz\Foolframe\Model\Profiler', 'Profiler');
+
+        $this->container->register('profiler', '\Foolz\Profiler\Profiler')
+            ->addMethodCall('enable', []);
+
+        $this->profiler = $this->container->get('profiler');
+
+        // fallback for profiler
+        \Profiler::forge($this->container->get('profiler'));
 
         $this->logger = new Logger('foolframe');
         $this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, Logger::WARNING));
@@ -87,9 +121,7 @@ class Context extends HttpKernel
         $this->logger_trace->pushProcessor(new IntrospectionProcessor());
         $this->logger_trace->pushProcessor(new WebProcessor());
 
-        // there's a mistyped docblock on register(), remove the following when it's fixed
         if ('cli' !== php_sapi_name()) {
-            /** @var  $this->error_handler \Symfony\Component\Debug\ErrorHandler */
             error_reporting(-1);
             $this->error_handler = ErrorHandler::register();
             $this->error_handler->setLogger($this->logger_trace);
@@ -100,86 +132,6 @@ class Context extends HttpKernel
             ini_set('display_errors', 1);
         }
 
-        $request = Request::createFromGlobals();
-        if (!$request->hasPreviousSession()) {
-            $request->setSession(new Session());
-        }
-
-        Uri::setRequest($request);
-
-        $this->setupCache();
-        $this->setupClassAliases();
-
-        $this->routeCollection = new RouteCollection();
-
-        $this->loadConfig();
-
-        $context = new RequestContext();
-        $matcher = new UrlMatcher($this->routeCollection, $context);
-        $resolver = new ControllerResolver();
-
-        $dispatcher = new EventDispatcher();
-        $dispatcher->addSubscriber(new RouterListener($matcher, null, $this->logger));
-        $dispatcher->addSubscriber(new ResponseListener('UTF-8'));
-
-        parent::__construct($dispatcher, $resolver);
-
-        $this->request = $request;
-    }
-
-    public function handleWeb()
-    {
-        $request = $this->request;
-        \Notices::init($request->getSession());
-
-        try {
-            $this->profiler->log('Request handling start');
-            $response = $this->handle($request);
-            $this->profiler->log('Request handling end');
-        } catch (NotFoundHttpException $e) {
-            $controller_404 = $this->routeCollection->get('404')->getDefault('_controller');
-            $request = new Request();
-            $request->attributes->add(['_controller' => $controller_404]);
-            $response = $this->handle($request);
-        }
-
-        // stick the html of the profiler at the end
-        if ($request->getRequestFormat() == 'html' && \Auth::has_access('maccess.admin')) {
-            $content = explode('</body>', $response->getContent());
-            if (count($content) == 2) {
-                $this->profiler->log('Execution end');
-                $response->setContent($content[0].$this->profiler->getHtml().$content[1]);
-            }
-        }
-
-        $response->send();
-    }
-
-    public function handleConsole()
-    {
-        $application = new Application();
-
-        Hook::forge('Foolz\Foolframe\Model\Context::handleConsole.add')
-            ->setParam('application', $application)
-            ->setObject($this)
-            ->execute();
-
-        //$application->add(new \Your\Class\Command\Console()); // that extends Command
-        $application->run();
-    }
-
-    /**
-     * Allows managing the routes
-     *
-     * @return RouteCollection
-     */
-    public function getRouteCollection()
-    {
-        return $this->routeCollection;
-    }
-
-    protected function setupCache()
-    {
         // start up the caching system
         $caching_config = Config::get('foolz/foolframe', 'cache', '');
         switch ($caching_config['type']) {
@@ -208,69 +160,27 @@ class Context extends HttpKernel
                 \Foolz\Cache\Cache::instantiate($dummy_config);
                 break;
         }
-    }
 
-    protected function setupClassAliases()
-    {
-        class_alias('Foolz\\Foolframe\\Model\\Uri', 'Uri');
-        class_alias('Foolz\\Foolframe\\Model\\DoctrineConnection', 'DoctrineConnection');
-        class_alias('Foolz\\Foolframe\\Model\\Notices', 'Notices');
-        class_alias('Foolz\\Foolframe\\Model\\Plugins', 'Plugins');
-        class_alias('Foolz\\Foolframe\\Model\\Preferences', 'Preferences');
-        class_alias('Foolz\\Foolframe\\Model\\SchemaManager', 'SchemaManager');
-        class_alias('Foolz\\Foolframe\\Model\\System', 'System');
-        class_alias('Foolz\\Foolframe\\Model\\User', 'User');
-        class_alias('Foolz\\Foolframe\\Model\\Users', 'Users');
-    }
-
-    protected function loadConfig()
-    {
-        // check if FoolFrame is installed and in case it's not, allow reaching install
-        if (!Config::get('foolz/foolframe', 'config', 'install.installed')) {
-            $this->routeCollection->add(
-                'foolframe.install', new Route(
-                    '/install/{_suffix}',
-                    [
-                        '_suffix' => '',
-                        '_controller' => '\Foolz\Foolframe\Controller\Install::*'
-                    ],
-                    [
-                        '_suffix' => '.*',
-                    ]
-                )
-            );
-
-            $this->routeCollection->add('foolframe.install.index', new Route(
-                '/',
-                ['_controller' => '\Foolz\Foolframe\Controller\Install::index']
-            ));
-
-            $this->routeCollection->add('404', new Route(
-                '',
-                ['_controller' => '\Foolz\Foolframe\Controller\Install::404']
-            ));
-        } else {
-            $frameworks = [];
-
-            // run the Framework class for each module
-            foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-                if ($module !== 'foolz/foolframe') {
-                    $class_arr = explode('/', $module);
-                    $class = '\\';
-                    foreach ($class_arr as $str) {
-                        $class .= ucfirst($str).'\\';
-                    }
-
-                    $class .= 'Model\Context';
-                    $contextes[] = new $class($this);
+        // run the Framework class for each module
+        foreach(Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
+            if ($module !== 'foolz/foolframe') {
+                $class_arr = explode('/', $module);
+                $class = '\\';
+                foreach ($class_arr as $str) {
+                    $class .= ucfirst($str).'\\';
                 }
-            }
 
+                $class .= 'Model\Context';
+                $this->child_contextes[$module] = new $class($this);
+            }
+        }
+
+        if (count($this->child_contextes)) {
             $available_langs = Config::get('foolz/foolframe', 'package', 'preferences.lang.available');
             $lang = \Cookie::get('language');
 
             if(!$lang || !array_key_exists($lang, $available_langs)) {
-                $lang = \Preferences::get('foolframe.lang.default');
+               $lang = \Preferences::get('foolframe.lang.default');
             }
 
             $locale = $lang.'.utf8';
@@ -282,33 +192,146 @@ class Context extends HttpKernel
             textdomain($lang);
 
             Plugins::instantiate($this);
+        }
+    }
 
-            // we must run this later else the plugins have no change to correctly set the
-            foreach ($contextes as $context) {
-                $context->routes();
+    public function handleWeb(Request $request = null)
+    {
+        if ($request === null) {
+            // create the request from the globals if we don't have custom input
+            $request = Request::createFromGlobals();
+        }
+
+        $this->container
+            ->register('uri', '\Foolz\Foolframe\Model\Uri')
+            ->addArgument($request);
+
+        // legacy
+        Uri::setRequest($request);
+
+        Plugins::handleWeb();
+
+        if (!count($this->child_contextes)) {
+            // no app installed, we need to go to the install
+            $this->loadInstallRoutes($this->route_collection);
+        } else {
+            // load the routes from the child contextes first
+
+            Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.route_collection')
+                ->setObject($this)
+                ->setParam('route_collection', $this->route_collection)
+                ->execute();
+
+            foreach ($this->child_contextes as $context) {
+                $context->loadRoutes($this->route_collection);
             }
 
-            foreach(['account', 'plugins', 'preferences', 'system', 'users'] as $location) {
-                $this->routeCollection->add(
-                    'foolframe.admin.'.$location, new Route(
-                        '/admin/'.$location.'/{_suffix}',
-                        [
-                            '_suffix' => '',
-                            '_controller' => '\Foolz\Foolframe\Controller\Admin\\'.ucfirst($location).'::*',
-                        ],
-                        [
-                            '_suffix' => '.*',
-                        ]
-                    )
-                );
-            }
+            // load the framework routes
+            $this->loadRoutes($this->route_collection);
+        }
 
-            $this->routeCollection->add(
-                'foolframe.admin', new Route(
-                    '/admin/{_suffix}',
+        if (!$request->hasPreviousSession()) {
+            $request->setSession(new Session());
+        }
+
+        \Notices::init($request->getSession());
+
+        $request_context = new RequestContext();
+        $request_context->fromRequest($request);
+        $matcher = new UrlMatcher($this->route_collection, $request_context);
+        $resolver = new ControllerResolver();
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber(new RouterListener($matcher, null, $this->logger));
+        $dispatcher->addSubscriber(new ResponseListener('UTF-8'));
+        $this->http_kernel = new HttpKernel($dispatcher, $resolver);
+
+        // we're pussies, and just load all the web stuff from child contextes
+        // @todo Make so it loads only the required handleWeb and only if required
+        foreach ($this->child_contextes as $context) {
+            $context->handleWeb($request);
+        }
+
+        try {
+            $this->profiler->log('Request handling start');
+            $response = $this->http_kernel->handle($request);
+            $this->profiler->log('Request handling end');
+        } catch (NotFoundHttpException $e) {
+            $controller_404 = $this->route_collection->get('404')->getDefault('_controller');
+            $request = new Request();
+            $request->attributes->add(['_controller' => $controller_404]);
+            $response = $this->http_kernel->handle($request);
+        }
+
+        // stick the html of the profiler at the end
+        if ($request->getRequestFormat() == 'html' && \Auth::has_access('maccess.admin')) {
+            $content = explode('</body>', $response->getContent());
+            if (count($content) == 2) {
+                $this->profiler->log('Execution end');
+                $response->setContent($content[0].$this->profiler->getHtml().'</body>'.$content[1]);
+            }
+        }
+
+        $response->send();
+    }
+
+    public function handleConsole()
+    {
+        $application = new Application();
+
+        Hook::forge('Foolz\Foolframe\Model\Context::handleConsole.add')
+            ->setParam('application', $application)
+            ->setObject($this)
+            ->execute();
+
+        //$application->add(new \Your\Class\Command\Console()); // that extends Command
+        $application->run();
+    }
+
+    /**
+     * Allows managing the routes
+     *
+     * @return RouteCollection
+     */
+    public function getRouteCollection()
+    {
+        return $this->route_collection;
+    }
+
+    protected function loadInstallRoutes(RouteCollection $route_collection)
+    {
+        $route_collection->add(
+            'foolframe.install', new Route(
+                '/install/{_suffix}',
+                [
+                    '_suffix' => '',
+                    '_controller' => '\Foolz\Foolframe\Controller\Install::*'
+                ],
+                [
+                    '_suffix' => '.*',
+                ]
+            )
+        );
+
+        $route_collection->add('foolframe.install.index', new Route(
+            '/',
+            ['_controller' => '\Foolz\Foolframe\Controller\Install::index']
+        ));
+
+        $route_collection->add('404', new Route(
+            '',
+            ['_controller' => '\Foolz\Foolframe\Controller\Install::404']
+        ));
+    }
+
+    public function loadRoutes(RouteCollection $route_collection)
+    {
+        foreach(['account', 'plugins', 'preferences', 'system', 'users'] as $location) {
+            $route_collection->add(
+                'foolframe.admin.'.$location, new Route(
+                    '/admin/'.$location.'/{_suffix}',
                     [
                         '_suffix' => '',
-                        '_controller' => '\Foolz\Foolframe\Controller\Admin::*'
+                        '_controller' => '\Foolz\Foolframe\Controller\Admin\\'.ucfirst($location).'::*',
                     ],
                     [
                         '_suffix' => '.*',
@@ -316,5 +339,18 @@ class Context extends HttpKernel
                 )
             );
         }
+
+        $route_collection->add(
+            'foolframe.admin', new Route(
+                '/admin/{_suffix}',
+                [
+                    '_suffix' => '',
+                    '_controller' => '\Foolz\Foolframe\Controller\Admin::*'
+                ],
+                [
+                    '_suffix' => '.*',
+                ]
+            )
+        );
     }
 }

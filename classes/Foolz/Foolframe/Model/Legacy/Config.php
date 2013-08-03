@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\Foolframe\Model\Legacy;
 
 /**
  * Reads PHP arrays in configuration files
@@ -19,7 +19,7 @@ class Config
      *
      * @param  string $package_name  The name of the package (use vendor/package format)
      *
-     * @return  \Foolz\Foolframe\Model\Config  The current object
+     * @return  \Foolz\Foolframe\Model\Legacy\Config  The current object
      */
     public static function removePackage($package_name)
     {

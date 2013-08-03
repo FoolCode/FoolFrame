@@ -84,7 +84,7 @@ class User
         }
 
         $query = DC::qb()
-            ->update(DC::p(\Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+            ->update(DC::p(Legacy\Config::get('foolz/foolframe', 'foolauth', 'table_name')))
             ->where('id = :id')
             ->setParameter(':id', $this->id);
 

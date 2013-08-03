@@ -39,7 +39,7 @@ class System
             'data' => [
                 [
                     'title' => _i('FoolFrame Version'),
-                    'value' => \Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'package', 'main.version'),
+                    'value' => Legacy\Config::get('foolz/foolframe', 'package', 'main.version'),
                     'alert' => [
                         'type' => 'info',
                         'condition' => true,

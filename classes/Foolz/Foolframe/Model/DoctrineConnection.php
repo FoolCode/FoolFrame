@@ -41,7 +41,7 @@ class DoctrineConnection
 
         $config->setSQLLogger(new DoctrineLogger());
 
-        $db_data = \Foolz\Foolframe\Model\Config::get('foolz/foolframe', 'db', $from_config);
+        $db_data = Legacy\Config::get('foolz/foolframe', 'db', $from_config);
 
         $db_data += $override;
 
