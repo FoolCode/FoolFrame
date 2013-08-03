@@ -2,11 +2,20 @@
 
 namespace Foolz\Foolframe\Model;
 
+use Foolz\Foolframe\Controller\ControllerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\ControllerResolver
 {
+    /**
+     * @var Context
+     */
+    private $context;
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
     private $logger;
 
     /**
@@ -19,10 +28,12 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
     /**
      * Constructor.
      *
+     * @param Context $context
      * @param LoggerInterface $logger A LoggerInterface instance
      */
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(Context $context, LoggerInterface $logger = null)
     {
+        $this->context = $context;
         $this->logger = $logger;
     }
 
@@ -85,12 +96,17 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
             }
 
         }
+
+        /** @var $controller ControllerInterface */
+        $controller->setContext($this->context);
+        $controller->setRequest($request);
+
         if (method_exists($controller, 'before')) {
-            $controller->before($request, $method);
+            $controller->before($method);
         }
 
         if (method_exists($controller, 'router')) {
-            list($controller, $method, $this->parameters) = $controller->router($request, $method, $this->parameters);
+            list($controller, $method, $this->parameters) = $controller->router($method, $this->parameters);
         } else {
             $method = 'action_'.$method;
         }

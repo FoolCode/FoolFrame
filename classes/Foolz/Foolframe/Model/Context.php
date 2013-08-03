@@ -145,6 +145,10 @@ class Context implements ContextInterface
             ini_set('display_errors', 1);
         }
 
+        $this->container->register('logger', 'Foolz\Foolframe\Model\Logger')
+            ->addMethodCall('addLogger', [$this->logger])
+            ->addMethodCall('addLogger', [$this->logger_trace]);
+
         $this->container->register('config', 'Foolz\Foolframe\Model\Config')
             ->addArgument($this);
 
@@ -279,7 +283,7 @@ class Context implements ContextInterface
         $request_context = new RequestContext();
         $request_context->fromRequest($request);
         $matcher = new UrlMatcher($this->route_collection, $request_context);
-        $resolver = new ControllerResolver();
+        $resolver = new ControllerResolver($this);
         $dispatcher = new EventDispatcher();
         $dispatcher->addSubscriber(new RouterListener($matcher, null, $this->logger));
         $dispatcher->addSubscriber(new ResponseListener('UTF-8'));

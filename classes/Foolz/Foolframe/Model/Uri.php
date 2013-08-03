@@ -13,7 +13,7 @@ class Uri extends Model {
 
     public function __construct(Context $context, Request $request)
     {
-        parent::_construct($context);
+        parent::__construct($context);
         $this->request = $request;
     }
 

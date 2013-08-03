@@ -13,14 +13,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Users extends \Foolz\Foolframe\Controller\Admin
 {
-    public function before(Request $request)
+    public function before()
     {
         // only mods and admins can see and edit users
         if(!\Auth::has_access('maccess.mod')) {
-            Response::redirect('admin');
+            return $this->redirectToLogin();
         }
 
-        parent::before($request);
+        parent::before();
 
         $this->param_manager->setParam('controller_title', _i('Users'));
     }

@@ -10,13 +10,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Plugins extends \Foolz\Foolframe\Controller\Admin
 {
-    public function before(Request $request)
+    public function before()
     {
         if(!\Auth::has_access('maccess.admin')) {
-            Response::redirect('admin');
+            return $this->redirectToLogin();
         }
 
-        parent::before($request);
+        parent::before();
 
         // set controller title
         $this->param_manager->setParam('controller_title', _i('Plugins'));

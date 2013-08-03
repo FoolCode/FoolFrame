@@ -21,7 +21,6 @@ class Register extends \Foolz\Theme\View
         <?= \Form::input([
         'class' => 'input-block-level',
         'name' => 'email',
-        'type' => 'email',
         'value' => \Input::post('email'),
         'placeholder' => _i('Email Address'),
         'required' => true

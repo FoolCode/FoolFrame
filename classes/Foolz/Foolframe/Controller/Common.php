@@ -2,15 +2,57 @@
 
 namespace Foolz\Foolframe\Controller;
 
+use Foolz\Foolframe\Model\Context;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class Common
+class Common implements ControllerInterface
 {
-    public function before(Request $request)
+    /**
+     * @var Context
+     */
+    protected $context;
+
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    public function setContext(Context $context)
     {
-        if (!\Foolz\Foolframe\Model\Legacy\Config::get('foolz/foolframe', 'config', 'install.installed')) {
-            throw new NotFoundHttpException;
+        $this->context = $context;
+    }
+
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+    }
+
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    public function getPost($key = false, $fallback = false)
+    {
+        if (!$key) {
+            return $this->getRequest()->request->all();
         }
+
+        return $this->getRequest()->request->get($key, $fallback);
+    }
+
+    public function getQuery($key = false, $fallback = false)
+    {
+        if (!$key) {
+            return $this->getRequest()->query->all();
+        }
+
+        return $this->getRequest()->query->get($key, $fallback);
     }
 }

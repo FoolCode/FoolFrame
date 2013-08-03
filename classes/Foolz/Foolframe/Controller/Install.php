@@ -29,7 +29,7 @@ class Install
      */
     protected $param_manager;
 
-    public function before(Request $request)
+    public function before()
     {
         $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
         $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin/');

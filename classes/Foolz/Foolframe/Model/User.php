@@ -6,6 +6,16 @@ use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
 
 class User
 {
+    /**
+     * @var DoctrineConnection
+     */
+    protected $dc;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
     public $id = null;
     public $username = null;
     public $password = null;
@@ -39,8 +49,11 @@ class User
         'display_name'
     ];
 
-    public function __construct($data)
+    public function __construct(Context $context, $data)
     {
+        $this->dc = $context->getService('doctrine');
+        $this->config = $context->getService('config');
+
         foreach($data as $key => $item) {
             if ($key == 'password') {
                 $key = 'password_current';
@@ -50,19 +63,19 @@ class User
         }
     }
 
-    public static function forge($data)
+    public static function forge(Context $context, $data)
     {
         if (is_array($data) && !\Arr::is_assoc($data)) {
             $array = [];
 
             foreach($data as $item) {
-                $array[] = static::forge($item);
+                $array[] = static::forge($context, $item);
             }
 
             return $array;
         }
 
-        return new User($data);
+        return new User($context, $data);
     }
 
     public function save(Array $data = [])
@@ -83,13 +96,13 @@ class User
             unset($set['password']);
         }
 
-        $query = DC::qb()
-            ->update(DC::p(Legacy\Config::get('foolz/foolframe', 'foolauth', 'table_name')))
+        $query = $this->dc->qb()
+            ->update($this->dc->p($this->config->get('foolz/foolframe', 'foolauth', 'table_name')))
             ->where('id = :id')
             ->setParameter(':id', $this->id);
 
         foreach ($set as $key => $item) {
-            $query->set(DC::forge()->quoteIdentifier($key), DC::forge()->quote($item));
+            $query->set($this->dc->forge()->quoteIdentifier($key), $this->dc->forge()->quote($item));
         }
 
         $query->execute();

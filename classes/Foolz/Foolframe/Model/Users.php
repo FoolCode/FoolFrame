@@ -2,27 +2,42 @@
 
 namespace Foolz\Foolframe\Model;
 
-use Foolz\Foolframe\Model\Legacy\Config;
-use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
-
 class UsersWrongIdException extends \Exception {}
 
-class Users
+class Users extends Model
 {
+    /**
+     * @var DoctrineConnection
+     */
+    protected $dc;
+
+    /**
+     * @var Confg
+     */
+    protected $config;
+
+    /**
+     * @param Context $context
+     */
+    public function __construct(Context $context)
+    {
+        $this->dc = $context->getService('doctrine');
+        $this->config = $context->getService('config');
+    }
+
     /**
      * Gets the current user
      *
-     * @param  int  $id
      * @return object
      */
-    public static function getUser()
+    public function getUser()
     {
         $id = \Auth::get_user_id();
         $id = $id[1];
 
-        $result = DC::qb()
+        $result = $this->dc->qb()
             ->select('*')
-            ->from(DC::p(Legacy\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+            ->from($this->dc->p($this->config->get('foolz/foolframe', 'foolauth', 'table_name')), 't')
             ->where('t.id = :id')
             ->setParameter(':id', $id)
             ->execute()
@@ -32,7 +47,7 @@ class Users
             throw new UsersWrongIdException;
         }
 
-        return User::forge($result);
+        return User::forge($this->getContext(), $result);
     }
 
     /**
@@ -41,12 +56,12 @@ class Users
      * @param  int  $id
      * @return object
      */
-    public static function getUserBy($field, $id)
+    public function getUserBy($field, $id)
     {
-        $result = DC::qb()
+        $result = $this->dc->qb()
             ->select('*')
-            ->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
-            ->where($field.' = '.DC::forge()->quote($id))
+            ->from($this->dc->p($this->config->get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+            ->where($field.' = '.$this->dc->forge()->quote($id))
             ->execute()
             ->fetch();
 
@@ -54,7 +69,7 @@ class Users
             throw new UsersWrongIdException;
         }
 
-        return User::forge($result);
+        return User::forge($this->getContext(), $result);
     }
 
     /**
@@ -64,21 +79,21 @@ class Users
      * @param  into $limit
      * @return object
      */
-    public static function getAll($page = 1, $limit = 40)
+    public function getAll($page = 1, $limit = 40)
     {
-        $users = DC::qb()
+        $users = $this->dc->qb()
             ->select('*')
-            ->from(DC::p(Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+            ->from($this->dc->p($this->config->get('foolz/foolframe', 'foolauth', 'table_name')), 't')
             ->setMaxResults($limit)
             ->setFirstResult(($page * $limit) - $limit)
             ->execute()
             ->fetchAll();
 
-        $users = User::forge($users);
+        $users = User::forge($this->getContext(), $users);
 
-        $count = DC::qb()
+        $count = $this->dc->qb()
             ->select('COUNT(*) as count')
-            ->from(DC::p(Legacy\Config::get('foolz/foolframe', 'foolauth', 'table_name')), 't')
+            ->from($this->dc->p($this->config->get('foolz/foolframe', 'foolauth', 'table_name')), 't')
             ->execute()
             ->fetch();
 

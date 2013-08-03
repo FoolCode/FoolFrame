@@ -2,10 +2,15 @@
 
 namespace Foolz\Foolframe\Controller;
 
+use Foolz\Foolframe\Model\Config;
+use Foolz\Foolframe\Model\Notices;
 use Foolz\Foolframe\Model\Plugins;
 use Foolz\Foolframe\Model\Legacy\Preferences;
+use Foolz\Foolframe\Model\Uri;
 use Foolz\Theme\Loader;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Admin extends Common
 {
@@ -28,27 +33,38 @@ class Admin extends Common
      */
     protected $builder;
 
-    public function before(Request $request)
+    /**
+     * @var Uri
+     */
+    protected $uri;
+
+    /**
+     * @var Notices
+     */
+    protected $notices;
+
+    /**
+     * @var Preferences
+     */
+    protected $preferences;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    public function before()
     {
-        parent::before($request);
-
-        $segments = explode('/', $request->getPathInfo());
-        $path = '';
-        if (count($segments) > 3) {
-            $path = '/'.$segments[1].'/'.$segments[2].'/'.$segments[3].'/';
-        }
-
-        if (!\Auth::has_access('maccess.user') && !in_array($path,
-            ['/admin/account/register/', '/admin/account/activate/', '/admin/account/login/',
-                '/admin/account/change_password/', '/admin/account/forgot_password/']))
-        {
-            return \Response::redirect('admin/account/login');
-        }
+        $request = $this->getRequest();
+        $this->uri = $this->getContext()->getService('uri');
+        $this->notices = $this->getContext()->getService('notices');
+        $this->preferences = $this->getContext()->getService('preferences');
+        $this->config = $this->getContext()->getService('config');
 
         $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
         $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin/');
         $theme_instance->addDir(VAPPPATH.'foolz/foolframe/themes-admin/');
-        $theme_instance->setBaseUrl(\Uri::base().'foolframe/');
+        $theme_instance->setBaseUrl($this->uri->base().'foolframe/');
         $theme_instance->setPublicDir(DOCROOT.'foolframe/');
         // make it possible to override the theme so other framework components can extend with their own
         $this->setupTheme($theme_instance);
@@ -75,6 +91,21 @@ class Admin extends Common
             ->setParams(array('sidebar' => self::get_sidebar($request, self::$sidebar)));
     }
 
+    public function redirect($url, $status = 302)
+    {
+        return new RedirectResponse($this->uri->create($url, $status));
+    }
+
+    public function redirectToLogin()
+    {
+        return $this->redirect('admin/account/login');
+    }
+
+    public function redirectToAdmin()
+    {
+        return $this->redirect('admin/account/profile');
+    }
+
     /**
      * Selects the theme. Can be overridden so other controllers can use their own admin components
      *
@@ -87,12 +118,7 @@ class Admin extends Common
 
     public function action_index()
     {
-        return \Response::redirect('admin/account/profile');
-    }
-
-    public function action_404()
-    {
-        return \Response::forge('404', 404);
+        return $this->redirectToAdmin();
     }
 
     /**
@@ -101,13 +127,13 @@ class Admin extends Common
      *
      * @return sidebar array
      */
-    private static function get_sidebar_values()
+    private function get_sidebar_values()
     {
         $sidebar = [];
 
         // load sidebars from modules and leave FoolFrame sidebar on bottom
-        foreach(\Foolz\Foolframe\Model\Legacy\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            $module_sidebar = \Foolz\Foolframe\Model\Legacy\Config::get($module, 'sidebar');
+        foreach($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
+            $module_sidebar = $this->config->get($module, 'sidebar');
             if(is_array($module_sidebar)) {
                 $sidebar = array_merge($module_sidebar['sidebar'], $sidebar);
             }

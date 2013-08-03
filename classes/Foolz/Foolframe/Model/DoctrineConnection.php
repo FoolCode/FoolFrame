@@ -4,6 +4,7 @@ namespace Foolz\Foolframe\Model;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use Foolz\Foolframe\Model\Legacy\DoctrineLogger;
 
 class DoctrineConnection extends Model
 {
@@ -34,7 +35,7 @@ class DoctrineConnection extends Model
 
         $config = new Configuration();
 
-        $config->setSQLLogger(new DoctrineLogger());
+        $config->setSQLLogger(new DoctrineLogger($context));
 
         $data = [
             'dbname' => $db_data['dbname'],

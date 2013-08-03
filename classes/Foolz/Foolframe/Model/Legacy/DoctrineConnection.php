@@ -1,7 +1,7 @@
 <?php
 
 namespace Foolz\Foolframe\Model\Legacy;
-use Foolz\Foolframe\Model\DoctrineLogger;
+use Foolz\Foolframe\Model\Legacy\DoctrineLogger;
 use Foolz\Foolframe\Model\Legacy;
 
 /**

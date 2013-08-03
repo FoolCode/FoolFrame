@@ -12,13 +12,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Preferences extends Admin
 {
-    public function before(Request $request)
+    public function before()
     {
-        parent::before($request);
-
         if (!\Auth::has_access('maccess.admin')) {
-            Response::redirect('admin');
+            return $this->redirectToLogin();
         }
+
+        parent::before();
 
         // set controller title
         $this->param_manager->setParam('controller_title', _i('Preferences'));

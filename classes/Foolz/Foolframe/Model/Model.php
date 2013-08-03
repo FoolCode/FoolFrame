@@ -4,7 +4,7 @@ namespace Foolz\Foolframe\Model;
 
 use Foolz\Foolframe\Model\Context;
 
-class Model implements ModelInterface
+class Model
 {
     /**
      * @var Context
