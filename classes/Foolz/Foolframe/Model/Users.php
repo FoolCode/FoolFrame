@@ -63,7 +63,7 @@ class Users extends Model
         $result = $this->dc->qb()
             ->select('*')
             ->from($this->dc->p($this->config->get('foolz/foolframe', 'foolauth', 'table_name')), 't')
-            ->where($field.' = '.$this->dc->forge()->quote($id))
+            ->where($field.' = '.$this->dc->getConnection()->quote($id))
             ->execute()
             ->fetch();
 
