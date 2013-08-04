@@ -102,7 +102,7 @@ class User extends Model
             ->setParameter(':id', $this->id);
 
         foreach ($set as $key => $item) {
-            $query->set($this->dc->forge()->quoteIdentifier($key), $this->dc->forge()->quote($item));
+            $query->set($this->dc->getConnection()->quoteIdentifier($key), $this->dc->forge()->quote($item));
         }
 
         $query->execute();
