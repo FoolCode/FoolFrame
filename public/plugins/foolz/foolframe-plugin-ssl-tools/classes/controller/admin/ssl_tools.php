@@ -10,12 +10,13 @@ class SslTools extends \Foolz\Foolframe\Controller\Admin
     public function before()
     {
         if (!\Auth::has_access('maccess.admin')) {
-            \Response::redirect('admin');
+            return $this->redirectToAdmin();
         }
 
         parent::before();
 
         $this->param_manager->setParam('controller_title', _i('Plugins'));
+
     }
 
     public function action_manage()
@@ -42,11 +43,6 @@ class SslTools extends \Foolz\Foolframe\Controller\Admin
                     'type' => 'checkbox',
                     'preferences' => true,
                     'help' => _i('Redirect every user to the SSL version of the site')
-                ),
-                'foolframe.plugins.ssl_tools.sticky' => array(
-                    'type' => 'checkbox',
-                    'preferences' => true,
-                    'help' => _i('Set a cookie for users that browsed the site with https:// so they get redirected to the https:// version of the site')
                 ),
                 'foolframe.plugins.ssl_tools.enable_top_link' => array(
                     'type' => 'checkbox',
@@ -75,7 +71,7 @@ class SslTools extends \Foolz\Foolframe\Controller\Admin
             'type' => 'close'
         );
 
-        \Preferences::submit_auto($form);
+        $this->preferences->submit_auto($form, $this->getPost());
 
         $data['form'] = $form;
 

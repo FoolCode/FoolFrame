@@ -1,6 +1,11 @@
 <?php
 
-\Foolz\Plugin\Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
+use Foolz\Foolframe\Model\Context;
+use Foolz\Plugin\Event;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+
+Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
     ->setCall(function($result) {
 
         // this plugin works with indexes that don't exist in CLI
@@ -13,9 +18,11 @@
             'Foolz\Foolframe\Controller\Admin\Plugins\SslTools' => __DIR__.'/classes/controller/admin/ssl_tools.php'
         ));
 
+        /** @var Context $context */
+        $context = $result->getParam('context');
         // don't add the admin panels if the user is not an admin
         if (\Auth::has_access('maccess.admin')) {
-            $result->getParam('framework')->getRouteCollection()->add(
+            $context->getRouteCollection()->add(
                 'foolframe.plugin.ssl_tools.admin', new \Symfony\Component\Routing\Route(
                     '/admin/plugins/ssl_tools/{_suffix}',
                     [
@@ -33,14 +40,46 @@
             ));
         }
 
-        // we can just run base checks now
-        \Foolz\Foolframe\Plugins\SslTools\Model\SslTools::check();
+        $context->getContainer()
+            ->register('foolframe-plugin.ssl_tools', 'Foolz\Foolframe\Plugins\SslTools\Model\SslTools')
+            ->addArgument($context);
 
-        \Foolz\Plugin\Event::forge('foolframe.themes.generic_top_nav_buttons')
-            ->setCall('\Foolz\Foolframe\Plugins\SslTools\Model\SslTools::nav_top')
-            ->setPriority(4);
+        /** @var \Foolz\Foolframe\Plugins\SslTools\Model\SslTools $ssl_tools */
+        $ssl_tools = $context->getService('foolframe-plugin.ssl_tools');
 
-        \Foolz\Plugin\Event::forge('foolframe.themes.generic_bottom_nav_buttons')
-            ->setCall('\Foolz\Foolframe\Plugins\SslTools\Model\SslTools::nav_bottom')
-            ->setPriority(4);
+        Event::forge('Foolz\Foolframe\Model\Context.handleWeb.has_request')
+            ->setCall(function($result) use ($ssl_tools) {
+                $request = $result->getParam('request');
+                $context = $this;
+
+                Event::forge('foolframe.themes.generic_top_nav_buttons')
+                    ->setCall(function($result) use ($context, $request, $ssl_tools) {
+                        $ssl_tools->nav($context, $request, 'top', $result);
+                    })
+                    ->setPriority(4);
+
+                Event::forge('foolframe.themes.generic_bottom_nav_buttons')
+                    ->setCall(function($result) use ($context, $request, $ssl_tools) {
+                        $ssl_tools->nav($context, $request, 'bottom', $result);
+                    })
+                    ->setPriority(4);
+            });
+
+        Event::forge('Foolz\Foolframe\Model\Context.handleWeb.override_response')
+            ->setCall(function($result) {
+                /** @var Request $request */
+                $request = $result->getParam('request');
+                $this->preferences = $this->getService('preferences');
+
+                if (!$request->isSecure()) {
+                    if ($this->preferences->get('foolframe.plugins.ssl_tools.force_everyone')
+                        || ($this->preferences->get('foolframe.plugins.ssl_tools.force_for_logged') && \Auth::has_access('maccess.user'))
+                    )
+                    {
+                        // redirect to itself
+                        $this->set(new RedirectResponse('https://'.$request->getHttpHost().$request->getRequestUri()));
+                        return;
+                    }
+                }
+            });
     });

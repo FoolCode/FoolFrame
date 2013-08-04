@@ -138,7 +138,7 @@ class Preferences extends Model
                 ->setParameters([':value' => $value, ':name' => $setting])
                 ->execute();
         } else {
-            $this->dc->forge()->insert($this->dc->p('preferences'), ['name' => $setting, 'value' => $value]);
+            $this->dc->getConnection()->insert($this->dc->p('preferences'), ['name' => $setting, 'value' => $value]);
         }
 
         if ($reload) {

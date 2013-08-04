@@ -1,11 +1,14 @@
 <?php
 
+use Foolz\Foolframe\Model\DoctrineConnection;
 use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
+use Foolz\Plugin\Event;
+use Symfony\Component\Routing\RouteCollection;
 
-\Foolz\Plugin\Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
+Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
     ->setCall(function($result) {
-        /* @var $framework \Foolz\Foolframe\Model\Context */
-        $framework = $result->getParam('framework');
+        /* @var $context \Foolz\Foolframe\Model\Context */
+        $context = $result->getParam('context');
 
         \Autoloader::add_classes(array(
             'Foolz\Foolframe\Plugins\Articles\Model\Articles' => __DIR__.'/classes/model/articles.php',
@@ -13,20 +16,24 @@ use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
             'Foolz\Foolfuuka\Controller\Chan\Articles' => __DIR__.'/classes/controller/chan.php'
         ));
 
+        $context->getContainer()
+            ->register('foolframe-plugin.articles', 'Foolz\Foolframe\Plugins\Articles\Model\Articles')
+            ->addArgument($context);
+
         // don't add the admin panels if the user is not an admin
         if (\Auth::has_access('maccess.admin')) {
-            $framework->getRouteCollection()->add(
+            $context->getRouteCollection()->add(
                 'foolframe.plugin.articles.admin', new \Symfony\Component\Routing\Route(
-                    '/admin/articles/{_suffix}',
-                    [
-                        '_suffix' => 'manage',
-                        '_controller' => '\Foolz\Foolframe\Controller\Admin\Articles::articles'
-                    ],
-                    [
-                        '_suffix' => '.*'
-                    ]
-                )
-            );
+                        '/admin/articles/{_suffix}',
+                        [
+                            '_suffix' => 'manage',
+                            '_controller' => '\Foolz\Foolframe\Controller\Admin\Articles::*'
+                        ],
+                        [
+                            '_suffix' => '.*'
+                        ]
+                    )
+                );
 
             \Plugins::registerSidebarElement('admin', 'articles', array(
                     'name' => _i('Articles'),
@@ -43,7 +50,7 @@ use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
             );
         }
 
-        $framework->getRouteCollection()->add(
+        $context->getRouteCollection()->add(
             'foolframe.plugin.articles.chan', new \Symfony\Component\Routing\Route(
                 '/_/articles/{_suffix}',
                 [
@@ -56,36 +63,37 @@ use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
             )
         );
 
-        \Foolz\Plugin\Event::forge('Fuel\Core\Router::parse_match.intercept')
-            ->setCall(function($result) {
-                if ($result->getParam('controller') === 'Foolz\Foolfuuka\Controller\Chan') {
-                    if ($result->getParam('action') === 'articles') {
-                        $result->setParam('controller', 'Foolz\Foolfuuka\Controller\Chan\Articles');
-                        $result->set(true);
-                    }
-                }
-            })->setPriority(4);
-
-        \Foolz\Plugin\Event::forge('foolframe.themes.generic_top_nav_buttons')
-            ->setCall('Foolz\Foolframe\Plugins\Articles\Model\Articles::getTop')
+        Event::forge('foolframe.themes.generic_top_nav_buttons')
+            ->setCall(function($result) use ($context) {
+                $context->getService('foolframe-plugin.articles')->getNav('top', $result);
+            })
             ->setPriority(3);
 
-        \Foolz\Plugin\Event::forge('foolframe.themes.generic_bottom_nav_buttons')
-            ->setCall('Foolz\Foolframe\Plugins\Articles\Model\Articles::getBottom')
+        Event::forge('foolframe.themes.generic_bottom_nav_buttons')
+            ->setCall(function($result) use ($context) {
+                $context->getService('foolframe-plugin.articles')->getNav('bottom', $result);
+            })
             ->setPriority(3);
 
-        \Foolz\Plugin\Event::forge('foolframe.themes.generic.index_nav_elements')
-            ->setCall('Foolz\Foolframe\Plugins\Articles\Model\Articles::getIndex')
+        Event::forge('foolframe.themes.generic.index_nav_elements')
+            ->setCall(function($result) use ($context) {
+                $context->getService('foolframe-plugin.articles')->getIndex($result);
+            })
             ->setPriority(3);
     });
 
-\Foolz\Plugin\Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-articles')
+Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-articles')
     ->setCall(function($result) {
-        /* @var $schema \Doctrine\DBAL\Schema\Schema */
-        /* @var $table \Doctrine\DBAL\Schema\Table */
+        /** @var $context \Foolz\Foolframe\Model\Context */
+        $context = $result->getParam('context');
+        /** @var DoctrineConnection $dc */
+        $dc = $context->getService('doctrine');
+
+        /** @var $schema \Doctrine\DBAL\Schema\Schema */
+        /** @var $table \Doctrine\DBAL\Schema\Table */
         $schema = $result->getParam('schema');
-        $table = $schema->createTable(DC::p('plugin_ff_articles'));
-        if (DC::forge()->getDriver()->getName() == 'pdo_mysql') {
+        $table = $schema->createTable($dc->p('plugin_ff_articles'));
+        if ($dc->getConnection()->getDriver()->getName() == 'pdo_mysql') {
             $table->addOption('charset', 'utf8mb4');
             $table->addOption('collate', 'utf8mb4_unicode_ci');
         }

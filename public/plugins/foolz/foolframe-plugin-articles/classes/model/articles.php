@@ -2,20 +2,41 @@
 
 namespace Foolz\Foolframe\Plugins\Articles\Model;
 
-use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
-use \Foolz\Cache\Cache;
+use Foolz\Foolframe\Model\Context;
+use Foolz\Foolframe\Model\DoctrineConnection;
+use Foolz\Cache\Cache;
+use Foolz\Foolframe\Model\Model;
+use Foolz\Foolframe\Model\Uri;
 
 class ArticlesArticleNotFoundException extends \Exception {};
 
-class Articles
+class Articles extends Model
 {
-    public static function remove($id)
+    /**
+     * @var DoctrineConnection
+     */
+    protected $dc;
+
+    /**
+     * @var Uri
+     */
+    protected $uri;
+
+    public function __construct(Context $context)
+    {
+        parent::__construct($context);
+
+        $this->dc = $this->getContext()->getService('doctrine');
+        $this->uri = $this->getContext()->getService('uri');
+    }
+
+    public function remove($id)
     {
         // this might throw ArticlesArticleNotFound, catch in controller
-        static::getById($id);
+        $this->getById($id);
 
-        DC::qb()
-            ->delete(DC::p('plugin_ff_articles'))
+        $this->dc->qb()
+            ->delete($this->dc->p('plugin_ff_articles'))
             ->where('id = :id')
             ->setParameter(':id', $id)
             ->execute();
@@ -23,7 +44,7 @@ class Articles
         static::clear_cache();
     }
 
-    public static function clear_cache()
+    public function clear_cache()
     {
         Cache::item('foolframe.plugin.articles.model.get_index')->delete();
         Cache::item('foolframe.plugin.articles.model.get_nav_top')->delete();
@@ -33,11 +54,11 @@ class Articles
     /**
      * Grab the whole table of articles
      */
-    public static function getAll()
+    public function getAll()
     {
-        $query = DC::qb()
+        $query = $this->dc->qb()
             ->select('*')
-            ->from(DC::p('plugin_ff_articles'), 'a');
+            ->from($this->dc->p('plugin_ff_articles'), 'a');
 
         if (!\Auth::has_access('maccess.mod')) {
             $query->where('hidden = 0');
@@ -50,11 +71,11 @@ class Articles
         return $result;
     }
 
-    public static function getById($id)
+    public function getById($id)
     {
-        $query = DC::qb()
+        $query = $this->dc->qb()
             ->select('*')
-            ->from(DC::p('plugin_ff_articles'), 'a')
+            ->from($this->dc->p('plugin_ff_articles'), 'a')
             ->where('id = :id')
             ->setParameter(':id', $id);
 
@@ -72,11 +93,11 @@ class Articles
         return $result;
     }
 
-    public static function getBySlug($slug)
+    public function getBySlug($slug)
     {
-        $query = DC::qb()
+        $query = $this->dc->qb()
             ->select('*')
-            ->from(DC::p('plugin_ff_articles'), 'a')
+            ->from($this->dc->p('plugin_ff_articles'), 'a')
             ->where('slug = :slug')
             ->setParameter(':slug', $slug);
 
@@ -94,26 +115,16 @@ class Articles
         return $result;
     }
 
-    public static function getTop($result)
-    {
-        return static::getNav('top', $result);
-    }
-
-    public static function getBottom($result)
-    {
-        return static::getNav('bottom', $result);
-    }
-
-    protected static function getNav($where, $result)
+    public function getNav($where, $result)
     {
         $nav = $result->getParam('nav');
 
         try {
             $res = Cache::item('foolframe.plugin.articles.model.get_nav_'.$where)->get();
         } catch (\OutOfBoundsException $e) {
-            $res = DC::qb()
+            $res = $this->dc->qb()
                 ->select('slug, title')
-                ->from(DC::p('plugin_ff_articles'), 'a')
+                ->from($this->dc->p('plugin_ff_articles'), 'a')
                 ->where($where.' = 1')
                 ->execute()
                 ->fetchAll();
@@ -126,22 +137,22 @@ class Articles
         }
 
         foreach($res as $article) {
-            $nav[] = array('href' => \Uri::create('_/articles/' . $article['slug']), 'text' => e($article['title']));
+            $nav[] = array('href' => $this->uri->create('_/articles/' . $article['slug']), 'text' => e($article['title']));
         }
 
         $result->setParam('nav', $nav)->set($nav);
     }
 
-    public static function getIndex($result)
+    public function getIndex($result)
     {
         $nav = $result->getParam('nav');
 
         try {
             $res = Cache::item('foolframe.plugin.articles.model.get_index')->get();
         } catch (\OutOfBoundsException $e) {
-            $res = DC::qb()
+            $res = $this->dc->qb()
                 ->select('slug, title')
-                ->from(DC::p('plugin_ff_articles'), 'a')
+                ->from($this->dc->p('plugin_ff_articles'), 'a')
                 ->orderBy('title', 'asc')
                 ->execute()
                 ->fetchAll();
@@ -157,7 +168,7 @@ class Articles
 
         foreach($res as $article) {
             $nav['articles']['elements'][] = array(
-                'href' => \Uri::create('_/articles/' . $article['slug']),
+                'href' => $this->uri->create('_/articles/' . $article['slug']),
                 'text' => e($article['title'])
             );
         }
@@ -165,11 +176,11 @@ class Articles
         $result->setParam('nav', $nav)->set($nav);
     }
 
-    public static function save($data)
+    public function save($data)
     {
         if (isset($data['id'])) {
-            $query = DC::qb()
-                ->update(DC::p('plugin_ff_articles'))
+            $query = $this->dc->qb()
+                ->update($this->dc->p('plugin_ff_articles'))
                 ->set('timestamp', ':time')
                 ->where('id = :id')
                 ->setParameter(':id', $data['id'])
@@ -177,7 +188,7 @@ class Articles
 
             foreach ($data as $k => $i) {
                 if ($k !== 'id') {
-                    $query->set($k, DC::forge()->quote($i));
+                    $query->set($k, $this->dc->getConnection()->quote($i));
                 }
             }
 
@@ -185,10 +196,10 @@ class Articles
         } else {
             $data['timestamp'] = time();
 
-            DC::forge()
-                ->insert(DC::p('plugin_ff_articles'), $data);
+            $this->dc->getConnection()
+                ->insert($this->dc->p('plugin_ff_articles'), $data);
         }
 
-        static::clear_cache();
+        $this->clear_cache();
     }
 }

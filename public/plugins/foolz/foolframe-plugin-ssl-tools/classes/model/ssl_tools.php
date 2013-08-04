@@ -2,41 +2,25 @@
 
 namespace Foolz\Foolframe\Plugins\SslTools\Model;
 
-class SslTools
+use Foolz\Foolframe\Model\Context;
+use Foolz\Foolframe\Model\Model;
+use Foolz\Foolframe\Model\Preferences;
+use Foolz\Foolframe\Model\Uri;
+use Symfony\Component\HttpFoundation\Request;
+
+class SslTools extends Model
 {
-    public static function check()
-    {
-        if (!isset($_SERVER['HTTPS']) || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'off')) {
-            if (\Preferences::get('foolframe.plugins.ssl_tools.force_everyone')
-                || (\Preferences::get('foolframe.plugins.ssl_tools.force_for_logged') && \Auth::has_access('maccess.user'))
-                || (\Preferences::get('foolframe.plugins.ssl_tools.sticky') && \Input::cookie('ff_sticky_ssl')))
-            {
-                // redirect to itself
-                \Response::redirect('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-            }
-        } else {
-            if (\Preferences::get('foolframe.plugins.ssl_tools.sticky') && !\Input::cookie('ff_sticky_ssl')) {
-                \Cookie::set('foolframe.plugins.ssl_tools.sticky', '1', 30);
-            }
-        }
-    }
-
-    public static function nav_top($result)
-    {
-        return static::nav('top', $result);
-    }
-
-    public static function nav_bottom($result)
-    {
-        return static::nav('bottom', $result);
-    }
-
-    public static function nav($position, $result)
+    public static function nav(Context $context, Request $request, $position, $result)
     {
         $nav = $result->getParam('nav');
 
-        if (\Preferences::get('foolframe.plugins.ssl_tools.enable_'.$position.'_link') && (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == 'off')) {
-            $nav[] = array('href' => 'https' . substr(\Uri::current(), 4), 'text' => '<i class="icon-lock"></i> SSL');
+        /** @var Preferences $preferences */
+        $preferences = $context->getService('preferences');
+        /** @var Uri $uri */
+        $uri = $context->getService('uri');
+
+        if ($preferences->get('foolframe.plugins.ssl_tools.enable_'.$position.'_link') && (!$request->isSecure())) {
+            $nav[] = array('href' => 'https'.substr($uri->base(), 4), 'text' => '<i class="icon-lock"></i> SSL');
         }
 
         $result->setParam('nav', $nav)->set($nav);

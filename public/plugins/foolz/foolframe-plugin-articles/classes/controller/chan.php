@@ -1,13 +1,25 @@
 <?php
 
 namespace Foolz\Foolfuuka\Controller\Chan;
-use \Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
-    \Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
+
+use \Foolz\Foolframe\Plugins\Articles\Model\Articles as A;
+use \Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class Articles extends \Foolz\Foolfuuka\Controller\Chan
 {
+    /**
+     * @var A
+     */
+    protected $articles;
+
+    public function before()
+    {
+        parent::before();
+        $this->articles = new A($this->getContext());
+    }
+
 
     public function action_articles($slug = null)
     {
@@ -16,7 +28,7 @@ class Articles extends \Foolz\Foolfuuka\Controller\Chan
         }
 
         try {
-            $article = A::getBySlug($slug);
+            $article = $this->articles->getBySlug($slug);
         } catch (ArticlesArticleNotFoundException $e) {
             return $this->action_404();
         }
@@ -42,7 +54,7 @@ class Articles extends \Foolz\Foolfuuka\Controller\Chan
 
     public function action_index()
     {
-        $articles = A::getAll();
+        $articles = $this->articles->getAll();
 
         $this->builder->getProps()->addTitle(_('Articles'));
         $this->param_manager->setParam('section_title', _('Articles'));

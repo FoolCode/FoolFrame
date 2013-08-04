@@ -2,27 +2,40 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
-use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC,
-    \Foolz\Foolframe\Plugins\Articles\Model\Articles as A,
-    \Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
+use Foolz\Foolframe\Model\DoctrineConnection;
+use Foolz\Foolframe\Model\Validation\Validator;
+use Foolz\Foolframe\Plugins\Articles\Model\Articles as A;
+use Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
+use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 class Articles extends \Foolz\Foolframe\Controller\Admin
 {
+    /**
+     * @var A
+     */
+    protected $articles;
 
     public function before()
     {
         if (!\Auth::has_access('maccess.mod')) {
-            \Response::redirect('admin');
+            return $this->redirectToAdmin('admin');
         }
 
         parent::before();
+
+        $this->articles = $this->getContext()->getService('foolframe-plugin.articles');
     }
 
     public function structure()
     {
+        /** @var DoctrineConnection $dc */
+        $dc = $this->getContext()->getService('doctrine');
+
         return array(
             'open' => array(
                 'type' => 'open',
@@ -30,11 +43,12 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
             'id' => array(
                 'type' => 'hidden',
                 'database' => true,
-                'validation_func' => function($input, $form_internal) {
+                'validation_func' => function($input, $form_internal) use ($dc) {
                     // check that the ID exists
-                    $count = (int) DC::qb()
+                    /** @var DoctrineConnection $dc */
+                    $count = (int) $dc->qb()
                         ->select('COUNT(*) as count')
-                        ->from(DC::p('plugin_ff_articles'), 'a')
+                        ->from($dc->p('plugin_ff_articles'), 'a')
                         ->where('id = :id')
                         ->setParameter(':id', $input['id'])
                         ->execute()
@@ -58,7 +72,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
                 'help' => _i('The title of your article'),
                 'class' => 'span4',
                 'placeholder' => _i('Required'),
-                'validation' => 'trim|required'
+                'validation' => [new Trim(), new Assert\NotBlank()]
             ),
             'slug' => array(
                 'database' => true,
@@ -67,14 +81,15 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
                 'help' => _i('Insert the short name of the article to use in the url. Only alphanumeric and dashes.'),
                 'placeholder' => _i('Required'),
                 'class' => 'span4',
-                'validation' => 'required|valid_string[alpha,dashes,numeric]',
-                'validation_func' => function($input, $form_internal) {
+                'validation' => [new Trim(), new Assert\Regex('/^\w+$/')],
+                'validation_func' => function($input, $form_internal) use ($dc) {
                     // if we're working on the same object
                     if (isset($input['id'])) {
                         // existence ensured by CRITICAL in the ID check
-                        $result = DC::qb()
+                        /** @var DoctrineConnection $dc */
+                        $result = $dc->qb()
                             ->select('*')
-                            ->from(DC::p('plugin_ff_articles'), 'a')
+                            ->from($dc->p('plugin_ff_articles'), 'a')
                             ->where('id = :id')
                             ->setParameter(':id', $input['id'])
                             ->execute()
@@ -87,9 +102,9 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
                     }
 
                     // check that there isn't already an article with that name
-                    $count = DC::qb()
+                    $count = $dc->qb()
                         ->select('COUNT(*) as count')
-                        ->from(DC::p('plugin_ff_articles'), 'a')
+                        ->from($dc->p('plugin_ff_articles'), 'a')
                         ->where('slug = :slug')
                         ->setParameter(':slug', $input['slug'])
                         ->execute()
@@ -109,7 +124,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
                 'class' => 'span4',
                 'label' => 'URL',
                 'help' => _i('If you set this, the article link will be an outlink.'),
-                'validation' => 'trim'
+                'validation' => [new Trim()]
             ),
             'content' => array(
                 'type' => 'textarea',
@@ -158,12 +173,12 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
         $this->param_manager->setParam('controller_title', _i("Articles"));
         $this->param_manager->setParam('method_title', _i('Manage'));
 
-        $articles = A::getAll();
+        $articles = $this->articles->getAll();
 
         ob_start();
         ?>
 
-            <a href="<?= \Uri::create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?= _i('New article') ?></a>
+            <a href="<?= $this->uri->create('admin/articles/edit') ?>" class="btn" style="float:right; margin:5px"><?= _i('New article') ?></a>
 
             <table class="table table-bordered table-striped table-condensed">
                 <thead>
@@ -182,13 +197,13 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
                             <?= htmlentities($article['title']) ?>
                         </td>
                         <td>
-                            <a href="<?= \Uri::create('_/articles/' . $article['slug']) ?>" target="_blank"><?= $article['slug'] ?></a>
+                            <a href="<?= $this->uri->create('_/articles/' . $article['slug']) ?>" target="_blank"><?= $article['slug'] ?></a>
                         </td>
                         <td>
-                            <a href="<?= \Uri::create('admin/articles/edit/'.$article['slug']) ?>" class="btn btn-mini btn-primary"><?= _i('Edit') ?></a>
+                            <a href="<?= $this->uri->create('admin/articles/edit/'.$article['slug']) ?>" class="btn btn-mini btn-primary"><?= _i('Edit') ?></a>
                         </td>
                         <td>
-                            <a href="<?= \Uri::create('admin/articles/remove/'.$article['id']) ?>" class="btn btn-mini btn-danger"><?= _i('Remove') ?></a>
+                            <a href="<?= $this->uri->create('admin/articles/remove/'.$article['id']) ?>" class="btn btn-mini btn-danger"><?= _i('Remove') ?></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -206,31 +221,31 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
     {
         $data['form'] = $this->structure();
 
-        if (\Input::post() && !\Security::check_token()) {
-            \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
-        } elseif (\Input::post()) {
-            $result = \Validation::form_validate($data['form']);
+        if ($this->getPost() && !\Security::check_token()) {
+            $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
+        } elseif ($this->getPost()) {
+            $result = Validator::formValidate($data['form']);
             if (isset($result['error'])) {
-                \Notices::set('warning', $result['error']);
+                $this->notices->set('warning', $result['error']);
             } else {
                 // it's actually fully checked, we just have to throw it in DB
-                A::save($result['success']);
+                $this->articles->save($result['success']);
                 if (is_null($slug)) {
-                    \Notices::setFlash('success', _i('New article created!'));
-                    \Response::redirect('admin/articles/edit/' . $result['success']['slug']);
+                    $this->notices->setFlash('success', _i('New article created!'));
+                    return $this->redirect('admin/articles/edit/' . $result['success']['slug']);
                 } elseif ($slug != $result['success']['slug']) {
                     // case in which letter was changed
-                    \Notices::setFlash('success', _i('Article information updated.'));
-                    \Response::redirect('admin/articles/edit/' . $result['success']['slug']);
+                    $this->notices->setFlash('success', _i('Article information updated.'));
+                    return $this->redirect('admin/articles/edit/' . $result['success']['slug']);
                 } else {
-                    \Notices::set('success', _i('Article information updated.'));
+                    $this->notices->set('success', _i('Article information updated.'));
                 }
             }
         }
 
         if (!is_null($slug)) {
             try {
-                $article = A::getBySlug($slug);
+                $article = $this->articles->getBySlug($slug);
                 $data['object'] = (object) $article;
             } catch (ArticlesArticleNotFoundException $e) {
                 throw new NotFoundHttpException;
@@ -251,21 +266,21 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
     public function action_remove($id)
     {
         try {
-            $article = A::getById($id);
+            $article = $this->articles->getById($id);
         } catch (ArticlesArticleNotFoundException $e) {
             throw new NotFoundHttpException;
         }
 
-        if (\Input::post() && !\Security::check_token()) {
-            \Notices::set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
-        } elseif (\Input::post()) {
+        if ($this->getPost() && !\Security::check_token()) {
+            $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
+        } elseif ($this->getPost()) {
             try {
-                A::remove($id);
+                $this->articles->remove($id);
             } catch (ArticlesArticleNotFoundException $e) {
                 throw new NotFoundHttpException;
             }
 
-            \Response::redirect('admin/articles/manage');
+            return $this->redirect('admin/articles/manage');
         }
 
         $this->param_manager->setParam('controller_title', _i('Articles'));

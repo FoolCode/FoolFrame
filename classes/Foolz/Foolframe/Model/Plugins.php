@@ -8,16 +8,34 @@ use \Foolz\Plugin\Loader;
 
 class PluginException extends \Exception {}
 
-class Plugins
+class Plugins extends Model
 {
     /**
      * The Plugin loader object
      *
      * @var  \Foolz\Plugin\Loader
      */
-    protected static $loader;
+    protected $loader;
 
-    protected static $framework;
+    /**
+     * @var Context
+     */
+    protected $context;
+
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
+     * @var Uri
+     */
+    protected $uri;
+
+    /**
+     * @var DoctrineConnection
+     */
+    protected $dc;
 
     /**
      * The modules in FuelPHP
@@ -26,64 +44,76 @@ class Plugins
      */
     protected static $modules = [];
 
+    /**
+     * @var array
+     */
     protected static $_admin_sidebars = [];
 
-    public static function instantiate(Context $framework)
+    public function __construct(Context $context)
     {
-        static::$loader = new Loader();
+        parent::__construct($context);
+        $this->config = $context->getService('config');
+        $this->dc = $context->getService('doctrine');
+    }
+
+    public function instantiate()
+    {
+        $this->loader = new Loader();
 
         // store all the relevant data from the modules
-        foreach (Legacy\Config::get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            $dir = VENDPATH.$module.'/'. Legacy\Config::get($module, 'package', 'directories.plugins');
-            static::$loader->addDir($dir);
+        foreach ($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
+            $dir = VENDPATH.$module.'/'. $this->config->get($module, 'package', 'directories.plugins');
+            $this->loader->addDir($dir);
             $dir = VAPPPATH.$module.'/plugins';
-            static::$loader->addDir($dir);
+            $this->loader->addDir($dir);
         }
 
         // public dir for plugins
-        static::$loader->addDir(VAPPPATH.'foolz/foolframe/plugins/');
+        $this->loader->addDir(VAPPPATH.'foolz/foolframe/plugins/');
 
-        foreach (static::getEnabled() as $enabled) {
+        foreach ($this->getEnabled() as $enabled) {
             try {
-                $plugin = static::$loader->get($enabled['slug']);
+                $plugin = $this->loader->get($enabled['slug']);
                 $plugin->bootstrap();
                 // we could use execute() but we want to inject more in the call
                 \Foolz\Plugin\Hook::forge('Foolz\Plugin\Plugin::execute.'.$plugin->getConfig('name'))
                     ->setObject($plugin)
-                    ->setParam('framework', $framework)
+                    ->setParam('framework', $this->getContext())
+                    ->setParam('context', $this->getContext())
                     ->execute();
 
-                static::$loader->get($enabled['slug'])->enabled = true;
+                $this->loader->get($enabled['slug'])->enabled = true;
             } catch (\OutOfBoundsException $e) {
 
             }
         }
     }
 
-    public static function handleWeb() {
-        static::$loader->setPublicDir(DOCROOT.'foolframe/');
-        static::$loader->setBaseUrl(\Uri::base().'foolframe/');
+    public function handleWeb() {
+        $this->uri = $this->getContext()->getService('uri');
+        $this->loader->setPublicDir(DOCROOT.'foolframe/');
+        $this->loader->setBaseUrl($this->uri->base().'foolframe/');
     }
 
-    public static function clearCache()
+    public function clearCache()
     {
         Cache::item('foolframe.model.plugins.get_all.query')->delete();
         Cache::item('foolframe.model.plugins.get_enabled.query')->delete();
     }
 
-    public static function getAll()
+    public function getAll()
     {
-        return static::$loader->getAll();
+        return $this->loader->getAll();
     }
 
-    public static function getEnabled()
+    public function getEnabled()
     {
         try {
             $result = Cache::item('foolframe.model.plugins.get_enabled.query')->get();
         } catch (\OutOfBoundsException $e) {
-            $result = DC::qb()
+            $result = $this->dc->qb()
                 ->select('*')
-                ->from(DC::p('plugins'), 'p')
+                ->from($this->dc->p('plugins'), 'p')
                 ->where('enabled = :enabled')
                 ->setParameter(':enabled', 1)
                 ->execute()
@@ -95,27 +125,27 @@ class Plugins
         return $result;
     }
 
-    public static function getInstalled()
+    public function getInstalled()
     {
-        return DC::qb()
+        return $this->dc->qb()
             ->select('*')
-            ->from(DC::p('plugins'), 'p')
+            ->from($this->dc->p('plugins'), 'p')
             ->execute()
             ->fetchAll();
     }
 
-    public static function getPlugin($slug)
+    public function getPlugin($slug)
     {
-        return static::$loader->get($slug);
+        return $this->loader->get($slug);
     }
 
-    public static function enable($slug)
+    public function enable($slug)
     {
-        $plugin = static::$loader->get($slug);
+        $plugin = $this->loader->get($slug);
 
-        $count = DC::qb()
+        $count = $this->dc->qb()
             ->select('COUNT(*) as count')
-            ->from(DC::p('plugins'), 'p')
+            ->from($this->dc->p('plugins'), 'p')
             ->andWhere('slug = :slug')
             ->setParameters([':slug' => $slug])
             ->execute()
@@ -123,62 +153,58 @@ class Plugins
 
         // if the plugin isn't installed yet, we will run install.php and NOT enable.php
         if (!$count) {
-            return static::install($slug);
+            return $this->install($slug);
         }
 
-        DC::qb()
-            ->update(DC::p('plugins'))
+        $this->dc->qb()
+            ->update($this->dc->p('plugins'))
             ->set('enabled', ':enabled')
             ->where('slug = :slug')
             ->setParameters(['enabled' => 1, ':slug' => $slug])
             ->execute();
 
-        static::clearCache();
+        $this->clearCache();
     }
 
     /**
      * Disables plugin and runs plugin_disable()
      */
-    public static function disable($slug)
+    public function disable($slug)
     {
-        $plugin = static::$loader->get($slug);
-        $dir = $plugin->getDir();
+        $plugin = $this->loader->get($slug);
 
-        if (file_exists($dir.'disable.php')) {
-            \Fuel::load($dir.'disable.php');
-        }
-
-        DC::qb()
-            ->update(DC::p('plugins'))
+        $this->dc->qb()
+            ->update($this->dc->p('plugins'))
             ->set('enabled', ':enabled')
             ->where('slug = :slug')
             ->setParameters([':enabled' => 0, ':slug' => $slug])
             ->execute();
 
-        static::clearCache();
+        $this->clearCache();
     }
 
-    public static function install($slug)
+    public function install($slug)
     {
-        $plugin = static::$loader->get($slug);
+        $plugin = $this->loader->get($slug);
         $plugin->install();
 
-        DC::forge()->insert(DC::p('plugins'), ['slug' => $slug, 'enabled' => 1]);
+        $this->dc->getConnection()->insert($this->dc->p('plugins'), ['slug' => $slug, 'enabled' => 1]);
 
-        static::clearCache();
+        $this->clearCache();
 
         // run the schema update
-        $sm = \Foolz\Foolframe\Model\SchemaManager::forge(DC::forge(), DC::getPrefix().'plugin_');
+        $sm = \Foolz\Foolframe\Model\SchemaManager::forge($this->dc->getConnection(), $this->dc->getPrefix().'plugin_');
 
-        foreach (static::getInstalled() as $enabled) {
+        foreach ($this->getInstalled() as $enabled) {
             try {
-                $plug = static::$loader->get($enabled['slug']);
+                $plug = $this->loader->get($enabled['slug']);
 
                 if (!$plug->isBootstrapped()) {
                     $plug->bootstrap();
                 }
 
                 \Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.'.$plug->getConfig('name'))
+                    ->setParam('context', $this->getContext())
                     ->setParam('schema', $sm->getCodedSchema())
                     ->execute();
             } catch (\OutOfBoundsException $e) {
@@ -188,24 +214,7 @@ class Plugins
 
         $sm->commit();
 
-        static::clearCache();
-    }
-
-    public static function uninstall($slug)
-    {
-        $dir = static::getPluginDir($slug);
-
-        if (file_exists($dir.'uninstall.php')) {
-            \Fuel::load($dir.'uninstall.php');
-        }
-
-        DC::qb()
-            ->delete(DC::p('plugins'))
-            ->andWhere('slug = :slug')
-            ->setParameters([':slug' => $slug])
-            ->execute();
-
-        static::clearCache();
+        $this->clearCache();
     }
 
     public static function getSidebarElements($type)

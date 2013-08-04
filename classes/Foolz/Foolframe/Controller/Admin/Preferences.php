@@ -180,7 +180,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        $this->preferences->submit_auto($form);
+        $this->preferences->submit_auto($form, $this->getPost());
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')
@@ -244,7 +244,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        $this->preferences->submit_auto($form);
+        $this->preferences->submit_auto($form, $this->getPost());
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')
@@ -316,7 +316,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        $this->preferences->submit_auto($form);
+        $this->preferences->submit_auto($form, $this->getPost());
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')

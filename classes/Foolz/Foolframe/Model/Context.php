@@ -159,6 +159,10 @@ class Context implements ContextInterface
         $this->container->register('preferences', 'Foolz\Foolframe\Model\Preferences')
             ->addArgument($this);
 
+        $this->container->register('plugins', 'Foolz\Foolframe\Model\Plugins')
+            ->addArgument($this);
+
+
         $this->container->register('users', 'Foolz\Foolframe\Model\Users')
             ->addArgument($this);
 
@@ -209,7 +213,7 @@ class Context implements ContextInterface
         }
 
         if (count($this->child_contextes)) {
-            Plugins::instantiate($this);
+            $this->getService('plugins')->instantiate();
         }
     }
 
@@ -241,7 +245,7 @@ class Context implements ContextInterface
             // no app installed, we need to go to the install
             $this->loadInstallRoutes($this->route_collection);
         } else {
-            Plugins::handleWeb();
+            $this->getService('plugins')->handleWeb();
             $available_langs = $this->config->get('foolz/foolframe', 'package', 'preferences.lang.available');
             $lang = $request->cookies->get('language');
 
@@ -276,6 +280,13 @@ class Context implements ContextInterface
             $request->setSession(new Session());
         }
 
+        // this is the first time we know we have a request for sure
+        // hooks that need the request to function must run here
+        Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.has_request')
+            ->setObject($this)
+            ->setParam('request', $request)
+            ->execute();
+
         $this->container->register('notices', 'Foolz\Foolframe\Model\Notices')
             ->addArgument($this)
             ->addArgument($request->getSession());
@@ -297,23 +308,32 @@ class Context implements ContextInterface
             $context->handleWeb($request);
         }
 
-        try {
-            $this->profiler->log('Request handling start');
-            $response = $this->http_kernel->handle($request);
-            $this->profiler->log('Request handling end');
-        } catch (NotFoundHttpException $e) {
-            $controller_404 = $this->route_collection->get('404')->getDefault('_controller');
-            $request = new Request();
-            $request->attributes->add(['_controller' => $controller_404]);
-            $response = $this->http_kernel->handle($request);
-        }
+        // if this hook is used, it can override the entirety of the request handling
+        $response = Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.override_response')
+            ->setObject($this)
+            ->setParam('request', $request)
+            ->execute()
+            ->get(false);
 
-        // stick the html of the profiler at the end
-        if ($request->getRequestFormat() == 'html' && \Auth::has_access('maccess.admin')) {
-            $content = explode('</body>', $response->getContent());
-            if (count($content) == 2) {
-                $this->profiler->log('Execution end');
-                $response->setContent($content[0].$this->profiler->getHtml().'</body>'.$content[1]);
+        if (!$response) {
+            try {
+                $this->profiler->log('Request handling start');
+                $response = $this->http_kernel->handle($request);
+                $this->profiler->log('Request handling end');
+            } catch (NotFoundHttpException $e) {
+                $controller_404 = $this->route_collection->get('404')->getDefault('_controller');
+                $request = new Request();
+                $request->attributes->add(['_controller' => $controller_404]);
+                $response = $this->http_kernel->handle($request);
+            }
+
+            // stick the html of the profiler at the end
+            if ($request->getRequestFormat() == 'html' && \Auth::has_access('maccess.admin')) {
+                $content = explode('</body>', $response->getContent());
+                if (count($content) == 2) {
+                    $this->profiler->log('Execution end');
+                    $response->setContent($content[0].$this->profiler->getHtml().'</body>'.$content[1]);
+                }
             }
         }
 
@@ -341,6 +361,14 @@ class Context implements ContextInterface
     public function getRouteCollection()
     {
         return $this->route_collection;
+    }
+
+    /**
+     * @return ContainerBuilder
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     protected function loadInstallRoutes(RouteCollection $route_collection)

@@ -10,6 +10,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Plugins extends \Foolz\Foolframe\Controller\Admin
 {
+    /**
+     * @var PluginsModel
+     */
+    protected $plugins;
+
     public function before()
     {
         if(!\Auth::has_access('maccess.admin')) {
@@ -18,6 +23,8 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
         parent::before();
 
+        $this->plugins = $this->getContext()->getService('plugins');
+
         // set controller title
         $this->param_manager->setParam('controller_title', _i('Plugins'));
     }
@@ -25,7 +32,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
     function action_manage()
     {
         $data = [];
-        $data['plugins'] = PluginsModel::getAll();
+        $data['plugins'] = $this->plugins->getAll();
 
         $this->param_manager->setParam('method_title', _i('Manage'));
         $this->builder->createPartial('body', 'plugins/manage')
@@ -51,7 +58,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
         $action = $this->getPost('action');
 
-        $plugin = PluginsModel::getPlugin($slug);
+        $plugin = $this->plugins->getPlugin($slug);
 
         if (!$plugin) {
             throw new NotFoundHttpException;
@@ -60,7 +67,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
         switch ($action) {
             case 'enable':
                 try {
-                    PluginsModel::enable($slug);
+                    $this->plugins->enable($slug);
                 } catch (PluginException $e) {
                     $this->notices->setFlash('error', _i('The plugin %s couldn\'t be enabled.', $plugin->getJsonConfig('extra.name')));
                     break;
@@ -72,7 +79,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
             case 'disable':
                 try {
-                    PluginsModel::disable($slug);
+                    $this->plugins->disable($slug);
                 } catch (PluginException $e) {
                     $this->notices->setFlash('error', _i('The %s plugin couldn\'t be enabled.', $plugin->getJsonConfig('extra.name')));
                     break;
@@ -86,7 +93,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
             case 'remove':
                 try {
-                    PluginsModel::remove($slug);
+                    $this->plugins->remove($slug);
                 } catch (PluginException $e) {
                     $this->notices->setFlash('error', _i('The :slug plugin couldn\'t be removed.', $plugin->getJsonConfig('extra.name')));
                     break;

@@ -5,7 +5,7 @@ namespace Foolz\Foolframe\Controller;
 use Foolz\Foolframe\Model\Config;
 use Foolz\Foolframe\Model\Notices;
 use Foolz\Foolframe\Model\Plugins;
-use Foolz\Foolframe\Model\Legacy\Preferences;
+use Foolz\Foolframe\Model\Preferences;
 use Foolz\Foolframe\Model\Uri;
 use Foolz\Theme\Loader;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -72,7 +72,7 @@ class Admin extends Common
         $this->param_manager = $this->builder->getParamManager();
         $this->builder->createLayout('base');
 
-        $this->builder->getProps()->addTitle(_i('Control Panel').' - '.Preferences::get('foolframe.gen.website_title'));
+        $this->builder->getProps()->addTitle(_i('Control Panel').' - '.$this->preferences->get('foolframe.gen.website_title'));
 
         $this->param_manager->setParams([
             'notices' => $this->notices,

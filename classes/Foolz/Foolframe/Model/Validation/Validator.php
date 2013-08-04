@@ -13,22 +13,22 @@ class Validator
     /**
      * @var array
      */
-    protected $original_values;
+    protected $original_values = [];
 
     /**
      * @var \Symfony\Component\Validator\Constraints[]
      */
-    protected $constraints;
+    protected $constraints = [];
 
     /**
      * @var array
      */
-    protected $final_values;
+    protected $final_values = [];
 
     /**
      * @var array
      */
-    protected $labels;
+    protected $labels = [];
 
     /**
      * @var ViolationCollection
@@ -59,6 +59,8 @@ class Validator
 
         $validator = SymfonyValidation::createValidator();
         $violations_arr = [];
+
+        $this->violations = new ViolationCollection([]);
 
         foreach ($this->constraints as $key => $constraint) {
             // we always keep the variables set someway
