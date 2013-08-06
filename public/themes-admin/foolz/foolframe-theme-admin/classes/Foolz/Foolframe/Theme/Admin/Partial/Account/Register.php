@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
 
-class Register extends \Foolz\Theme\View
+class Register extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>
@@ -13,7 +13,7 @@ class Register extends \Foolz\Theme\View
         <?= \Form::input([
         'class' => 'input-block-level',
         'name' => 'username',
-        'value' => \Input::post('username'),
+        'value' => $this->getPost('username'),
         'placeholder' => _i('Username'),
         'required' => true
     ]) ?>
@@ -21,7 +21,7 @@ class Register extends \Foolz\Theme\View
         <?= \Form::input([
         'class' => 'input-block-level',
         'name' => 'email',
-        'value' => \Input::post('email'),
+        'value' => $this->getPost('email'),
         'placeholder' => _i('Email Address'),
         'required' => true
     ]) ?>
@@ -44,8 +44,8 @@ class Register extends \Foolz\Theme\View
 
         <?= \Form::submit(['class' => 'btn btn-primary', 'name' => 'register', 'value' => _i('Register')]) ?>
 
-        <input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/forgot_password/') ?>'" value="<?= htmlspecialchars(_i('Forgot Password')) ?>" />
-        <input type="button" onClick="window.location.href='<?= \Uri::create('/admin/account/login/') ?>'" class="btn" value="<?= htmlspecialchars(_i('Back')) ?>" />
+        <input type="button" class="btn" onClick="window.location.href='<?= $this->getUri()->create('/admin/account/forgot_password/') ?>'" value="<?= htmlspecialchars(_i('Forgot Password')) ?>" />
+        <input type="button" onClick="window.location.href='<?= $this->getUri()->create('/admin/account/login/') ?>'" class="btn" value="<?= htmlspecialchars(_i('Back')) ?>" />
         <?= \Form::close() ?>
     <?php
     }

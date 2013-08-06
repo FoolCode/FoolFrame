@@ -37,6 +37,11 @@ class Uri extends Model {
         return $this->request->getUri();
     }
 
+    public function segments()
+    {
+        return explode('/', $this->request->getUri());
+    }
+
     public static function uri_to_assoc($uri, $index = 0, $allowed = null)
     {
         if (is_string($uri)) {

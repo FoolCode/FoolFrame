@@ -75,6 +75,7 @@ class Admin extends Common
         $this->builder->getProps()->addTitle(_i('Control Panel').' - '.$this->preferences->get('foolframe.gen.website_title'));
 
         $this->param_manager->setParams([
+            'context' => $this->getContext(),
             'notices' => $this->notices,
             'uri' => $this->uri,
             'request' => $request

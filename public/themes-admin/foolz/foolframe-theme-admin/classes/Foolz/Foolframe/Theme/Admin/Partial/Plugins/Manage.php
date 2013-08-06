@@ -4,7 +4,7 @@ namespace Foolz\Foolframe\Theme\Admin\Partial\Plugins;
 
 use Foolz\Foolframe\Model\Legacy\Config;
 
-class Manage extends \Foolz\Theme\View
+class Manage extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>

@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: woxxy
- * Date: 03/08/13
- * Time: 20:47
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Foolz\Foolframe\Model;
-
 
 use Psr\Log\LoggerInterface;
 

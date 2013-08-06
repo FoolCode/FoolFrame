@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Install;
 
-class Welcome extends \Foolz\Theme\View
+class Welcome extends \Foolz\Foolframe\View\View
 {
     public function toString()
     {
@@ -12,7 +12,7 @@ class Welcome extends \Foolz\Theme\View
 
         <hr>
 
-        <a href="<?= \Uri::create('install/system_check') ?>" class="btn btn-success pull-right"><?= _i('Next') ?></a>
+        <a href="<?= $this->getUri()->create('install/system_check') ?>" class="btn btn-success pull-right"><?= _i('Next') ?></a>
         <?php
     }
 }

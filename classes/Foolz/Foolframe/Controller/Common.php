@@ -55,4 +55,15 @@ class Common implements ControllerInterface
 
         return $this->getRequest()->query->get($key, $fallback);
     }
+
+    public function getCookie($key = false, $fallback = false)
+    {
+        if (!$key) {
+            return $this->getRequest()->cookies->all();
+        }
+
+        $config = $this->getContext()->getService('config');
+        return $this->getRequest()
+            ->cookies->get($config->get('foolz/foolframe', 'config', 'config.cookie_prefix').$key, $fallback);
+    }
 }

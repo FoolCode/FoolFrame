@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
 
-class ChangePassword extends \Foolz\Theme\View
+class ChangePassword extends \Foolz\Foolframe\View\View
 {
 public function toString()
 { ?><div class="admin-container">

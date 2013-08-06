@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial;
 
-class Confirm extends \Foolz\Theme\View
+class Confirm extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>

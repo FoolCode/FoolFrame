@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Install;
 
-class CreateAdmin extends \Foolz\Theme\View
+class CreateAdmin extends \Foolz\Foolframe\View\View
 {
     public function toString()
     {
@@ -18,7 +18,7 @@ class CreateAdmin extends \Foolz\Theme\View
                     <label class="control-label" for="username"><?= _i('Username') ?></label>
 
                     <div class="controls">
-                        <?= \Form::input(array('id' => 'username', 'name' => 'username', 'value' => \Input::post('username'))) ?>
+                        <?= \Form::input(array('id' => 'username', 'name' => 'username', 'value' => $this->getPost('username'))) ?>
                         <p class="help-block small-text"><?= _i('This will the the username of the account with administrative privileges created to manage your FoolFrame installation.') ?></p>
                     </div>
                 </div>
@@ -27,7 +27,7 @@ class CreateAdmin extends \Foolz\Theme\View
                     <label class="control-label" for="email"><?= _i('Email') ?></label>
 
                     <div class="controls">
-                        <?= \Form::input(array('id' => 'email', 'name' => 'email', 'type' => 'email', 'value' => \Input::post('email'))) ?>
+                        <?= \Form::input(array('id' => 'email', 'name' => 'email', 'type' => 'email', 'value' => $this->getPost('email'))) ?>
                         <p class="help-block small-text"><?= _i('Enter the email address for the user account specified above. This will be used for account recovery and authentication.') ?></p>
                     </div>
                 </div>

@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
 
-class Login extends \Foolz\Theme\View
+class Login extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>
@@ -15,7 +15,7 @@ class Login extends \Foolz\Theme\View
         <?= \Form::input([
         'class' => 'input-block-level',
         'name' => 'username',
-        'value' => \Input::post('username'),
+        'value' => $this->getPost('username'),
         'placeholder' => _i('Username')
     ]) ?>
 
@@ -29,22 +29,22 @@ class Login extends \Foolz\Theme\View
             <?= \Form::checkbox([
                 'name' => 'remember',
                 'value' => true,
-                'checked' => \Input::post('remember')
+                'checked' => $this->getPost('remember')
             ]) ?>
             <?= \Form::label(_i('Remember Me'), 'remember') ?>
         </label>
 
         <?= \Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => _i('Login')]) ?>
 
-        <input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/forgot_password/') ?>'" value="<?= htmlspecialchars(_i('Forgot Password')) ?>" />
+        <input type="button" class="btn" onClick="window.location.href='<?= $this->getUri()->create('/admin/account/forgot_password/') ?>'" value="<?= htmlspecialchars(_i('Forgot Password')) ?>" />
 
-        <?php if (!\Preferences::get('foolframe.auth.disable_registration')) : ?>
-        <input type="button" class="btn" onClick="window.location.href='<?= \Uri::create('/admin/account/register/') ?>'" value="<?= htmlspecialchars(_i('Register')) ?>" />
+        <?php if (!$this->getPreferences()->get('foolframe.auth.disable_registration')) : ?>
+        <input type="button" class="btn" onClick="window.location.href='<?= $this->getUri()->create('/admin/account/register/') ?>'" value="<?= htmlspecialchars(_i('Register')) ?>" />
     <?php endif; ?>
 
         <hr>
 
-        <a href="<?= \Uri::base() ?>"><?= _i('Back to Index') ?></a>
+        <a href="<?= $this->getUri()->base() ?>"><?= _i('Back to Index') ?></a>
         <?= \Form::close() ?>
     <?php
     }

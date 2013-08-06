@@ -49,7 +49,7 @@ namespace Foolz\Foolframe\Theme\Admin\Partial;
  *
  */
 
-class FormCreator extends \Foolz\Theme\View
+class FormCreator extends \Foolz\Foolframe\View\View
 {
 
 public function toString()
@@ -100,8 +100,8 @@ public function toString()
 
             $item['value_array'] = array();
 
-            if (\Input::post($item['name'])) {
-                $item['value_array'] = \Input::post($item['name']);
+            if ($this->getPost($item['name'])) {
+                $item['value_array'] = $this->getPost($item['name']);
                 $item['value_array'] = array_filter($item['value_array']);
             } else {
                 if(isset($item['value']))
@@ -114,8 +114,8 @@ public function toString()
         } else {
             $item['name'] = $name;
 
-            if (\Input::post($item['name'])) {
-                $item['value'] = \Input::post($item['name']);
+            if ($this->getPost($item['name'])) {
+                $item['value'] = $this->getPost($item['name']);
             }
 
             $count = 1;
@@ -227,7 +227,7 @@ public function toString()
                         }
 
                         if (isset($helpers['preferences']) && $helpers['preferences']) {
-                            $checked = \Preferences::get(str_replace(',', '.', $name));
+                            $checked = $this->getPreferences()->get(str_replace(',', '.', $name));
 
                             if(isset($helpers['array_key'])) {
                                 $checked = @unserialize($checked);
@@ -296,7 +296,7 @@ public function toString()
                     case 'checkbox_array':
                         $data_form = array();
                         if (!isset($item['value'])) {
-                            if($unserialized = unserialize(\Preferences::get(str_replace(',', '.', $name)))) {
+                            if($unserialized = unserialize($this->getPreferences()->get(str_replace(',', '.', $name)))) {
                                 $item['value'] = $unserialized;
                             } else {
                                 $item['value'] = array();
@@ -330,7 +330,7 @@ public function toString()
                         <?php
                         endif;
                         if (isset($helpers['preferences']) && $helpers['preferences']) {
-                            $item['selected'] = \Preferences::get(str_replace(',', '.', $name));
+                            $item['selected'] = $this->getPreferences()->get(str_replace(',', '.', $name));
                         } elseif (isset($item['value'])) {
                             $item['selected'] = $item['value'];
                         } elseif (isset($object->$name)) {
@@ -361,7 +361,7 @@ public function toString()
 
                         if (!isset($item['value'])) {
                             if (isset($helpers['preferences']) && $helpers['preferences']) {
-                                $item['value'] = \Preferences::get(str_replace(',', '.', $name));
+                                $item['value'] = $this->getPreferences()->get(str_replace(',', '.', $name));
                                 if(isset($helpers['array']) && $helpers['array']) {
                                     $item['value'] = unserialize($item['value']);
 

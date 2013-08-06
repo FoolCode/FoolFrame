@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial;
 
-class Content extends \Foolz\Theme\View
+class Content extends \Foolz\Foolframe\View\View
 {
     public function toString()
     {

@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
 
-class RequestChangeEmail extends \Foolz\Theme\View
+class RequestChangeEmail extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>
@@ -19,7 +19,7 @@ class RequestChangeEmail extends \Foolz\Theme\View
                     'id' => 'new-email',
                     'name' => 'email',
                     'type' => 'email',
-                    'value' => \Input::post('email'),
+                    'value' => $this->getPost('email'),
                     'placeholder' => 'test@example.com',
                     'required' => true
                 ]) ?>

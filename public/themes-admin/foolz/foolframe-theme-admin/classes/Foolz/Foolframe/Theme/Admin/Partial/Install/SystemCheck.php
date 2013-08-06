@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Install;
 
-class SystemCheck extends \Foolz\Theme\View
+class SystemCheck extends \Foolz\Foolframe\View\View
 {
     public function toString()
     {
@@ -73,7 +73,7 @@ class SystemCheck extends \Foolz\Theme\View
 
         <hr>
 
-        <a href="<?= \Uri::create('install/database_setup') ?>" class="btn btn-success pull-right"><?= _i('Next') ?></a>
+        <a href="<?= $this->getUri()->create('install/database_setup') ?>" class="btn btn-success pull-right"><?= _i('Next') ?></a>
     <?php endif;
     }
 }

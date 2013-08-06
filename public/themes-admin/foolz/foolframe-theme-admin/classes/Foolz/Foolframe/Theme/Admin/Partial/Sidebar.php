@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial;
 
-class Sidebar extends \Foolz\Theme\View
+class Sidebar extends \Foolz\Foolframe\View\View
 {
 
     public function toString()

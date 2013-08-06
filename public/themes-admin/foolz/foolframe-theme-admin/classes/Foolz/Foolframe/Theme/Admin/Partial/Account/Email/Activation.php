@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Account\Email;
 
-class Activation extends \Foolz\Theme\View
+class Activation extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>

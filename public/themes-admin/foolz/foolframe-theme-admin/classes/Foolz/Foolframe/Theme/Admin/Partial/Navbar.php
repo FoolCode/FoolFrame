@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial;
 
-class Navbar extends \Foolz\Theme\View
+class Navbar extends \Foolz\Foolframe\View\View
 {
 
 public function toString()
@@ -10,11 +10,11 @@ public function toString()
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="<?= \Uri::create('admin') ?>">
-                <?= \Preferences::get('foolframe.gen.website_title') ?>
+            <a class="brand" href="<?= $this->getUri()->create('admin') ?>">
+                <?= $this->getPreferences()->get('foolframe.gen.website_title') ?>
             </a>
             <ul class="nav pull-right">
-                <li><a href="<?= \Uri::base('@default') ?>"><?= _i('Boards') ?></a></li>
+                <li><a href="<?= $this->getUri()->base('@default') ?>"><?= _i('Boards') ?></a></li>
                 <li class="divider-vertical"></li>
                 <?php if (\Auth::has_access('maccess.user')) : ?>
                     <li class="dropdown">
@@ -24,17 +24,17 @@ public function toString()
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="<?= \Uri::create('admin/account/change_email') ?>">
+                                <a href="<?= $this->getUri()->create('admin/account/change_email') ?>">
                                     <?= _i('Profile') ?>
                                 </a>
                             </li>
                             <li>
-                                <a href="<?= \Uri::create('/admin/account/logout').'?token='.\Security::fetch_token() ?>">
+                                <a href="<?= $this->getUri()->create('/admin/account/logout').'?token='.\Security::fetch_token() ?>">
                                     <?= _i('Logout') ?>
                                 </a>
                             </li>
                             <li>
-                                <a href="<?= \Uri::create('/admin/account/logout_all').'?token='.\Security::fetch_token() ?>">
+                                <a href="<?= $this->getUri()->create('/admin/account/logout_all').'?token='.\Security::fetch_token() ?>">
                                     <?= _i('Logout on All Devices') ?>
                                 </a>
                             </li>
@@ -42,7 +42,7 @@ public function toString()
                     </li>
                 <?php else : ?>
                     <li>
-                        <a href="<?= \Uri::create('admin/account/login') ?>">
+                        <a href="<?= $this->getUri()->create('admin/account/login') ?>">
                             <?= _i('Login') ?>
                         </a>
                     </li>

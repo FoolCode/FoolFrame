@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Install;
 
-class Navbar extends \Foolz\Theme\View
+class Navbar extends \Foolz\Foolframe\View\View
 {
 
 public function toString()

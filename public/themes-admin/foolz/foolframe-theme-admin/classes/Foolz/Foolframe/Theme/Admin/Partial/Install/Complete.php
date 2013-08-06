@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Install;
 
-class Complete extends \Foolz\Theme\View
+class Complete extends \Foolz\Foolframe\View\View
 {
     public function toString()
     {
@@ -13,7 +13,7 @@ class Complete extends \Foolz\Theme\View
 
         <hr>
 
-        <a href="<?= \Uri::create('admin') ?>" class="btn btn-info pull-right"><?= _i('Log In') ?></a>
+        <a href="<?= $this->getUri()->create('admin') ?>" class="btn btn-info pull-right"><?= _i('Log In') ?></a>
         <?php
     }
 }

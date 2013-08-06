@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Users;
 
-class Manage extends \Foolz\Theme\View
+class Manage extends \Foolz\Foolframe\View\View
 {
     public function toString()
     {?>
@@ -21,7 +21,7 @@ class Manage extends \Foolz\Theme\View
             <tr>
                 <td><?= $user->id ?></td>
                 <td>
-                    <a href="<?= \Uri::create('admin/users/user/'.$user->id) ?>"><?= $user->username ?></a>
+                    <a href="<?= $this->getUri()->create('admin/users/user/'.$user->id) ?>"><?= $user->username ?></a>
                 </td>
                 <td>
                     <a href="mailto:<?= htmlspecialchars($user->email) ?>"><?= $user->email ?></a>

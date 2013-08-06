@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
 
-class RequestChangePassword extends \Foolz\Theme\View
+class RequestChangePassword extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>

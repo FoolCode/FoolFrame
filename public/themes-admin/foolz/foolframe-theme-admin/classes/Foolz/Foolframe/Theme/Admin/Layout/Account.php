@@ -4,7 +4,7 @@ namespace Foolz\Foolframe\Theme\Admin\Layout;
 
 use Foolz\Foolframe\Model\Legacy\Preferences;
 
-class Account extends \Foolz\Theme\View
+class Account extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>

@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
 
-class RequestDelete extends \Foolz\Theme\View
+class RequestDelete extends \Foolz\Foolframe\View\View
 {
     public function toString()
     { ?>

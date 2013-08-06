@@ -94,6 +94,11 @@ class Context implements ContextInterface
      */
     protected $preferences;
 
+    public function __sleep()
+    {
+        return array();
+    }
+
     /**
      * Called directly from index.php
      * Starts up the Symfony components and the FoolFrame components
@@ -146,6 +151,7 @@ class Context implements ContextInterface
         }
 
         $this->container->register('logger', 'Foolz\Foolframe\Model\Logger')
+            ->addArgument($this)
             ->addMethodCall('addLogger', [$this->logger])
             ->addMethodCall('addLogger', [$this->logger_trace]);
 
@@ -307,6 +313,10 @@ class Context implements ContextInterface
         foreach ($this->child_contextes as $context) {
             $context->handleWeb($request);
         }
+
+        Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.contextes_handled')
+            ->setObject($this)
+            ->execute();
 
         // if this hook is used, it can override the entirety of the request handling
         $response = Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.override_response')

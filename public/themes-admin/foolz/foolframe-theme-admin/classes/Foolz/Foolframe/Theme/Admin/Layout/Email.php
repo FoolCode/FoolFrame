@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Theme\Admin\Layout;
 
-class Email extends \Foolz\Theme\View
+class Email extends \Foolz\Foolframe\View\View
 {
 
     public function toString()

@@ -4,7 +4,7 @@ namespace Foolz\Foolframe\Theme\Admin\Layout;
 
 use Foolz\Foolframe\Model\Notices;
 
-class Base extends \Foolz\Theme\View
+class Base extends \Foolz\Foolframe\View\View
 {
 
     public function toString()
