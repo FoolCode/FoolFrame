@@ -66,15 +66,19 @@ class Install extends Common
         $theme_instance->setBaseUrl(\Uri::base().'foolframe/');
         $theme_instance->setPublicDir(DOCROOT.'foolframe/');
         $this->theme = $theme_instance->get('foolz/foolframe-theme-admin');
+
         $this->builder = $this->theme->createBuilder();
-        $this->param_manager = $this->builder->getParamManager();
         $this->builder->createLayout('base');
-
-        $this->builder->getProps()->addTitle(_i('FoolFrame Installation'));
-        $this->param_manager->setParam('controller_title', _i('FoolFrame Installation'));
-        $this->param_manager->setParam('notices', $this->notices);
-
         $this->builder->createPartial('navbar', 'install/navbar');
+        $this->builder->getProps()->addTitle(_i('FoolFrame Installation'));
+
+        $this->param_manager = $this->builder->getParamManager();
+        $this->param_manager->setParams([
+            'context' => $this->getContext(),
+            'request' => $this->getRequest(),
+            'notices' => $this->notices,
+            'controller_title' => _i('FoolFrame Installation')
+        ]);
     }
 
     public function process($action)
