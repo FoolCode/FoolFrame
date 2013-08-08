@@ -25,7 +25,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
     {
         // redirect user to admin panel
         if (\Auth::has_access('maccess.user')) {
-            return $this->redirectToLogin();
+            return $this->redirectToAdmin();
         }
 
         // the login button has been submitted - authenticate username and password
@@ -302,8 +302,8 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             } elseif ($this->getPost()) {
                 $validator = new Validator();
                 $validator
-                    ->add('password', _i('Password'), [new Assert\NotBlank()])
                     ->add('email', _i('Email'), [new Trim(), new Assert\NotBlank(), new Assert\Email()])
+                    ->add('password', _i('Password'), [new Assert\NotBlank()])
                     ->validate($this->getPost());
 
                 if(!$validator->getViolations()->count()) {
@@ -313,10 +313,10 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                         $change_email_key = \Auth::create_change_email_key($input['email'], $input['password']);
                     } catch (\Auth\FoolUserWrongPassword $e) {
                         $this->notices->setFlash('error', _i('The password entered is incorrect.'));
-                        return $this->redirect('admin/account/change_email_request');
+                        return $this->redirect('admin/account/change_email');
                     } catch (\Auth\FoolUserEmailExists $e) {
                         $this->notices->setFlash('error', _i('The email address is already associated with another username. Please use another email address.'));
-                        return $this->redirect('admin/account/change_email_request');
+                        return $this->redirect('admin/account/change_email');
                     }
 
                     /** @var \Foolz\Foolframe\Model\Users $users */
