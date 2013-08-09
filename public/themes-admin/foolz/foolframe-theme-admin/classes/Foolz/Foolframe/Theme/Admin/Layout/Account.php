@@ -3,6 +3,7 @@
 namespace Foolz\Foolframe\Theme\Admin\Layout;
 
 use Foolz\Foolframe\Model\Legacy\Preferences;
+use Foolz\Foolframe\Model\Notices;
 
 class Account extends \Foolz\Foolframe\View\View
 {
@@ -66,7 +67,11 @@ class Account extends \Foolz\Foolframe\View\View
             <?= $this->getBuilder()->isPartial('body') ? $this->getBuilder()->getPartial('body')->build() : '' ?>
 
             <div class="alerts">
-                <?php $notices = array_merge(\Notices::get(), \Notices::getFlash()); ?>
+                <?php
+                    /** @var Notices $notices */
+                    $notices = $this->getBuilderParamManager()->getParam('notices');
+                    $notices = array_merge($notices->get(), $notices->getFlash());
+                ?>
                 <?php foreach ($notices as $notice) : ?>
                     <div class="alert alert-"<?= $notice['level'] ?>">
                         <?php if (is_array($notice['message'])) : ?>

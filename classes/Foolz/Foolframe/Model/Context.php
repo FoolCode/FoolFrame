@@ -3,6 +3,8 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Cache\Cache;
+use Foolz\Foolframe\Model\Auth\UserChecker;
+use Foolz\Foolframe\Model\Auth\UserProvider;
 use Foolz\Foolframe\Model\Legacy\Config;
 use Foolz\Foolframe\Model\Legacy\Uri;
 use Foolz\Plugin\Hook;
@@ -29,6 +31,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\EventListener\ResponseListener;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
+use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
+use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
 class Context implements ContextInterface
 {

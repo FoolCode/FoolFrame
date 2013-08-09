@@ -2,15 +2,26 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use Foolz\Foolframe\Model\Auth\RememberMe;
+use Foolz\Foolframe\Model\Auth\UserChecker;
+use Foolz\Foolframe\Model\Auth\UserProvider;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
 use Foolz\Foolframe\Model\Validation\Validator;
+use Foolz\Inet\Inet;
 use Swift_SendmailTransport;
 use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
+use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
+use Symfony\Component\Security\Core\Encoder\EncoderFactory;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Account extends \Foolz\Foolframe\Controller\Admin
@@ -33,18 +44,39 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             $this->notices->set('error', _i('The security token was not found. Please try again.'));
         } elseif ($this->getPost()) {
             // load authentication instance
-            $auth = \Auth::instance();
 
             // verify credentials
             try {
-                $auth->login();
+                $dao_authentication_provider = new DaoAuthenticationProvider(
+                    new UserProvider($this->getContext()),
+                    new UserChecker($this->getContext()),
+                    'dao_security',
+                    new EncoderFactory([
+                        'Foolz\Foolframe\Model\Auth\User' => new BCryptPasswordEncoder(10)
+                    ])
+                );
+                $authentication_manager = new AuthenticationProviderManager([$dao_authentication_provider]);
+
+                $token = $authentication_manager->authenticate(
+                    new UsernamePasswordToken(
+                        $this->getPost('username', ''),
+                        $this->getPost('password', ''),
+                        'dao_security'
+                    )
+                );
+
+                $rememberme = new RememberMe($this->getContext());
+                $rememberme_token = $rememberme->createLoginHash(
+                    $token->getUser(),
+                    Inet::ptod($this->getRequest()->getClientIp()),
+                    $this->getRequest()->headers->get('User-Agent')
+                );
+
+                die('here');
+
                 return $this->redirectToAdmin();
-            } catch (\Auth\FoolUserWrongUsernameOrPassword $e) {
-                // invalid username or password was entered
+            } catch (BadCredentialsException $e) {
                 $this->notices->set('error', _i('You have entered an invalid username and/or password. Please try again.'));
-            } catch (\Auth\FoolUserLimitExceeded $e) {
-                // account has been locked due to excess authentication failures
-                $this->notices->set('error', _i('After %d failed login attempts, this account has been locked. In order to unlock your account, please use the password reset system.', Config::get('foolz/foolframe', 'foolauth', 'attempts_to_lock')));
             }
         }
 
