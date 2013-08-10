@@ -41,7 +41,7 @@ class Preferences extends Admin
             'class' => 'span3',
             'preferences' => true,
             'validation' => [new Trim(), new Assert\Length(['max' => 32])],
-            'help' => _i('Sets the title of your site.')
+            'help' => _i('Set the title of your site.')
         );
 
         // build the array for the form
@@ -51,13 +51,13 @@ class Preferences extends Admin
             'class' => 'span3',
             'preferences' => true,
             'validation' => [new Trim(), new Assert\Length(['max' => 32])],
-            'help' => _i('Sets the title displayed in the index page.')
+            'help' => _i('Set the title displayed on the index page.')
         );
 
         $form['foolframe.lang.default'] = array(
             'type' => 'select',
             'label' => _i('Default language'),
-            'help' => _i('The language the users will see as they reach your site.'),
+            'help' => _i('Set the language users will see as they reach your site.'),
             'options' => Config::get('foolz/foolframe', 'package', 'preferences.lang.available'),
             'preferences' => true,
         );
@@ -92,7 +92,7 @@ class Preferences extends Admin
             $form[strtolower($module_name).'.theme.active_themes'] = array(
                 'type' => 'checkbox_array',
                 'label' => _i('Active themes'),
-                'help' => _i('Choose the themes to make available to the users for %s. Admins are able to access any of them even if disabled.',
+                'help' => _i('Select which themes will be available to the users for %s. (Mods and Admins have full access to all)',
                     '<strong>'.$module_name.'</strong>'),
                 'checkboxes' => $theme_checkboxes
             );
@@ -113,7 +113,7 @@ class Preferences extends Admin
             $form[strtolower($module_name).'.theme.default'] = array(
                 'type' => 'select',
                 'label' => _i('Default theme for %s', '<strong>'.$module_name.'</strong>'),
-                'help' => _i('The theme the users will see as they reach %s.', '<strong>'.$module_name.'</strong>'),
+                'help' => _i('Set the default theme users will see as they reach %s.', '<strong>'.$module_name.'</strong>'),
                 'options' => $themes_default,
                 'preferences' => true,
             );
@@ -134,9 +134,9 @@ class Preferences extends Admin
 
         $form['foolframe.theme.header_text'] = array(
             'type' => 'textarea',
-            'label' => _i('Header Text ("notices")'),
+            'label' => _i('Header Text ("alerts/notices")'),
             'preferences' => true,
-            'help' => _i("Inserts the text above in the header, below the navigation links."),
+            'help' => _i("Inserts text above in the header site wide, below the navigation links. <br> Most <a href='http://getbootstrap.com/2.3.2/base-css.html' target='blank'>Bootstrap CSS</a> formatting can be used here."),
             'class' => 'span5'
         );
 
@@ -152,7 +152,7 @@ class Preferences extends Admin
             'type' => 'textarea',
             'label' => _i('Footer Text'),
             'preferences' => true,
-            'help' => _i('The text to put in the footer, such as credits and similar.'),
+            'help' => _i("Inserts text in the footer site wide, such as credits and similar.<br> Most <a href='http://getbootstrap.com/2.3.2/base-css.html' target='blank'>Bootstrap CSS</a> formatting can be used here."),
             'class' => 'span5'
         );
 
