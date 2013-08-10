@@ -42,7 +42,7 @@ class Manage extends \Foolz\Foolframe\View\View
                     <?= \Form::submit([
                         'class' => (isset($plugin->enabled) ? 'btn btn-small btn-warning' : 'btn btn-small btn-success'),
                         'name' => 'submit',
-                        'value' => (isset($plugin->enabled) ? __('Disable') : __('Enable'))
+                        'value' => (isset($plugin->enabled) ? _i('Disable') : _i('Enable'))
                     ]) ?>
                     <?= \Form::close(); ?>
                     </div>
