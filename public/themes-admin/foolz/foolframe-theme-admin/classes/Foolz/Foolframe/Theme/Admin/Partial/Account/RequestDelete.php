@@ -9,7 +9,7 @@ class RequestDelete extends \Foolz\Foolframe\View\View
 <div class="admin-container">
     <div class="admin-container-header"><?= _i('New Email Address') ?></div>
     <p>
-        <i class="icon-warning-sign text-error"></i> <?= _i('Since this action is irreversible, a link will be sent to the email associated with your account to verify your decision to purge your account from the system.') ?>
+        <i class="icon-warning-sign text-error"></i> <?= _i('This action is irreversible, Insert your account password below and click the button.<br>An email will be sent to your registered email account with further instructions to verify your decision to purge your account from the system.') ?>
 
         <hr/>
 
