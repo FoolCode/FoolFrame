@@ -29,12 +29,12 @@ class RememberMe extends Model
         if (time() % 25 == 0)
         {
             $this->dc->qb()
-                ->delete($this->dc->p('autologin'))
+                ->delete($this->dc->p('user_autologin'))
                 ->where('expiration < '.time())
                 ->execute();
         }
 
-        $this->dc->getConnection()->insert($this->dc->p('autologin'), [
+        $this->dc->getConnection()->insert($this->dc->p('user_autologin'), [
             'user_id' => $user->getId(),
             'login_hash' => password_hash($login_hash, PASSWORD_BCRYPT, ['cost' => 10]),
             'expiration' => time() + 604800, // 7 days

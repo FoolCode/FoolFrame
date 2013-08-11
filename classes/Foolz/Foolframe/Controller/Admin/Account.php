@@ -5,6 +5,7 @@ namespace Foolz\Foolframe\Controller\Admin;
 use Foolz\Foolframe\Model\Auth\RememberMe;
 use Foolz\Foolframe\Model\Auth\UserChecker;
 use Foolz\Foolframe\Model\Auth\UserProvider;
+use Foolz\Foolframe\Model\Cookie;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
 use Foolz\Foolframe\Model\Validation\Validator;
@@ -12,6 +13,7 @@ use Foolz\Inet\Inet;
 use Swift_SendmailTransport;
 use Swift_Mailer;
 use Swift_Message;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -72,9 +74,12 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                     $this->getRequest()->headers->get('User-Agent')
                 );
 
-                die('here');
-
-                return $this->redirectToAdmin();
+                $response = new RedirectResponse($this->uri->create('admin'));
+                $this->getRequest()->getSession()->set('rememberme', $rememberme_token);
+                if ($this->getPost('remember')) {
+                    $response->headers->setCookie(new Cookie($this->getContext(), 'rememberme', $rememberme_token, 365 * 24 * 60 * 60));
+                }
+                return $response;
             } catch (BadCredentialsException $e) {
                 $this->notices->set('error', _i('You have entered an invalid username and/or password. Please try again.'));
             }
