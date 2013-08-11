@@ -9,7 +9,7 @@ class RequestChangePassword extends \Foolz\Foolframe\View\View
 <div class="admin-container">
     <div class="admin-container-header"><?= _i('Change Password') ?></div>
     <p>
-        <?= _i('If you would like to change your current password, a message containing a password reset link will be sent to the email address associated with your account.') ?>
+        <?= _i('To change your password click the button below.<br>An email will be sent to your registered email account with further instructions.') ?>
 
         <hr/>
 

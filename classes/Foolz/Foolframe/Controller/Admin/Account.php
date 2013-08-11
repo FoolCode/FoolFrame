@@ -371,7 +371,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                     $message = Swift_Message::newInstance()
                         ->setFrom([$from => $this->preferences->get('foolframe.gen.website_title')])
-                        ->setTo($input['email'])
+                        ->setTo($user->email)
                         ->setSubject($title)
                         ->setBody($this->builder->build(), 'text/html');
 
@@ -459,7 +459,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                     $message = Swift_Message::newInstance()
                         ->setFrom([$from => $this->preferences->get('foolframe.gen.website_title')])
-                        ->setTo($input['email'])
+                        ->setTo($user->email)
                         ->setSubject($title)
                         ->setBody($this->builder->build(), 'text/html');
 
