@@ -94,6 +94,16 @@ class SchemaManager
     }
 
     /**
+     * Returns the Doctrine Connection
+     *
+     * @return \Doctrine\DBAL\Connection
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
      * Get the prefix for the database
      *
      * @return  null|string  null if there's no prefix, string if set
