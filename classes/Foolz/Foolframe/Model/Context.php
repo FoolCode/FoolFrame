@@ -263,6 +263,11 @@ class Context implements ContextInterface
             }
         }
 
+        Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
+            ->setObject($this)
+            ->setParam('route_collection', $this->route_collection)
+            ->execute();
+
         if (!count($this->child_contextes)) {
             // no app installed, we need to go to the install
             $this->loadInstallRoutes($this->route_collection);

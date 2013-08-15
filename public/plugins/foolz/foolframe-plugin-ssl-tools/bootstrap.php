@@ -21,7 +21,7 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
 
         /** @var Context $context */
         $context = $result->getParam('context');
-        Event::forge('Foolz\Foolframe\Model\Context.handleWeb.has_request')
+        Event::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
             ->setCall(function($result) use ($context) {
                 /** @var Auth $auth */
                 $auth = $context->getService('auth');
