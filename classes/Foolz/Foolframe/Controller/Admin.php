@@ -95,7 +95,7 @@ class Admin extends Common
         $this->builder->createPartial('navbar', 'navbar');
         $this->builder->createPartial('sidebar', 'sidebar')
             ->getParamManager()
-            ->setParams(array('sidebar' => self::get_sidebar($request, self::$sidebar)));
+            ->setParams(array('sidebar' => $this->get_sidebar($request, self::$sidebar)));
     }
 
     public function redirect($url, $status = 302)
@@ -255,18 +255,18 @@ class Admin extends Common
      *
      * @todo comment this
      */
-    public static function get_sidebar(Request $request, $array)
+    public function get_sidebar(Request $request, $array)
     {
         $segments = explode('/', $request->getPathInfo());
 
         // not logged in users don't need the sidebar
-        if (\Auth::member('guest')) {
+        if (!$this->getAuth()->hasAccess('maccess.user')) {
             return [];
         }
 
         $result = [];
         foreach ($array as $key => $item) {
-            if (\Auth::has_access('maccess.' . $item['level']) && !empty($item)) {
+            if ($this->getAuth()->hasAccess('maccess.' . $item['level']) && !empty($item)) {
                 $subresult = $item;
 
                 // segment 2 contains what's currently active so we can set it lighted up
@@ -302,7 +302,7 @@ class Admin extends Common
                 // cherry-picking subfunctions
                 foreach ($item['content'] as $subkey => $subitem) {
                     $subsubresult = $subitem;
-                    if (\Auth::has_access('maccess.' . $subitem['level'])) {
+                    if ($this->getAuth()->hasAccess('maccess.' . $subitem['level'])) {
                         if ($subresult['active'] && (isset($segments[2]) && $segments[3] == $subkey ||
                             (
                             isset($subitem['alt_highlight']) &&

@@ -1,5 +1,6 @@
 <?php
 
+use Foolz\Foolframe\Model\Auth;
 use Foolz\Foolframe\Model\Context;
 use Foolz\Plugin\Event;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,8 +21,10 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
 
         /** @var Context $context */
         $context = $result->getParam('context');
+        /** @var Auth $auth */
+        $auth = $context->getService('auth');
         // don't add the admin panels if the user is not an admin
-        if (\Auth::has_access('maccess.admin')) {
+        if ($auth->hasAccess('maccess.admin')) {
             $context->getRouteCollection()->add(
                 'foolframe.plugin.ssl_tools.admin', new \Symfony\Component\Routing\Route(
                     '/admin/plugins/ssl_tools/{_suffix}',
@@ -66,14 +69,14 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
             });
 
         Event::forge('Foolz\Foolframe\Model\Context.handleWeb.override_response')
-            ->setCall(function($result) {
+            ->setCall(function($result) use ($auth) {
                 /** @var Request $request */
                 $request = $result->getParam('request');
                 $this->preferences = $this->getService('preferences');
 
                 if (!$request->isSecure()) {
                     if ($this->preferences->get('foolframe.plugins.ssl_tools.force_everyone')
-                        || ($this->preferences->get('foolframe.plugins.ssl_tools.force_for_logged') && \Auth::has_access('maccess.user'))
+                        || ($this->preferences->get('foolframe.plugins.ssl_tools.force_for_logged') && $auth->hasAccess('maccess.user'))
                     )
                     {
                         // redirect to itself

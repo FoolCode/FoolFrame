@@ -21,7 +21,7 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
             ->addArgument($context);
 
         // don't add the admin panels if the user is not an admin
-        if (\Auth::has_access('maccess.admin')) {
+        if ($context->getService('auth')->hasAccess('maccess.admin')) {
             $context->getRouteCollection()->add(
                 'foolframe.plugin.articles.admin', new \Symfony\Component\Routing\Route(
                         '/admin/articles/{_suffix}',

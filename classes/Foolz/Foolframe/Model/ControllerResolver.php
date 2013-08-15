@@ -105,6 +105,12 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
             $controller->before($method);
         }
 
+        if (method_exists($controller, 'security')) {
+            if (!$controller->security()) {
+                return array($controller, 'redirectToLogin');
+            }
+        }
+
         if (method_exists($controller, 'router')) {
             list($controller, $method, $this->parameters) = $controller->router($method, $this->parameters);
         } else {

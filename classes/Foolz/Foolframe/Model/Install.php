@@ -70,10 +70,6 @@ class Install extends Model
         $this->config->set('foolz/foolframe', 'config', 'config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
         $this->config->save('foolz/foolframe', 'config');
 
-        $this->config->set('foolz/foolframe', 'foolauth', 'salt', \Str::random('alnum', 24));
-        $this->config->set('foolz/foolframe', 'foolauth', 'login_hash_salt', \Str::random('alnum', 24));
-        $this->config->save('foolz/foolframe', 'foolauth');
-
         $this->config->set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
         $this->config->save('foolz/foolframe', 'cache');
     }

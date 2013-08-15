@@ -2,6 +2,7 @@
 
 namespace Foolz\Foolframe\Controller;
 
+use Foolz\Foolframe\Model\Auth;
 use Foolz\Foolframe\Model\Context;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -36,6 +37,13 @@ class Common implements ControllerInterface
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * @return Auth
+     */
+    public function getAuth() {
+        return $this->getContext()->getService('auth');
     }
 
     public function getPost($key = false, $fallback = false)

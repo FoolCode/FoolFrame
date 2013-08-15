@@ -9,19 +9,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 class Users extends \Foolz\Foolframe\Controller\Admin
 {
     public function before()
     {
-        // only mods and admins can see and edit users
-        if(!\Auth::has_access('maccess.mod')) {
-            return $this->redirectToLogin();
-        }
-
         parent::before();
 
         $this->param_manager->setParam('controller_title', _i('Users'));
+    }
+
+    public function security()
+    {
+        return $this->getAuth()->hasAccess('maccess.mod');
     }
 
     public function action_manage($page = 1)
@@ -77,7 +76,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
                 '<a href="http://gravatar.com" target="_blank">Gravatar</a>')
         );
 
-        if (\Auth::has_access('users.change_credentials')) {
+        if ($this->getAuth()->hasAccess('users.change_credentials')) {
             $form['username'] = array(
                 'type' => 'input',
                 'database' => true,
@@ -133,7 +132,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
             'validation' => [new Trim(), new Assert\Length(['max' => 32])]
         );
 
-        if (\Auth::has_access('users.change_group')) {
+        if ($this->getAuth()->hasAccess('users.change_group')) {
             $groups = $this->config->get('foolz/foolframe', 'foolauth', 'groups');
             $group_ids = [];
 

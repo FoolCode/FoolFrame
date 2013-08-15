@@ -14,16 +14,16 @@ class User extends Model
      */
     protected $config;
 
-    public $id = null;
-    public $username = null;
-    public $password = null;
-    public $group_id = null;
-    public $email = null;
+    public $id = 0;
+    public $username = '';
+    public $password = '';
+    public $group_id = 0;
+    public $email = '';
     public $new_email = null;
     public $new_email_key = null;
     public $new_email_time = null;
     public $last_login = null;
-    public $activated = null;
+    public $activated = false;
     public $activation_key = null;
     public $new_password_key = null;
     public $deletion_key = null;
@@ -91,7 +91,7 @@ class User extends Model
         }
 
         if (!is_null($set['password']) && $set['password'] !== '') {
-            $set['password'] = \Auth::hash_password($set['password']);
+            $set['password'] = password_hash($set['password'], PASSWORD_BCRYPT, ['cost' => 10]);
         } else {
             unset($set['password']);
         }
@@ -105,6 +105,159 @@ class User extends Model
             $query->set($this->dc->getConnection()->quoteIdentifier($key), $this->dc->getConnection()->quote($item));
         }
 
+
         $query->execute();
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActivated()
+    {
+        return (bool) $this->activated;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActivationKey()
+    {
+        return $this->activation_key;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeletionKey()
+    {
+        return $this->deletion_key;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeletionTime()
+    {
+        return $this->deletion_time;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDisplayName()
+    {
+        return $this->display_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGroupId()
+    {
+        return $this->group_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastLogin()
+    {
+        return $this->last_login;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNewEmail()
+    {
+        return $this->new_email;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNewEmailKey()
+    {
+        return $this->new_email_key;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNewEmailTime()
+    {
+        return $this->new_email_time;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNewPasswordKey()
+    {
+        return $this->new_password_key;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPasswordCurrent()
+    {
+        return $this->password_current;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProfileFields()
+    {
+        return $this->profile_fields;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTwitter()
+    {
+        return $this->twitter;
     }
 }

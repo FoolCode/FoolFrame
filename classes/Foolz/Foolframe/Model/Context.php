@@ -3,8 +3,7 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Cache\Cache;
-use Foolz\Foolframe\Model\Auth\UserChecker;
-use Foolz\Foolframe\Model\Auth\UserProvider;
+use Foolz\Foolframe\Model\Auth\WrongKeyException;
 use Foolz\Foolframe\Model\Legacy\Config;
 use Foolz\Foolframe\Model\Legacy\Uri;
 use Foolz\Plugin\Hook;
@@ -31,12 +30,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\EventListener\ResponseListener;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
-use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManager;
-use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
-use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
 class Context implements ContextInterface
 {
@@ -71,11 +64,6 @@ class Context implements ContextInterface
      * @var \Monolog\Logger
      */
     protected $logger_trace;
-
-    /**
-     * @var Session
-     */
-    protected $session;
 
     /**
      * @var ErrorHandler
@@ -176,8 +164,10 @@ class Context implements ContextInterface
         $this->container->register('plugins', 'Foolz\Foolframe\Model\Plugins')
             ->addArgument($this);
 
-
         $this->container->register('users', 'Foolz\Foolframe\Model\Users')
+            ->addArgument($this);
+
+        $this->container->register('auth', 'Foolz\Foolframe\Model\Auth')
             ->addArgument($this);
 
         $this->config = $this->getService('config');
@@ -255,6 +245,24 @@ class Context implements ContextInterface
         // legacy
         Uri::setRequest($request);
 
+        if (!$request->hasPreviousSession()) {
+            $request->setSession(new Session());
+        }
+
+        $remember_me = $request->cookies->get(
+            $this->config->get('foolz/foolframe', 'config', 'config.cookie_prefix').'rememberme',
+            $request->getSession()->get('rememberme')
+        );
+
+        /** @var Auth $auth */
+        $auth = $this->getService('auth');
+        if ($remember_me) {
+            try {
+                $auth->authenticateWithRememberMe($remember_me);
+            } catch (WrongKeyException $e) {
+            }
+        }
+
         if (!count($this->child_contextes)) {
             // no app installed, we need to go to the install
             $this->loadInstallRoutes($this->route_collection);
@@ -290,10 +298,6 @@ class Context implements ContextInterface
             $this->loadRoutes($this->route_collection);
         }
 
-        if (!$request->hasPreviousSession()) {
-            $request->setSession(new Session());
-        }
-
         // this is the first time we know we have a request for sure
         // hooks that need the request to function must run here
         Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.has_request')
@@ -304,8 +308,6 @@ class Context implements ContextInterface
         $this->container->register('notices', 'Foolz\Foolframe\Model\Notices')
             ->addArgument($this)
             ->addArgument($request->getSession());
-
-        \Notices::init($request->getSession());
 
         $request_context = new RequestContext();
         $request_context->fromRequest($request);
@@ -346,7 +348,7 @@ class Context implements ContextInterface
             }
 
             // stick the html of the profiler at the end
-            if ($request->getRequestFormat() == 'html' && \Auth::has_access('maccess.admin')) {
+            if ($request->getRequestFormat() == 'html' && $auth->hasAccess('maccess.admin')) {
                 $content = explode('</body>', $response->getContent());
                 if (count($content) == 2) {
                     $this->profiler->log('Execution end');
