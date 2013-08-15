@@ -17,16 +17,17 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
     public function before()
     {
-        if(!\Auth::has_access('maccess.admin')) {
-            return $this->redirectToLogin();
-        }
-
         parent::before();
 
         $this->plugins = $this->getContext()->getService('plugins');
 
         // set controller title
         $this->param_manager->setParam('controller_title', _i('Plugins'));
+    }
+
+    public function security()
+    {
+        return $this->getAuth()->hasAccess('maccess.admin');
     }
 
     function action_manage()

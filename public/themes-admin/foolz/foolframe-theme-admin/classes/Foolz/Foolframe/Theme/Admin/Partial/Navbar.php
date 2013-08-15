@@ -16,10 +16,10 @@ public function toString()
             <ul class="nav pull-right">
                 <li><a href="<?= $this->getUri()->base('@default') ?>"><?= _i('Boards') ?></a></li>
                 <li class="divider-vertical"></li>
-                <?php if (\Auth::has_access('maccess.user')) : ?>
+                <?php if ($this->getAuth()->hasAccess('maccess.user')) : ?>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <?= \Auth::get_screen_name(); ?>
+                            <?= $this->getAuth()->getUser()->getUsername(); ?>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
@@ -31,11 +31,6 @@ public function toString()
                             <li>
                                 <a href="<?= $this->getUri()->create('/admin/account/logout').'?token='.\Security::fetch_token() ?>">
                                     <?= _i('Logout') ?>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="<?= $this->getUri()->create('/admin/account/logout_all').'?token='.\Security::fetch_token() ?>">
-                                    <?= _i('Logout on All Devices') ?>
                                 </a>
                             </li>
                         </ul>

@@ -22,4 +22,12 @@ class Model
     {
         return $this->context;
     }
+
+    /**
+     * @return Auth
+     */
+    public function getAuth()
+    {
+        return $this->context->getService('auth');
+    }
 }

@@ -28,31 +28,6 @@ class Users extends Model
     }
 
     /**
-     * Gets the current user
-     *
-     * @return object
-     */
-    public function getUser()
-    {
-        $id = \Auth::get_user_id();
-        $id = $id[1];
-
-        $result = $this->dc->qb()
-            ->select('*')
-            ->from($this->dc->p($this->config->get('foolz/foolframe', 'foolauth', 'table_name')), 't')
-            ->where('t.id = :id')
-            ->setParameter(':id', $id)
-            ->execute()
-            ->fetch();
-
-        if (!$result) {
-            throw new UsersWrongIdException;
-        }
-
-        return User::forge($this->getContext(), $result);
-    }
-
-    /**
      * Gets single user database row by selected row
      *
      * @param  int  $id

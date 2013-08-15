@@ -60,7 +60,7 @@ class Articles extends Model
             ->select('*')
             ->from($this->dc->p('plugin_ff_articles'), 'a');
 
-        if (!\Auth::has_access('maccess.mod')) {
+        if (!$this->getAuth()->hasAccess('maccess.mod')) {
             $query->where('hidden = 0');
         }
 
@@ -79,7 +79,7 @@ class Articles extends Model
             ->where('id = :id')
             ->setParameter(':id', $id);
 
-        if (!\Auth::has_access('maccess.mod')) {
+        if (!$this->getAuth()->hasAccess('maccess.mod')) {
             $query->andWhere('hidden = 0');
         }
 
@@ -101,7 +101,7 @@ class Articles extends Model
             ->where('slug = :slug')
             ->setParameter(':slug', $slug);
 
-        if (!\Auth::has_access('maccess.mod')) {
+        if (!$this->getAuth()->hasAccess('maccess.mod')) {
             $query->andWhere('hidden = 0');
         }
 

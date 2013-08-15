@@ -62,6 +62,7 @@ class Schema
 
         $user_autologin = $schema->createTable($pf.'user_autologin');
         $user_autologin->addColumn('user_id', 'integer', ['unsigned' => true]);
+        $user_autologin->addColumn('login_id', 'string', ['length' => 255]);
         $user_autologin->addColumn('login_hash', 'string', ['length' => 255]);
         $user_autologin->addColumn('expiration', 'integer', ['unsigned' => true]);
         $user_autologin->addColumn('last_ip', 'decimal', ['precision' => 39, 'scale' => 0]);
@@ -69,6 +70,7 @@ class Schema
         $user_autologin->addColumn('last_login', 'integer', ['unsigned' => true]);
         $user_autologin->setPrimaryKey(['login_hash']);
         $user_autologin->addIndex(['user_id'], 'user_id_index');
+        $user_autologin->addUniqueIndex(['user_id', 'login_id', 'login_hash'], 'user_id_login_id_login_hash_index');
 
         $user_login_attempts = $schema->createTable($pf.'user_login_attempts');
         $user_login_attempts->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);

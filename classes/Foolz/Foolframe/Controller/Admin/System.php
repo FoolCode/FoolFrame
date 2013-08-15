@@ -10,14 +10,15 @@ class System extends \Foolz\Foolframe\Controller\Admin
 {
     public function before()
     {
-        if(!\Auth::has_access('maccess.admin')) {
-            return $this->redirectToLogin();
-        }
-
         parent::before();
 
         // set controller title
         $this->param_manager->setParam('controller_title', _i('System'));
+    }
+
+    public function security()
+    {
+        return $this->getAuth()->hasAccess('maccess.admin');
     }
 
     public function action_information()

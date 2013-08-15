@@ -2,6 +2,7 @@
 
 namespace Foolz\Foolframe\Controller;
 
+use Foolz\Foolframe\Model\Auth;
 use Foolz\Foolframe\Model\Config;
 use Foolz\Foolframe\Model\DoctrineConnection;
 use Foolz\Foolframe\Model\Notices;
@@ -63,7 +64,7 @@ class Install extends Common
 
         $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
         $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin/');
-        $theme_instance->setBaseUrl(\Uri::base().'foolframe/');
+        $theme_instance->setBaseUrl($this->uri->base().'foolframe/');
         $theme_instance->setPublicDir(DOCROOT.'foolframe/');
         $this->theme = $theme_instance->get('foolz/foolframe-theme-admin');
 
@@ -189,11 +190,12 @@ class Install extends Common
             if (!$validator->getViolations()->count()) {
                 $input = $validator->getFinalValues();
 
-                list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
-                \Auth::activate_user($id, $activation_key);
-                \Auth::force_login($id);
+                $auth = new Auth($this->getContext());
 
-                $user = $users->getUser();
+                list($id, $activation_key) = $auth->createUser($input['username'], $input['password'], $input['email']);
+                $auth->activate_user($id, $activation_key);
+                $auth->authenticateWithId($id);
+                $user = $auth->getUser();
                 $user->save(['group_id' => 100]);
 
                 return new RedirectResponse($this->uri->create('install/modules'));

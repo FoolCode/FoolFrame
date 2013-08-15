@@ -22,13 +22,14 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
 
     public function before()
     {
-        if (!\Auth::has_access('maccess.mod')) {
-            return $this->redirectToAdmin('admin');
-        }
-
         parent::before();
 
         $this->articles = $this->getContext()->getService('foolframe-plugin.articles');
+    }
+
+    public function security()
+    {
+        return $this->getAuth()->hasAccess('maccess.mod');
     }
 
     public function structure()

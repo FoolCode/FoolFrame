@@ -14,14 +14,15 @@ class Preferences extends Admin
 {
     public function before()
     {
-        if (!\Auth::has_access('maccess.admin')) {
-            return $this->redirectToLogin();
-        }
-
         parent::before();
 
         // set controller title
         $this->param_manager->setParam('controller_title', _i('Preferences'));
+    }
+
+    public function security()
+    {
+        return $this->getAuth()->hasAccess('maccess.admin');
     }
 
     function action_general()

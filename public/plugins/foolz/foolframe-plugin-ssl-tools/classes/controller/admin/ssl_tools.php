@@ -9,14 +9,14 @@ class SslTools extends \Foolz\Foolframe\Controller\Admin
 {
     public function before()
     {
-        if (!\Auth::has_access('maccess.admin')) {
-            return $this->redirectToAdmin();
-        }
-
         parent::before();
 
         $this->param_manager->setParam('controller_title', _i('Plugins'));
+    }
 
+    public function security()
+    {
+        return $this->getAuth()->hasAccess('maccess.admin');
     }
 
     public function action_manage()

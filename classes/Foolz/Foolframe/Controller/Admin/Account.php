@@ -2,12 +2,17 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
+use Foolz\Foolframe\Model\Auth;
+use Foolz\Foolframe\Model\Auth\WrongUsernameOrPasswordException;
+use Foolz\Foolframe\Model\Cookie;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
 use Foolz\Foolframe\Model\Validation\Validator;
+use Foolz\Inet\Inet;
 use Swift_SendmailTransport;
 use Swift_Mailer;
 use Swift_Message;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -15,6 +20,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Account extends \Foolz\Foolframe\Controller\Admin
 {
+    /**
+     * @var Auth
+     */
+    protected $auth;
+
     public function before()
     {
         parent::before();
@@ -24,7 +34,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
     public function action_login()
     {
         // redirect user to admin panel
-        if (\Auth::has_access('maccess.user')) {
+        if ($this->getAuth()->hasAccess('maccess.user')) {
             return $this->redirectToAdmin();
         }
 
@@ -33,18 +43,29 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             $this->notices->set('error', _i('The security token was not found. Please try again.'));
         } elseif ($this->getPost()) {
             // load authentication instance
-            $auth = \Auth::instance();
 
             // verify credentials
             try {
-                $auth->login();
-                return $this->redirectToAdmin();
-            } catch (\Auth\FoolUserWrongUsernameOrPassword $e) {
-                // invalid username or password was entered
+                $this->getAuth()->authenticateWithUsernameAndPassword(
+                    $this->getPost('username', ''),
+                    $this->getPost('password', '')
+                );
+
+
+                $rememberme_token = $this->getAuth()->createAutologinHash(
+                    Inet::ptod($this->getRequest()->getClientIp()),
+                    $this->getRequest()->headers->get('User-Agent')
+                );
+
+                $response = new RedirectResponse($this->uri->create('admin'));
+                $this->getRequest()->getSession()->set('rememberme', $rememberme_token);
+                if ($this->getPost('remember')) {
+                    $response->headers->setCookie(new Cookie($this->getContext(), 'rememberme', $rememberme_token, 365 * 24 * 60 * 60));
+                }
+
+                return $response;
+            } catch (WrongUsernameOrPasswordException $e) {
                 $this->notices->set('error', _i('You have entered an invalid username and/or password. Please try again.'));
-            } catch (\Auth\FoolUserLimitExceeded $e) {
-                // account has been locked due to excess authentication failures
-                $this->notices->set('error', _i('After %d failed login attempts, this account has been locked. In order to unlock your account, please use the password reset system.', Config::get('foolz/foolframe', 'foolauth', 'attempts_to_lock')));
             }
         }
 
@@ -57,7 +78,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
     public function action_logout()
     {
-        if (!\Auth::has_access('maccess.user')) {
+        if (!$this->getAuth()->hasAccess('maccess.user')) {
             return $this->redirectToLogin();
         }
 
@@ -65,30 +86,16 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             die('The security token is invalid.');
         }
 
-        \Auth::logout(false);
-        return $this->redirectToLogin();
-    }
+        $response = new RedirectResponse($this->uri->create('admin/account/login'));
+        $response->headers->clearCookie($this->config->get('foolz/foolframe', 'config', 'config.cookie_prefix').'rememberme');
+        $this->getRequest()->getSession()->clear();
 
-    /**
-     * Log out from all the devices
-     */
-    public function action_logout_all()
-    {
-        if (!\Auth::has_access('maccess.user')) {
-            return $this->redirectToLogin();
-        }
-
-        if (!\Security::check_token($this->getQuery('token'))) {
-            die('The security token didn\'t match or has expired.');
-        }
-
-        \Auth::logout(true);
-        return $this->redirectToLogin();
+        return $response;
     }
 
     public function action_register()
     {
-        if (\Auth::has_access('maccess.user')) {
+        if ($this->getAuth()->hasAccess('maccess.user')) {
             return $this->redirectToAdmin();
         }
 
@@ -122,8 +129,8 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                 if(!$validator->getViolations()->count() && $input['password'] === $input['confirm_password']) {
                     try {
-                        list($id, $activation_key) = \Auth::create_user($input['username'], $input['password'], $input['email']);
-                    } catch (\Auth\FoolUserUpdateException $e) {
+                        list($id, $activation_key) = $this->getAuth()->createUser($input['username'], $input['password'], $input['email']);
+                    } catch (Auth\UpdateException $e) {
                         $this->notices->setFlash('error', $e->getMessage());
                         return $this->redirect('admin/account/register');
                     }
@@ -157,7 +164,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                         if ($result != 1) {
                             // the email driver was unable to send the email. the account will be activated automatically.
-                            \Auth::activate_user($id, $activation_key);
+                            $this->getAuth()->activateUser($id, $activation_key);
                             $this->notices->setFlash('success', _i('Congratulations! You have successfully registered.'));
                             $this->getContext()
                                 ->getService('logger')
@@ -184,11 +191,11 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
     public function action_activate($id, $activation_key)
     {
-        if (\Auth::has_access('maccess.user')) {
+        if ($this->getAuth()->hasAccess('maccess.user')) {
             return $this->redirectToAdmin();
         }
 
-        if (\Auth::activate_user($id, $activation_key)) {
+        if ($this->getAuth()->activateUser($id, $activation_key)) {
             $this->notices->setFlash('success', _i('Your account has been activated. You are now able to login and access the control panel.'));
             return $this->redirectToLogin();
         }
@@ -199,7 +206,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
     public function action_forgot_password()
     {
-        if (\Auth::has_access('maccess.user')) {
+        if ($this->getAuth()->hasAccess('maccess.user')) {
             return $this->redirectToAdmin();
         }
 
@@ -214,7 +221,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             if(!$validator->getViolations()->count()) {
                 $input = $validator->getFinalValues();
 
-                return static::send_change_password_email($input['email']);
+                return $this->sendChangePasswordEmail($input['email']);
             } else {
                 $this->notices->set('error', $validator->getViolations()->getText());
             }
@@ -229,7 +236,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
     public function action_change_password($id = null, $password_key = null)
     {
         if ($id !== null && $password_key !== null) {
-            if (\Auth::check_new_password_key($id, $password_key)) {
+            if ($this->getAuth()->checkNewPasswordKey($id, $password_key)) {
                 if ($this->getPost() && !\Security::check_token()) {
                     $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
                 } elseif ($this->getPost()) {
@@ -243,9 +250,9 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                         $input = $validator->getFinalValues();
 
                         try {
-                            \Auth::change_password($id, $password_key, $input['password']);
+                            $this->getAuth()->changePassword($id, $password_key, $input['password']);
                             return $this->redirectToLogin();
-                        } catch (\Auth\FoolUserWrongKey $e) {
+                        } catch (Auth\WrongKeyException $e) {
                             $this->notices->set('warning', _i('It appears that you are trying to access an invalid link or your activation key has expired.'));
                         }
                     } else {
@@ -262,14 +269,14 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
             return new Response($this->builder->build());
         } else {
-            if (!\Auth::has_access('maccess.user')) {
+            if (!$this->getAuth()->hasAccess('maccess.user')) {
                 return $this->redirectToAdmin();
             }
 
             if ($this->getPost() && !\Security::check_token()) {
                 $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             } elseif ($this->getPost()) {
-                return static::send_change_password_email(\Auth::get_email());
+                return $this->sendChangePasswordEmail($this->getAuth()->getUser()->getEmail());
             }
 
             $this->param_manager->setParam('method_title', _i('Change Password'));
@@ -282,16 +289,16 @@ class Account extends \Foolz\Foolframe\Controller\Admin
     {
         $this->param_manager->setParam('method_title', _i('Change Email Address'));
 
-        if (!\Auth::has_access('maccess.user')) {
+        if (!$this->getAuth()->hasAccess('maccess.user')) {
             return $this->redirectToLogin();
         }
 
         if ($id != null && $email_key != null) {
             try {
-                \Auth::change_email($id, $email_key);
+                $this->getAuth()->changeEmail($id, $email_key);
                 $this->notices->setFlash('success', _i('You have successfully verified your new email address.'));
                 return $this->redirect('admin/account/change_email');
-            } catch (\Auth\FoolUserWrongKey $e) {
+            } catch (Auth\WrongKeyException $e) {
                 $this->notices->set('warning', _i('It appears that you are accessing an invalid link or that your activation key has expired.'));
             }
 
@@ -310,18 +317,16 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                     $input = $validator->getFinalValues();
 
                     try {
-                        $change_email_key = \Auth::create_change_email_key($input['email'], $input['password']);
-                    } catch (\Auth\FoolUserWrongPassword $e) {
+                        $change_email_key = $this->getAuth()->createChangeEmailKey($input['email'], $input['password']);
+                    } catch (Auth\WrongPasswordException $e) {
                         $this->notices->setFlash('error', _i('The password entered is incorrect.'));
                         return $this->redirect('admin/account/change_email');
-                    } catch (\Auth\FoolUserEmailExists $e) {
+                    } catch (Auth\EmailExistsException $e) {
                         $this->notices->setFlash('error', _i('The email address is already associated with another username. Please use another email address.'));
                         return $this->redirect('admin/account/change_email');
                     }
 
-                    /** @var \Foolz\Foolframe\Model\Users $users */
-                    $users = $this->getContext()->getService('users');
-                    $user = $users->getUser();
+                    $user = $this->getAuth()->getUser();
 
                     $from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
@@ -371,22 +376,22 @@ class Account extends \Foolz\Foolframe\Controller\Admin
         $this->_views['method_title'] = _i('Delete');
 
         if ($id !== null && $key !== null) {
-            if (!\Auth::has_access('maccess.user')) {
+            if (!$this->getAuth()->hasAccess('maccess.user')) {
                 $this->notices->set('warning', _i('You must log in to delete your account with this verification link.'));
 
                 return new Response($this->builder->build());
             }
 
             try {
-                \Auth::delete_account($id, $key);
+                $this->getAuth()->deleteAccount($id, $key);
                 $this->notices->set('success', _i('Your account has been deleted from the system.'));
-            } catch (\Auth\FoolUserWrongKey $e) {
+            } catch (Auth\WrongKeyException $e) {
                 $this->notices->set('warning', _i('It appears that you are accessing an invalid link or your activation key has expired.'));
             }
 
             return new Response($this->builder->build());
         } else {
-            if (!\Auth::has_access('maccess.user')) {
+            if (!$this->getAuth()->hasAccess('maccess.user')) {
                 return $this->redirect('admin/account/login');
             }
 
@@ -402,15 +407,13 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                     $input = $validator->getFinalValues();
 
                     try {
-                        $account_deletion_key = \Auth::create_account_deletion_key($input['password']);
-                    } catch (\Auth\FoolUserWrongPassword $e) {
+                        $account_deletion_key = $this->getAuth()->createAccountDeletionKey($input['password']);
+                    } catch (Auth\WrongPasswordException $e) {
                         $this->notices->setFlash('error', _i('The password entered was incorrect.'));
                         return $this->redirect('admin/account/delete');
                     }
 
-                    /** @var \Foolz\Foolframe\Model\Users $users */
-                    $users = $this->getContext()->getService('users');
-                    $user = $users->getUser();
+                    $user = $this->getAuth()->getUser();
 
                     $from = 'no-reply@'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-email-assigned');
 
@@ -418,12 +421,13 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                     $this->builder->createLayout('email');
                     $this->builder->getProps()->setTitle([$title]);
-                    $this->builder->createPartial('body', 'account/email/delete', [
-                        'title' => $title,
-                        'site' => $this->preferences->get('foolframe.gen.website_title'),
-                        'username' => $user->username,
-                        'link' => $this->uri->create('admin/account/delete/'.$user->id.'/'.$account_deletion_key)
-                    ]);
+                    $this->builder->createPartial('body', 'account/email/delete_account')
+                        ->getParamManager()->setParams([
+                            'title' => $title,
+                            'site' => $this->preferences->get('foolframe.gen.website_title'),
+                            'username' => $user->username,
+                            'link' => $this->uri->create('admin/account/delete/'.$user->id.'/'.$account_deletion_key)
+                        ]);
 
                     $message = Swift_Message::newInstance()
                         ->setFrom([$from => $this->preferences->get('foolframe.gen.website_title')])
@@ -454,11 +458,11 @@ class Account extends \Foolz\Foolframe\Controller\Admin
         }
     }
 
-    public function send_change_password_email($email)
+    public function sendChangePasswordEmail($email)
     {
         try {
-            $password_key = \Auth::create_forgotten_password_key($email);
-        } catch (\Auth\FoolUserWrongEmail $e) {
+            $password_key = $this->getAuth()->createForgottenPasswordKey($email);
+        } catch (Auth\WrongEmailException $e) {
             $this->notices->setFlash('error', _i('The email address provided does not exist in the system. Please check and verify that it is correct.'));
             return $this->redirect('admin/account/forgotten_password');
         }
@@ -498,13 +502,12 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             $this->getContext()->getService('logger')->error('The system was unable to send a verification email to '.$user->username.'. This user was attempting to change their password.');
         }
 
-        \Auth::logout();
-        return $this->redirectToLogin();
+        return $this->action_logout();
     }
 
     public function action_profile()
     {
-        if (!\Auth::has_access('maccess.user')) {
+        if (!$this->getAuth()->hasAccess('maccess.user')) {
             return $this->redirectToLogin();
         }
 
@@ -521,7 +524,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
         $form['paragraph-2'] = array(
             'type' => 'paragraph',
-            'help' => '<img src="'.\Gravatar::get_gravatar(\Auth::get_email()).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
+            'help' => '<img src="'.\Gravatar::get_gravatar($this->getAuth()->getUser()->getEmail()).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
                 _i('Your avatar is automatically fetched from %s, based on your registration email.',
                 '<a href="http://gravatar.com" target="_blank">Gravatar</a>')
         );
@@ -580,11 +583,12 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
                 $this->notices->set('success', _i('Your profile has been updated.'));
 
-                \Auth::update_profile($result['success']);
+                $user = $this->getAuth()->getUser();
+                $user->save($result['success']);
             }
         }
 
-        $data['object'] = (object) \Auth::get_profile();
+        $data['object'] = (object) $this->getAuth()->getUser();
 
         // generate profile form
         $this->param_manager->setParam('method_title', _i('Profile'));

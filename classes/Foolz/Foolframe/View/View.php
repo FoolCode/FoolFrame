@@ -2,6 +2,7 @@
 
 namespace Foolz\Foolframe\View;
 
+use Foolz\Foolframe\Model\Auth;
 use Foolz\Foolframe\Model\Config;
 use Foolz\Foolframe\Model\Context;
 use Foolz\Foolframe\Model\Logger;
@@ -51,6 +52,14 @@ class View extends \Foolz\Theme\View
     public function getUri()
     {
         return $this->getBuilderParamManager()->getParam('context')->getService('uri');
+    }
+
+    /**
+     * @return Auth
+     */
+    public function getAuth()
+    {
+        return $this->getBuilderParamManager()->getParam('context')->getService('auth');
     }
 
     /**

@@ -55,7 +55,7 @@ return [
      * Groups as id => [name => <string>, roles => <array>]
      */
     'groups' => [
-        0    => ['name' => 'Guest', 'roles' => []],
+        0    => ['name' => 'Guest', 'roles' => ['guest']],
         1    => ['name' => 'User', 'roles' => ['user']],
         50   => ['name' => 'Moderator', 'roles' => ['mod']],
         100  => ['name' => 'Administrator', 'roles' => ['admin']],
@@ -65,6 +65,7 @@ return [
      * Roles as name => [location => rights]
      */
     'roles' => [
+        'guest' => [],
         'user' => [
             'access'  => ['user', 'member'],
             'maccess' => ['user']
