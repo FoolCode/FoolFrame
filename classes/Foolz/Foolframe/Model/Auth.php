@@ -524,7 +524,7 @@ class Auth extends Model
             ->where('id = :id')
             ->setParameter(':id', $this->user->getId())
             ->setParameter(':new_email', $email)
-            ->setParameter(':new_email_key', $new_email_key)
+            ->setParameter(':new_email_key', $new_email_key_hashed)
             ->execute();
 
         return $new_email_key;

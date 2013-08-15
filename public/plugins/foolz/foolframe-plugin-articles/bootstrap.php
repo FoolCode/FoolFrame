@@ -3,7 +3,6 @@
 use Foolz\Foolframe\Model\DoctrineConnection;
 use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
 use Foolz\Plugin\Event;
-use Symfony\Component\Routing\RouteCollection;
 
 Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
     ->setCall(function($result) {

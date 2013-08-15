@@ -293,7 +293,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             return $this->redirectToLogin();
         }
 
-        if ($id != null && $email_key != null) {
+        if ($id !== null && $email_key !== null) {
             try {
                 $this->getAuth()->changeEmail($id, $email_key);
                 $this->notices->setFlash('success', _i('You have successfully verified your new email address.'));
