@@ -254,24 +254,24 @@ class Context implements ContextInterface
             $request->getSession()->get('rememberme')
         );
 
-        /** @var Auth $auth */
-        $auth = $this->getService('auth');
-        if ($remember_me) {
-            try {
-                $auth->authenticateWithRememberMe($remember_me);
-            } catch (WrongKeyException $e) {
-            }
-        }
-
-        Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
-            ->setObject($this)
-            ->setParam('route_collection', $this->route_collection)
-            ->execute();
-
         if (!count($this->child_contextes)) {
             // no app installed, we need to go to the install
             $this->loadInstallRoutes($this->route_collection);
         } else {
+            /** @var Auth $auth */
+            $auth = $this->getService('auth');
+            if ($remember_me) {
+                try {
+                    $auth->authenticateWithRememberMe($remember_me);
+                } catch (WrongKeyException $e) {
+                }
+            }
+
+            Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
+                ->setObject($this)
+                ->setParam('route_collection', $this->route_collection)
+                ->execute();
+
             $this->getService('plugins')->handleWeb();
             $available_langs = $this->config->get('foolz/foolframe', 'package', 'preferences.lang.available');
             $lang = $request->cookies->get('language');
@@ -353,7 +353,7 @@ class Context implements ContextInterface
             }
 
             // stick the html of the profiler at the end
-            if ($request->getRequestFormat() == 'html' && $auth->hasAccess('maccess.admin')) {
+            if ($request->getRequestFormat() == 'html' && isset($auth) && $auth->hasAccess('maccess.admin')) {
                 $content = explode('</body>', $response->getContent());
                 if (count($content) == 2) {
                     $this->profiler->log('Execution end');
