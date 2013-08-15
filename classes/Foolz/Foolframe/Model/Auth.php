@@ -441,6 +441,7 @@ class Auth extends Model
     public function checkNewPasswordKey($id, $password_key)
     {
         $row = $this->dc->qb()
+            ->select('*')
             ->from($this->dc->p('users'), 'l')
             ->where('id = :id')
             ->andWhere('new_password_time > :new_password_time')
