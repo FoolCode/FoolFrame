@@ -20,14 +20,44 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
             ->register('foolframe-plugin.articles', 'Foolz\Foolframe\Plugins\Articles\Model\Articles')
             ->addArgument($context);
 
-        // don't add the admin panels if the user is not an admin
-        if ($context->getService('auth')->hasAccess('maccess.admin')) {
-            $context->getRouteCollection()->add(
-                'foolframe.plugin.articles.admin', new \Symfony\Component\Routing\Route(
-                        '/admin/articles/{_suffix}',
+        Event::forge('Foolz\Foolframe\Model\Context.handleWeb.has_request')
+            ->setCall(function($result) use ($context) {
+                // don't add the admin panels if the user is not an admin
+                if ($context->getService('auth')->hasAccess('maccess.admin')) {
+                    $context->getRouteCollection()->add(
+                        'foolframe.plugin.articles.admin', new \Symfony\Component\Routing\Route(
+                            '/admin/articles/{_suffix}',
+                            [
+                                '_suffix' => 'manage',
+                                '_controller' => '\Foolz\Foolframe\Controller\Admin\Articles::*'
+                            ],
+                            [
+                                '_suffix' => '.*'
+                            ]
+                        )
+                    );
+
+                    \Plugins::registerSidebarElement('admin', 'articles', array(
+                            'name' => _i('Articles'),
+                            'default' => 'manage',
+                            'position' => array(
+                                'beforeafter' => 'before',
+                                'element' => 'account'
+                            ),
+                            'level' => 'admin',
+                            'content' => array(
+                                'manage' => array('level' => 'admin', 'name' => _i('Articles'), 'icon' => 'icon-font'),
+                            )
+                        )
+                    );
+                }
+
+                $context->getRouteCollection()->add(
+                    'foolframe.plugin.articles.chan', new \Symfony\Component\Routing\Route(
+                        '/_/articles/{_suffix}',
                         [
-                            '_suffix' => 'manage',
-                            '_controller' => '\Foolz\Foolframe\Controller\Admin\Articles::*'
+                            '_suffix' => '',
+                            '_controller' => '\Foolz\Foolfuuka\Controller\Chan\Articles::articles'
                         ],
                         [
                             '_suffix' => '.*'
@@ -35,51 +65,24 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
                     )
                 );
 
-            \Plugins::registerSidebarElement('admin', 'articles', array(
-                    'name' => _i('Articles'),
-                    'default' => 'manage',
-                    'position' => array(
-                        'beforeafter' => 'before',
-                        'element' => 'account'
-                    ),
-                    'level' => 'admin',
-                    'content' => array(
-                        'manage' => array('level' => 'admin', 'name' => _i('Articles'), 'icon' => 'icon-font'),
-                    )
-                )
-            );
-        }
+                Event::forge('foolframe.themes.generic_top_nav_buttons')
+                    ->setCall(function($result) use ($context) {
+                        $context->getService('foolframe-plugin.articles')->getNav('top', $result);
+                    })
+                    ->setPriority(3);
 
-        $context->getRouteCollection()->add(
-            'foolframe.plugin.articles.chan', new \Symfony\Component\Routing\Route(
-                '/_/articles/{_suffix}',
-                [
-                    '_suffix' => '',
-                    '_controller' => '\Foolz\Foolfuuka\Controller\Chan\Articles::articles'
-                ],
-                [
-                    '_suffix' => '.*'
-                ]
-            )
-        );
+                Event::forge('foolframe.themes.generic_bottom_nav_buttons')
+                    ->setCall(function($result) use ($context) {
+                        $context->getService('foolframe-plugin.articles')->getNav('bottom', $result);
+                    })
+                    ->setPriority(3);
 
-        Event::forge('foolframe.themes.generic_top_nav_buttons')
-            ->setCall(function($result) use ($context) {
-                $context->getService('foolframe-plugin.articles')->getNav('top', $result);
-            })
-            ->setPriority(3);
-
-        Event::forge('foolframe.themes.generic_bottom_nav_buttons')
-            ->setCall(function($result) use ($context) {
-                $context->getService('foolframe-plugin.articles')->getNav('bottom', $result);
-            })
-            ->setPriority(3);
-
-        Event::forge('foolframe.themes.generic.index_nav_elements')
-            ->setCall(function($result) use ($context) {
-                $context->getService('foolframe-plugin.articles')->getIndex($result);
-            })
-            ->setPriority(3);
+                Event::forge('foolframe.themes.generic.index_nav_elements')
+                    ->setCall(function($result) use ($context) {
+                        $context->getService('foolframe-plugin.articles')->getIndex($result);
+                    })
+                    ->setPriority(3);
+            });
     });
 
 Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-articles')

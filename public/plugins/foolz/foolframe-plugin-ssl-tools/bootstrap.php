@@ -21,27 +21,31 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
 
         /** @var Context $context */
         $context = $result->getParam('context');
-        /** @var Auth $auth */
-        $auth = $context->getService('auth');
-        // don't add the admin panels if the user is not an admin
-        if ($auth->hasAccess('maccess.admin')) {
-            $context->getRouteCollection()->add(
-                'foolframe.plugin.ssl_tools.admin', new \Symfony\Component\Routing\Route(
-                    '/admin/plugins/ssl_tools/{_suffix}',
-                    [
-                        '_suffix' => 'manage',
-                        '_controller' => '\Foolz\Foolframe\Controller\Admin\Plugins\SslTools::manage'
-                    ],
-                    [
-                        '_suffix' => '.*'
-                    ]
-                )
-            );
+        Event::forge('Foolz\Foolframe\Model\Context.handleWeb.has_request')
+            ->setCall(function($result) use ($context) {
+                /** @var Auth $auth */
+                $auth = $context->getService('auth');
+                // don't add the admin panels if the user is not an admin
+                if ($auth->hasAccess('maccess.admin')) {
+                    $context->getRouteCollection()->add(
+                        'foolframe.plugin.ssl_tools.admin', new \Symfony\Component\Routing\Route(
+                            '/admin/plugins/ssl_tools/{_suffix}',
+                            [
+                                '_suffix' => 'manage',
+                                '_controller' => '\Foolz\Foolframe\Controller\Admin\Plugins\SslTools::manage'
+                            ],
+                            [
+                                '_suffix' => '.*'
+                            ]
+                        )
+                    );
 
-            \Plugins::registerSidebarElement('admin', 'plugins', array(
-                'content' => array('ssl_tools/manage' => array('level' => 'admin', 'name' => _i('SSL Tools'), 'icon' => 'icon-lock'))
-            ));
-        }
+                    \Plugins::registerSidebarElement('admin', 'plugins', array(
+                        'content' => array('ssl_tools/manage' => array('level' => 'admin', 'name' => _i('SSL Tools'), 'icon' => 'icon-lock'))
+                    ));
+                }
+            });
+
 
         $context->getContainer()
             ->register('foolframe-plugin.ssl_tools', 'Foolz\Foolframe\Plugins\SslTools\Model\SslTools')
