@@ -12,6 +12,7 @@ use Foolz\Foolframe\Model\System;
 use Foolz\Foolframe\Model\Uri;
 use Foolz\Foolframe\Model\Users;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
+use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
 use Foolz\Foolframe\Model\Validation\Validator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -183,7 +184,8 @@ class Install extends Common
             $validator
                 ->add('username', _i('Username'), [new Trim(), new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 32])])
                 ->add('email', _i('Email'), [new Trim(), new Assert\NotBlank(), new Assert\Email()])
-                ->add('password', _i('Password'), [new Trim(), new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])]);
+                ->add('password', _i('Password'), [new Trim(), new Assert\NotBlank(), new Assert\Length(['min' => 4, 'max' => 64])])
+                ->add('confirm_password', _i('Confirm Password'), [new EqualsField(['field' => _i('Password'), 'value' => $this->getPost('password')])]);
 
             $validator->validate($this->getPost());
 
@@ -193,7 +195,7 @@ class Install extends Common
                 $auth = new Auth($this->getContext());
 
                 list($id, $activation_key) = $auth->createUser($input['username'], $input['password'], $input['email']);
-                $auth->activate_user($id, $activation_key);
+                $auth->activateUser($id, $activation_key);
                 $auth->authenticateWithId($id);
                 $user = $auth->getUser();
                 $user->save(['group_id' => 100]);
