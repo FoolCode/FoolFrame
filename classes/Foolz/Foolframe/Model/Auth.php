@@ -216,7 +216,7 @@ class Auth extends Model
         $login_hash = sha1(uniqid('', true) . $this->user->getUsername() . $last_login);
 
         // autologin garbage collection
-        if (time() % 1 == 0) {
+        if (time() % 100 == 0) {
             $this->dc->qb()
                 ->delete($this->dc->p('user_autologin'))
                 ->where('expiration < ' . time())
