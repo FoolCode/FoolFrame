@@ -289,19 +289,24 @@ class Context implements ContextInterface
             textdomain($lang);
 
             // load the routes from the child contextes first
-
             Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.route_collection')
                 ->setObject($this)
                 ->setParam('route_collection', $this->route_collection)
                 ->execute();
 
             foreach ($this->child_contextes as $context) {
+                $context->handleWeb($request);
                 $context->loadRoutes($this->route_collection);
             }
 
-            // load the framework routes
             $this->loadRoutes($this->route_collection);
         }
+
+        // load the framework routes
+
+        Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.contextes_handled')
+            ->setObject($this)
+            ->execute();
 
         // this is the first time we know we have a request for sure
         // hooks that need the request to function must run here
@@ -323,15 +328,7 @@ class Context implements ContextInterface
         $dispatcher->addSubscriber(new ResponseListener('UTF-8'));
         $this->http_kernel = new HttpKernel($dispatcher, $resolver);
 
-        // we're pussies, and just load all the web stuff from child contextes
-        // @todo Make so it loads only the required handleWeb and only if required
-        foreach ($this->child_contextes as $context) {
-            $context->handleWeb($request);
-        }
 
-        Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.contextes_handled')
-            ->setObject($this)
-            ->execute();
 
         // if this hook is used, it can override the entirety of the request handling
         $response = Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.override_response')
