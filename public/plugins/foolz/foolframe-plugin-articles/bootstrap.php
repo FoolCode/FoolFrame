@@ -109,6 +109,6 @@ Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-
         $table->addColumn('bottom', 'smallint', ['unsigned' => true, 'default' => 0]);
         $table->addColumn('timestamp', 'integer', ['unsigned' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['slug'], DC::p('plugin_ff_articles_slug_index'));
-        $table->addIndex(['title'], DC::p('plugin_ff_articles_title_index'));
+        $table->addIndex(['slug'], $dc->p('plugin_ff_articles_slug_index'));
+        $table->addIndex(['title'], $dc->p('plugin_ff_articles_title_index'));
     });
