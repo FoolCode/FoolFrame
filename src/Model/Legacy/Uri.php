@@ -29,7 +29,7 @@ class Uri
 
     public static function main()
     {
-        return static::$request->getBasePath();
+        return static::$request->getBasePath() . static::$request->getPathInfo();
     }
 
     public static function string()

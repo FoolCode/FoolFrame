@@ -29,7 +29,7 @@ class Uri extends Model {
 
     public function main()
     {
-        return $this->request->getBasePath();
+        return $this->request->getBasePath() . $this->request->getPathInfo();
     }
 
     public function string()
