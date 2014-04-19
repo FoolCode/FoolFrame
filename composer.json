@@ -11,6 +11,6 @@
 
     },
 	"autoload": {
-		"psr-0": {"Foolz\\Foolframe": "classes/"}
+		"psr-4": {"Foolz\\Foolframe\\": "src/"}
 	}
 }
