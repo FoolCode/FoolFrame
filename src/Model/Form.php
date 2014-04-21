@@ -112,9 +112,32 @@ class Form
         return $s;
     }
 
-    public function radio($field, $value = null, $checked = false, $args = [], $type = 'radio')
+    public function radio($field, $value = null, $checked = false, $args = [])
     {
-        $s = '<input type="'.$type.'"';
+        $s = '<input type="radio"';
+
+        $args['name'] = $field;
+
+        if (is_array($field)) {
+            $args = $field;
+        } else {
+            if ($value) {
+                $args['value'] = $value;
+            }
+
+            if ($checked) {
+                $args['selected'] = 'selected';
+            }
+        }
+
+        $s .= $this->expandArgs($args).'>';
+
+        return $s;
+    }
+
+    public function checkbox($field, $value = null, $checked = false, $args = [])
+    {
+        $s = '<input type="checkbox"';
 
         $args['name'] = $field;
 
@@ -133,11 +156,6 @@ class Form
         $s .= $this->expandArgs($args).'>';
 
         return $s;
-    }
-
-    public function checkbox($field, $value = null, $checked = false, $args = [])
-    {
-        return $this->radio($field, $value, $checked, $args, 'checkbox');
     }
 
     public function label($text, $for)
