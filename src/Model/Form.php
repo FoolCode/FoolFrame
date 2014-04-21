@@ -112,9 +112,9 @@ class Form
         return $s;
     }
 
-    public function radio($field, $value = null, $checked = false, $args = [])
+    public function radio($field, $value = null, $checked = false, $args = [], $type = 'radio')
     {
-        $s = '<input type="radio"';
+        $s = '<input type="'.$type.'"';
 
         $args['name'] = $field;
 
