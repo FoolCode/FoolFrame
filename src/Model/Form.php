@@ -126,7 +126,7 @@ class Form
             }
 
             if ($checked) {
-                $args['selected'] = 'selected';
+                $args['checked'] = 'checked';
             }
         }
 
@@ -137,25 +137,7 @@ class Form
 
     public function checkbox($field, $value = null, $checked = false, $args = [])
     {
-        $s = '<input type="checkbox"';
-
-        $args['name'] = $field;
-
-        if (is_array($field)) {
-            $args = $field;
-        } else {
-            if ($value) {
-                $args['value'] = $value;
-            }
-
-            if ($checked) {
-                $args['checked'] = 'checked';
-            }
-        }
-
-        $s .= $this->expandArgs($args).'>';
-
-        return $s;
+        return $this->radio($field, $value, $checked, $args, 'checkbox');
     }
 
     public function label($text, $for)
