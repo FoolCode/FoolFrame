@@ -65,7 +65,7 @@ class User extends Model
 
     public static function forge(Context $context, $data)
     {
-        if (is_array($data) && !Arr::is_assoc($data)) {
+        if (is_array($data) && !Util::isAssoc($data)) {
             $array = [];
 
             foreach($data as $item) {

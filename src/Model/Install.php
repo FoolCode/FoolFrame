@@ -67,10 +67,10 @@ class Install extends Model
     public function create_salts()
     {
         // config without slash is the custom foolz one
-        $this->config->set('foolz/foolframe', 'config', 'config.cookie_prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
+        $this->config->set('foolz/foolframe', 'config', 'config.cookie_prefix', 'foolframe_'.Util::randomString(3).'_');
         $this->config->save('foolz/foolframe', 'config');
 
-        $this->config->set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.\Str::random('alnum', 3).'_');
+        $this->config->set('foolz/foolframe', 'cache', 'prefix', 'foolframe_'.Util::randomString(3).'_');
         $this->config->save('foolz/foolframe', 'cache');
     }
 
