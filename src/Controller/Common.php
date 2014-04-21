@@ -42,7 +42,8 @@ class Common implements ControllerInterface
     /**
      * @return Auth
      */
-    public function getAuth() {
+    public function getAuth()
+    {
         return $this->getContext()->getService('auth');
     }
 
@@ -53,6 +54,16 @@ class Common implements ControllerInterface
         }
 
         return $this->getRequest()->request->get($key, $fallback);
+    }
+
+    public function checkCsrfToken()
+    {
+        return $this->getContext()->getService('security')->checkCsrfToken($this->getRequest());
+    }
+
+    public function checkCsrfTokenGet()
+    {
+        return $this->getContext()->getService('security')->checkCsrfTokenGet($this->getRequest());
     }
 
     public function getQuery($key = false, $fallback = false)

@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: woxxy
- * Date: 03/08/13
- * Time: 17:16
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Foolz\Foolframe\Model;
 

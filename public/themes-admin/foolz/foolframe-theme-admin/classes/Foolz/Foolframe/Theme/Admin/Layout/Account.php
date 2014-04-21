@@ -13,7 +13,7 @@ class Account extends \Foolz\Foolframe\View\View
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title><?= _i('Login').' - '.Preferences::get('foolframe.gen.website_title') ?></title>
+        <title><?= _i('Login').' - '.$this->getPreferences()->get('foolframe.gen.website_title') ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link href="<?= $this->getAssetManager()->getAssetLink('bootstrap2/css/bootstrap.css') ?>" rel="stylesheet">
@@ -88,7 +88,7 @@ class Account extends \Foolz\Foolframe\View\View
             </div>
         </div>
 
-        <?= \Security::js_set_token(); ?>
+        <?= $this->getSecurity()->getJsCsrfToken(); ?>
     </body>
 </html>
 <?php

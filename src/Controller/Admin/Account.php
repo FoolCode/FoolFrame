@@ -9,11 +9,12 @@ use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
 use Foolz\Foolframe\Model\Validation\Validator;
 use Foolz\Inet\Inet;
+use forxer\Gravatar\Gravatar;
+use Neutron\ReCaptcha\ReCaptcha;
 use Swift_SendmailTransport;
 use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -39,7 +40,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
         }
 
         // the login button has been submitted - authenticate username and password
-        if ($this->getPost() && !\Security::check_token()) {
+        if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
             $this->notices->set('error', _i('The security token was not found. Please try again.'));
         } elseif ($this->getPost()) {
             // load authentication instance
@@ -82,7 +83,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             return $this->redirectToLogin();
         }
 
-        if (!\Security::check_token(\Input::get('token'))) {
+        if (!$this->checkCsrfTokenGet()) {
             die('The security token is invalid.');
         }
 
@@ -103,18 +104,26 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             throw new NotFoundHttpException;
         }
 
-        if ($this->getPost() && !\Security::check_token()) {
+        if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
             $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif ($this->getPost()) {
 
             $input = $this->getPost();
 
-            $recaptcha = ! \ReCaptcha::available()
-                || \ReCaptcha::instance()->check_answer(
+            $recaptcha = true;
+            if ($this->preferences->get('recaptcha.public_key', false)) {
+
+                $recaptcha_obj = ReCaptcha::create($this->preferences->get('recaptcha.public_key'), $this->preferences->get('recaptcha.private_key'));
+                $recaptcha_result = $recaptcha_obj->checkAnswer(
                     $this->getRequest()->getClientIp(),
                     $this->getPost('recaptcha_challenge_field'),
                     $this->getPost('recaptcha_response_field')
                 );
+
+                if (!$recaptcha_result->isValid()) {
+                    $recaptcha = false;
+                }
+            }
 
             if (!$recaptcha) {
                 $this->notices->set('error', _i('The reCAPTCHA code entered does not match the one displayed.'));
@@ -210,7 +219,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             return $this->redirectToAdmin();
         }
 
-        if ($this->getPost() && !\Security::check_token()) {
+        if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
             $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif ($this->getPost()) {
             $validator = new Validator();
@@ -237,7 +246,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
     {
         if ($id !== null && $password_key !== null) {
             if ($this->getAuth()->checkNewPasswordKey($id, $password_key)) {
-                if ($this->getPost() && !\Security::check_token()) {
+                if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
                     $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
                 } elseif ($this->getPost()) {
                     $validator = new Validator();
@@ -273,7 +282,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                 return $this->redirectToAdmin();
             }
 
-            if ($this->getPost() && !\Security::check_token()) {
+            if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
                 $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             } elseif ($this->getPost()) {
                 return $this->sendChangePasswordEmail($this->getAuth()->getUser()->getEmail());
@@ -304,7 +313,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
             return new Response($this->builder->build());
         } else {
-            if ($this->getPost() && !\Security::check_token()) {
+            if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
                 $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             } elseif ($this->getPost()) {
                 $validator = new Validator();
@@ -395,7 +404,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                 return $this->redirect('admin/account/login');
             }
 
-            if ($this->getPost() && !\Security::check_token()) {
+            if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
                 $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             } elseif ($this->getPost()) {
                 $validator = new Validator();
@@ -524,7 +533,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
         $form['paragraph-2'] = array(
             'type' => 'paragraph',
-            'help' => '<img src="'.\Gravatar::get_gravatar($this->getAuth()->getUser()->getEmail()).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
+            'help' => '<img src="'.Gravatar::image($this->getAuth()->getUser()->getEmail()).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
                 _i('Your avatar is automatically fetched from %s, based on your registration email.',
                 '<a href="http://gravatar.com" target="_blank">Gravatar</a>')
         );
@@ -569,10 +578,10 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
         $data['form'] = $form;
 
-        if ($this->getPost() && !\Security::check_token()) {
+        if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
             $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif ($this->getPost()) {
-            $result = Validator::formValidate($form);
+            $result = Validator::formValidate($form, $this->getPost());
 
             if (isset($result['error'])) {
                 $this->notices->set('warning', $result['error']);

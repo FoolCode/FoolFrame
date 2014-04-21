@@ -1,19 +1,22 @@
 <?php
 
+use Foolz\Foolframe\Model\Autoloader;
+use Foolz\Foolframe\Model\Context;
 use Foolz\Foolframe\Model\DoctrineConnection;
-use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
 use Foolz\Plugin\Event;
 
 Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
     ->setCall(function($result) {
-        /* @var $context \Foolz\Foolframe\Model\Context */
+        /* @var Context $context */
         $context = $result->getParam('context');
+        /** @var Autoloader $autoloader */
+        $autoloader = $context->getService('autoloader');
 
-        \Autoloader::add_classes(array(
+        $autoloader->addClassMap([
             'Foolz\Foolframe\Plugins\Articles\Model\Articles' => __DIR__.'/classes/model/articles.php',
             'Foolz\Foolframe\Controller\Admin\Articles' => __DIR__.'/classes/controller/admin.php',
             'Foolz\Foolfuuka\Controller\Chan\Articles' => __DIR__.'/classes/controller/chan.php'
-        ));
+        ]);
 
         $context->getContainer()
             ->register('foolframe-plugin.articles', 'Foolz\Foolframe\Plugins\Articles\Model\Articles')
@@ -86,7 +89,7 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
 
 Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-articles')
     ->setCall(function($result) {
-        /** @var $context \Foolz\Foolframe\Model\Context */
+        /** @var Context $context */
         $context = $result->getParam('context');
         /** @var DoctrineConnection $dc */
         $dc = $context->getService('doctrine');

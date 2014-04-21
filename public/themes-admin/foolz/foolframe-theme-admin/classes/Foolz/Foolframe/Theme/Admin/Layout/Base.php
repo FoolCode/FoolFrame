@@ -121,7 +121,7 @@ class Base extends \Foolz\Foolframe\View\View
             </div>
         </div>
 
-        <?= \Security::js_set_token(); ?>
+        <?= $this->getSecurity()->getJsCsrfToken(); ?>
     </body>
 </html>
 <?php

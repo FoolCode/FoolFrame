@@ -29,7 +29,7 @@ public function toString()
                                 </a>
                             </li>
                             <li>
-                                <a href="<?= $this->getUri()->create('/admin/account/logout').'?token='.\Security::fetch_token() ?>">
+                                <a href="<?= $this->getUri()->create('/admin/account/logout').'?csrf_token='.$this->getSecurity()->getCsrfToken() ?>">
                                     <?= _i('Logout') ?>
                                 </a>
                             </li>

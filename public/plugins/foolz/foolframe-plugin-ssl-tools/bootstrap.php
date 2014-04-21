@@ -1,6 +1,7 @@
 <?php
 
 use Foolz\Foolframe\Model\Auth;
+use Foolz\Foolframe\Model\Autoloader;
 use Foolz\Foolframe\Model\Context;
 use Foolz\Plugin\Event;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -8,19 +9,21 @@ use Symfony\Component\HttpFoundation\Request;
 
 Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
     ->setCall(function($result) {
-
         // this plugin works with indexes that don't exist in CLI
         if (PHP_SAPI === 'cli') {
             return false;
         }
 
-        \Autoloader::add_classes(array(
+        /* @var Context $context */
+        $context = $result->getParam('context');
+        /** @var Autoloader $autoloader */
+        $autoloader = $context->getService('autoloader');
+
+        $autoloader->addClassMap([
             'Foolz\Foolframe\Plugins\SslTools\Model\SslTools' => __DIR__.'/classes/model/ssl_tools.php',
             'Foolz\Foolframe\Controller\Admin\Plugins\SslTools' => __DIR__.'/classes/controller/admin/ssl_tools.php'
-        ));
+        ]);
 
-        /** @var Context $context */
-        $context = $result->getParam('context');
         Event::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
             ->setCall(function($result) use ($context) {
                 /** @var Auth $auth */

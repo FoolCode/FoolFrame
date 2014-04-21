@@ -2,7 +2,7 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
-use \Foolz\Autoupgrade\Upgrade;
+use Foolz\Foolframe\Model\System as S;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,7 +23,7 @@ class System extends \Foolz\Foolframe\Controller\Admin
 
     public function action_information()
     {
-        $data = ['info' => \System::environment()];
+        $data = ['info' => S::environment($this->getContext())];
 
         $this->param_manager->setParam('method_title', _i('Information'));
         $this->builder->createPartial('body', 'system/information')

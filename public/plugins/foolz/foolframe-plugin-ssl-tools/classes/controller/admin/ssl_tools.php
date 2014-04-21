@@ -71,7 +71,7 @@ class SslTools extends \Foolz\Foolframe\Controller\Admin
             'type' => 'close'
         );
 
-        $this->preferences->submit_auto($form, $this->getPost());
+        $this->preferences->submit_auto($this->getRequest(), $form, $this->getPost());
 
         $data['form'] = $form;
 

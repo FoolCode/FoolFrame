@@ -5,7 +5,9 @@ namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
 class RequestChangePassword extends \Foolz\Foolframe\View\View
 {
     public function toString()
-    { ?>
+    {
+        $form = $this->getForm();
+        ?>
 <div class="admin-container">
     <div class="admin-container-header"><?= _i('Change Password') ?></div>
     <p>
@@ -13,10 +15,10 @@ class RequestChangePassword extends \Foolz\Foolframe\View\View
 
         <hr/>
 
-        <?= \Form::open(['onsubmit' => 'fuel_set_csrf_token(this);']) ?>
-        <?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()) ?>
-        <?= \Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => _i('Request Password Change')]) ?>
-        <?= \Form::close() ?>
+        <?= $form->open(['onsubmit' => 'fuel_set_csrf_token(this);']) ?>
+        <?= $form->hidden('csrf_token', $this->getSecurity()->getCsrfToken()) ?>
+        <?= $form->submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => _i('Request Password Change')]) ?>
+        <?= $form->close() ?>
     </p>
 </div>
 <?php

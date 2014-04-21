@@ -7,7 +7,9 @@ use Foolz\Foolframe\Model\Legacy\Config;
 class Manage extends \Foolz\Foolframe\View\View
 {
     public function toString()
-    { ?>
+    {
+        $form = $this->getForm();
+        ?>
 <div class="admin-container">
     <div class="admin-container-header">
         <?= _i('All Plugins') ?><?php /*<?= \Str::tr(__(':module Plugins'), ['module' => Config::get($module, 'package', 'main.name')]) ?> */ ?>
@@ -31,20 +33,20 @@ class Manage extends \Foolz\Foolframe\View\View
                 </td>
                 <td>
                     <div class="btn-group pull-right">
-                    <?= \Form::open(
+                    <?= $form->open(
                         'admin/plugins/action',
                         [
                             'action' => (isset($plugin->enabled) ? 'disable' : 'enable'),
                             'name' => $plugin->getJsonConfig('name')
                         ]
                     ) ?>
-                    <?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()) ?>
-                    <?= \Form::submit([
+                    <?= $form->hidden('csrf_token', $this->getSecurity()->getCsrfToken()) ?>
+                    <?= $form->submit([
                         'class' => (isset($plugin->enabled) ? 'btn btn-small btn-warning' : 'btn btn-small btn-success'),
                         'name' => 'submit',
                         'value' => (isset($plugin->enabled) ? _i('Disable') : _i('Enable'))
                     ]) ?>
-                    <?= \Form::close(); ?>
+                    <?= $form->close(); ?>
                     </div>
                 </td>
             </tr>

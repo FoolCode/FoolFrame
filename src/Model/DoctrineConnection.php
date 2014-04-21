@@ -4,7 +4,6 @@ namespace Foolz\Foolframe\Model;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
-use Foolz\Foolframe\Model\Legacy\DoctrineLogger;
 
 class DoctrineConnection extends Model
 {

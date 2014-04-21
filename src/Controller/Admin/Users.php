@@ -4,7 +4,7 @@ namespace Foolz\Foolframe\Controller\Admin;
 
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
 use Foolz\Foolframe\Model\Validation\Validator;
-use Symfony\Component\HttpFoundation\Request;
+use forxer\Gravatar\Gravatar;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -71,7 +71,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
         $form['paragraph-2'] = array(
             'type' => 'paragraph',
-            'help' => '<img src="'.\Gravatar::get_gravatar($data['object']->email).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
+            'help' => '<img src="'.Gravatar::image($data['object']->email).'" width="80" height="80" style="padding:2px; border: 1px solid #ccc;"/> '.
                 _i('The avatar is automatically fetched from %s, based on the user\'s registration email.',
                 '<a href="http://gravatar.com" target="_blank">Gravatar</a>')
         );
@@ -161,10 +161,10 @@ class Users extends \Foolz\Foolframe\Controller\Admin
 
         $data['form'] = $form;
 
-        if ($this->getPost() && !\Security::check_token()) {
+        if ($this->getPost() && !$this->checkCsrfToken()) {
             $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif ($this->getPost()) {
-            $result = Validator::formValidate($form);
+            $result = Validator::formValidate($form, $this->getPost());
 
             if (isset($result['error'])) {
                 $this->notices->set('warning', $result['error']);
@@ -173,7 +173,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
                     $this->notices->set('warning', $result['warning']);
                 }
 
-                \Notices::set('success', _i('Preferences updated.'));
+                $this->notices->set('success', _i('Preferences updated.'));
 
                 $user = $users->getUserBy('id', $id);
 

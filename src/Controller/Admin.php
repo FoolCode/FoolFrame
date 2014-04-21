@@ -6,6 +6,7 @@ use Foolz\Foolframe\Model\Config;
 use Foolz\Foolframe\Model\Notices;
 use Foolz\Foolframe\Model\Plugins;
 use Foolz\Foolframe\Model\Preferences;
+use Foolz\Foolframe\Model\Security;
 use Foolz\Foolframe\Model\Uri;
 use Foolz\Theme\Loader;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -53,6 +54,11 @@ class Admin extends Common
      */
     protected $config;
 
+    /**
+     * @var Security
+     */
+    protected $security;
+
     public function before()
     {
         $request = $this->getRequest();
@@ -60,6 +66,7 @@ class Admin extends Common
         $this->notices = $this->getContext()->getService('notices');
         $this->preferences = $this->getContext()->getService('preferences');
         $this->config = $this->getContext()->getService('config');
+        $this->security = $this->getContext()->getService('security');
 
         $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
         $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin/');
@@ -294,7 +301,7 @@ class Admin extends Common
                         $default_uri = $item['default'];
                     }
                     array_unshift($default_uri, 'admin', $key);
-                    $subresult['href'] = \Uri::create(implode('/', $default_uri));
+                    $subresult['href'] = $this->uri->create(implode('/', $default_uri));
                 }
 
                 $subresult['content'] = [];
@@ -330,7 +337,7 @@ class Admin extends Common
                                 $default_uri = $subkey;
                             }
                             array_unshift($default_uri, 'admin', $key);
-                            $subsubresult['href'] = \Uri::create(implode('/', $default_uri));
+                            $subsubresult['href'] = $this->uri->create(implode('/', $default_uri));
                         }
 
                         $subresult['content'][] = $subsubresult;

@@ -44,7 +44,7 @@ class Plugins extends \Foolz\Foolframe\Controller\Admin
 
     function action_action()
     {
-        if ($this->getPost() && !\Security::check_token()) {
+        if ($this->getPost() && !$this->security->checkCsrfToken($this->getRequest())) {
             $this->notices->setFlash('warning', _i('The security token wasn\'t found. Try resubmitting.'));
             return $this->redirect('admin/plugins/manage');
         }

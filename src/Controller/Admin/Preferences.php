@@ -2,10 +2,8 @@
 
 namespace Foolz\Foolframe\Controller\Admin;
 
-use Foolz\Foolframe\Model\Legacy\Config;
 use Foolz\Foolframe\Controller\Admin;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -59,7 +57,7 @@ class Preferences extends Admin
             'type' => 'select',
             'label' => _i('Default language'),
             'help' => _i('Set the language users will see as they reach your site.'),
-            'options' => Config::get('foolz/foolframe', 'package', 'preferences.lang.available'),
+            'options' => $this->config->get('foolz/foolframe', 'package', 'preferences.lang.available'),
             'preferences' => true,
         );
 
@@ -181,7 +179,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        $this->preferences->submit_auto($form, $this->getPost());
+        $this->preferences->submit_auto($this->getRequest(), $form, $this->getPost());
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')
@@ -245,7 +243,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        $this->preferences->submit_auto($form, $this->getPost());
+        $this->preferences->submit_auto($this->getRequest(), $form, $this->getPost());
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')
@@ -317,7 +315,7 @@ class Preferences extends Admin
 
         $data['form'] = $form;
 
-        $this->preferences->submit_auto($form, $this->getPost());
+        $this->preferences->submit_auto($this->getRequest(), $form, $this->getPost());
 
         // create a form
         $this->builder->createPartial('body', 'form_creator')

@@ -4,13 +4,8 @@ namespace Foolz\Foolframe\Model;
 
 use Foolz\Cache\Cache;
 use Foolz\Foolframe\Model\Auth\WrongKeyException;
-use Foolz\Foolframe\Model\Legacy\Config;
-use Foolz\Foolframe\Model\Legacy\Uri;
 use Foolz\Plugin\Hook;
-use Foolz\Foolframe\Model\ExceptionHandler;
 use Foolz\Profiler\Profiler;
-use Monolog\Handler\ChromePHPHandler;
-use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Monolog\Processor\IntrospectionProcessor;
@@ -108,19 +103,11 @@ class Context implements ContextInterface
 
         $this->profiler = $this->container->get('profiler');
 
-        class_alias('Foolz\Foolframe\Model\Legacy\Uri', 'Uri');
-        class_alias('Foolz\Foolframe\Model\Legacy\DoctrineConnection', 'DoctrineConnection');
-        class_alias('Foolz\Foolframe\Model\Legacy\Notices', 'Notices');
         class_alias('Foolz\Foolframe\Model\Plugins', 'Plugins');
-        class_alias('Foolz\Foolframe\Model\Legacy\Preferences', 'Preferences');
         class_alias('Foolz\Foolframe\Model\SchemaManager', 'SchemaManager');
         class_alias('Foolz\Foolframe\Model\System', 'System');
         class_alias('Foolz\Foolframe\Model\User', 'User');
         class_alias('Foolz\Foolframe\Model\Users', 'Users');
-        class_alias('Foolz\Foolframe\Model\Profiler', 'Profiler');
-
-        // fallback for profiler
-        \Profiler::forge($this->container->get('profiler'));
 
         $this->route_collection = new RouteCollection();
 
@@ -146,6 +133,10 @@ class Context implements ContextInterface
             ini_set('display_errors', 1);
         }
 
+        $this->container->register('autoloader', 'Foolz\Foolframe\Model\Autoloader')
+            ->addArgument($this)
+            ->addMethodCall('register');
+
         $this->container->register('logger', 'Foolz\Foolframe\Model\Logger')
             ->addArgument($this)
             ->addMethodCall('addLogger', [$this->logger])
@@ -168,6 +159,9 @@ class Context implements ContextInterface
             ->addArgument($this);
 
         $this->container->register('auth', 'Foolz\Foolframe\Model\Auth')
+            ->addArgument($this);
+
+        $this->container->register('security', 'Foolz\Foolframe\Model\Security')
             ->addArgument($this);
 
         $this->config = $this->getService('config');
@@ -241,9 +235,6 @@ class Context implements ContextInterface
             ->register('uri', '\Foolz\Foolframe\Model\Uri')
             ->addArgument($this)
             ->addArgument($request);
-
-        // legacy
-        Uri::setRequest($request);
 
         if (!$request->hasPreviousSession()) {
             $request->setSession(new Session());
@@ -358,6 +349,8 @@ class Context implements ContextInterface
                 }
             }
         }
+
+        $this->getService('security')->updateCsrfToken($response);
 
         $response->send();
     }

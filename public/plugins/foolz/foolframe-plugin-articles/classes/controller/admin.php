@@ -7,7 +7,6 @@ use Foolz\Foolframe\Model\Validation\Validator;
 use Foolz\Foolframe\Plugins\Articles\Model\Articles as A;
 use Foolz\Foolframe\Plugins\Articles\Model\ArticlesArticleNotFoundException;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -222,10 +221,10 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
     {
         $data['form'] = $this->structure();
 
-        if ($this->getPost() && !\Security::check_token()) {
+        if ($this->getPost() && !$this->checkCsrfToken()) {
             $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif ($this->getPost()) {
-            $result = Validator::formValidate($data['form']);
+            $result = Validator::formValidate($data['form'], $this->getPost());
             if (isset($result['error'])) {
                 $this->notices->set('warning', $result['error']);
             } else {
@@ -272,7 +271,7 @@ class Articles extends \Foolz\Foolframe\Controller\Admin
             throw new NotFoundHttpException;
         }
 
-        if ($this->getPost() && !\Security::check_token()) {
+        if ($this->getPost() && !$this->checkCsrfToken()) {
             $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
         } elseif ($this->getPost()) {
             try {

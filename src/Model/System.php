@@ -4,7 +4,7 @@ namespace Foolz\Foolframe\Model;
 
 class System
 {
-    public static function environment()
+    public static function environment(Context $context)
     {
         $environment = [];
 
@@ -39,7 +39,7 @@ class System
             'data' => [
                 [
                     'title' => _i('FoolFrame Version'),
-                    'value' => Legacy\Config::get('foolz/foolframe', 'package', 'main.version'),
+                    'value' => $context->getService('config')->get('foolz/foolframe', 'package', 'main.version'),
                     'alert' => [
                         'type' => 'info',
                         'condition' => true,

@@ -3,6 +3,7 @@
 namespace Foolz\Foolframe\Model;
 
 use Doctrine\DBAL\Logging\SQLLogger;
+use Foolz\Profiler\Profiler;
 
 class DoctrineLogger extends Model implements SQLLogger
 {
@@ -25,11 +26,11 @@ class DoctrineLogger extends Model implements SQLLogger
 
     public function startQuery($sql, array $params = null, array $types = null)
     {
-        $this->profiler->start('Doctrine', $sql);
+        $this->profiler->logStart('Doctrine', [$sql]);
     }
 
     public function stopQuery()
     {
-        $this->profiler->stop('Doctrine');
+        $this->profiler->logStop('Doctrine');
     }
 }

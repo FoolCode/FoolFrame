@@ -37,7 +37,7 @@ namespace Foolz\Foolframe\Theme\Admin\Partial;
  * ...
  * 		);
  *
- * Values outside of $not_input will be sent to the \Form:: function (where applicable).
+ * Values outside of $not_input will be sent to the $form_helper-> function (where applicable).
  *
  *
  *
@@ -54,6 +54,7 @@ class FormCreator extends \Foolz\Foolframe\View\View
 
 public function toString()
 {
+    $form_helper = $this->getForm();
     extract($this->getParamManager()->getParams());
     ?>
 
@@ -157,17 +158,17 @@ public function toString()
 
                     case 'open':
                         $open_default_attr = array('onsubmit' => 'fuel_set_csrf_token(this);');
-                        echo \Form::open(
-                            isset($item['attributes']) ? merge($item['attributes'], $open_default_attr) : $open_default_attr,
+                        echo $form_helper->open(
+                            isset($item['attributes']) ? array_merge($item['attributes'], $open_default_attr) : $open_default_attr,
                             isset($item['hidden']) ? $item['hidden'] : array()
                         );
 
-                        echo \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token());
+                        echo $form_helper->hidden('csrf_token', $this->getSecurity()->getCsrfToken());
                         break;
 
 
                     case 'close':
-                        echo \Form::close(); // I know there's a variable there but it's useless
+                        echo $form_helper->close(); // I know there's a variable there but it's useless
                         break;
 
 
@@ -186,13 +187,13 @@ public function toString()
                         }
 
                         if (isset($item['value'])) {
-                            echo \Form::hidden($name, $item['value']);
+                            echo $form_helper->hidden($name, $item['value']);
                         }
                         break;
 
                     case 'submit':
                     case 'reset':
-                        echo call_user_func('Form::' . $item['type'], $item);
+                        echo call_user_func([$form_helper, $item['type']], $item);
                         break;
 
                     case 'radio':
@@ -210,7 +211,7 @@ public function toString()
                                 ?>
                                 <label class="radio">
                                     <?php
-                                    echo \Form::radio($name, $radio_key, $checked)
+                                    echo $form_helper->radio($name, $radio_key, $checked)
                                     ?>
                                     <?php echo $radio_value ?>
                                 </label>
@@ -258,7 +259,7 @@ public function toString()
                         ?>
                         <label class="checkbox">
                             <?php
-                            echo \Form::checkbox($name, $item['value'], $checked, $extra)
+                            echo $form_helper->checkbox($name, $item['value'], $checked, $extra)
                             ?>
                             <?php echo $helpers['help'] ?>
                         </label>
@@ -339,7 +340,7 @@ public function toString()
                             $item['selected'] = $helpers['default_value'];
                         }
 
-                        echo \Form::select($name, $item['selected'], $item['options']);
+                        echo $form_helper->select($name, $item['selected'], $item['options']);
                         ?>
                         <span class="help-inline">
                             <?php
@@ -386,7 +387,7 @@ public function toString()
                             // if help is not set, put the label in help-inline
                             if (isset($helpers['help'])) : ?><label><?php echo $helpers['label'] ?></label><?php endif; ?>
                         <?php
-                        echo \Form::$helper['type']($item);
+                        echo $form_helper->$helper['type']($item);
                         ?>
                         <span class="help-inline">
                             <?php

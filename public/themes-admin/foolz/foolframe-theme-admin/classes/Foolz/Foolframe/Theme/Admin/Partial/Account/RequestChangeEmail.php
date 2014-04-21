@@ -5,17 +5,19 @@ namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
 class RequestChangeEmail extends \Foolz\Foolframe\View\View
 {
     public function toString()
-    { ?>
+    {
+        $form = $this->getForm();
+        ?>
 <div class="admin-container">
     <div class="admin-container-header"><?= _i('Change Email Address') ?></div>
     <p>
-        <?= \Form::open(['onsubmit' => 'fuel_set_csrf_token(this);']) ?>
-        <?= \Form::hidden(\Config::get('security.csrf_token_key'), \Security::fetch_token()) ?>
+        <?= $form->open(['onsubmit' => 'fuel_set_csrf_token(this);']) ?>
+        <?= $form->hidden('csrf_token', $this->getSecurity()->getCsrfToken()) ?>
 
         <div class="control-group">
             <label class="control-label" for="new-email"><?= _i('New Email Address') ?></label>
             <div class="controls">
-                <?= \Form::input([
+                <?= $form->input([
                     'id' => 'new-email',
                     'name' => 'email',
                     'type' => 'email',
@@ -29,7 +31,7 @@ class RequestChangeEmail extends \Foolz\Foolframe\View\View
         <div class="control-group">
             <label class="control-label" for="password"><?= _i('Password') ?></label>
             <div class="controls">
-                <?= \Form::password([
+                <?= $form->password([
                     'id' => 'password',
                     'name' => 'password',
                     'placeholder' => _i('Password'),
@@ -40,11 +42,11 @@ class RequestChangeEmail extends \Foolz\Foolframe\View\View
 
         <div class="control-group">
             <div class="controls">
-                <?= \Form::submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => _i('Submit')]) ?>
+                <?= $form->submit(['class' => 'btn btn-primary', 'name' => 'submit', 'value' => _i('Submit')]) ?>
             </div>
         </div>
 
-        <?= \Form::close() ?>
+        <?= $form->close() ?>
     </p>
 </div>
 <?php

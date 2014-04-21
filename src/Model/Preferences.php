@@ -3,8 +3,8 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Cache\Cache;
-use Foolz\Foolframe\Model\Legacy\DoctrineConnection;
 use Foolz\Foolframe\Model\Validation\Validator;
+use Symfony\Component\HttpFoundation\Request;
 
 class Preferences extends Model
 {
@@ -19,7 +19,7 @@ class Preferences extends Model
     protected $profiler;
 
     /**
-     * @var Legacy\DoctrineConnection
+     * @var DoctrineConnection
      */
     protected $dc;
 
@@ -27,6 +27,11 @@ class Preferences extends Model
      * @var Notices
      */
     protected $notices;
+
+    /**
+     * @var Security
+     */
+    protected $security;
 
     /**
      * @var array
@@ -53,6 +58,7 @@ class Preferences extends Model
         $this->config = $context->getService('config');
         $this->profiler = $context->getService('profiler');
         $this->dc = $context->getService('doctrine');
+        $this->security = $this->getContext()->getService('security');
     }
 
     /**
@@ -184,14 +190,15 @@ class Preferences extends Model
      * functions included in the $form array. It sets a proper notice for the
      * admin interface on conclusion.
      *
+     * @param Request $request
      * @param array $form
      * @param bool|array $input If it evaluates to false, content won't be submitted
      */
-    public function submit_auto($form, $input = false)
+    public function submit_auto(Request $request, $form, $input = false)
     {
         if ($input) {
             $this->notices = $this->getContext()->getService('notices');
-            if (!\Security::check_token()) {
+            if (!$this->security->checkCsrfToken($request)) {
                 $this->notices->set('warning', _i('The security token wasn\'t found. Try resubmitting.'));
                 return;
             }

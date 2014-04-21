@@ -5,9 +5,11 @@ namespace Foolz\Foolframe\View;
 use Foolz\Foolframe\Model\Auth;
 use Foolz\Foolframe\Model\Config;
 use Foolz\Foolframe\Model\Context;
+use Foolz\Foolframe\Model\Form;
 use Foolz\Foolframe\Model\Logger;
 use Foolz\Foolframe\Model\Notices;
 use Foolz\Foolframe\Model\Preferences;
+use Foolz\Foolframe\Model\Security;
 use Foolz\Foolframe\Model\Uri;
 use Foolz\Profiler\Profiler;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,12 +56,25 @@ class View extends \Foolz\Theme\View
         return $this->getBuilderParamManager()->getParam('context')->getService('uri');
     }
 
+    public function getForm()
+    {
+        return new Form($this->getRequest());
+    }
+
     /**
      * @return Auth
      */
     public function getAuth()
     {
         return $this->getBuilderParamManager()->getParam('context')->getService('auth');
+    }
+
+    /**
+     * @return Security
+     */
+    public function getSecurity()
+    {
+        return $this->getBuilderParamManager()->getParam('context')->getService('security');
     }
 
     /**
