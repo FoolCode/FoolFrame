@@ -8,6 +8,7 @@ use Foolz\Foolframe\Model\Plugins;
 use Foolz\Foolframe\Model\Preferences;
 use Foolz\Foolframe\Model\Security;
 use Foolz\Foolframe\Model\Uri;
+use Foolz\Plugin\Hook;
 use Foolz\Theme\Loader;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,8 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 class Admin extends Common
 {
     protected $_views = null;
-    private static $sidebar = [];
-    private static $sidebar_dynamic = [];
 
     /**
      * @var \Foolz\Theme\Theme
@@ -89,20 +88,23 @@ class Admin extends Common
         ]);
 
         // returns the hardcoded sidebar array (can't use functions when declaring a class variable)
-        self::$sidebar = static::get_sidebar_values();
+        $sidebar = $this->getSidebarValues();
 
-        // get the plugin sidebars
-        self::$sidebar_dynamic = Plugins::getSidebarElements('admin');
+        $sidebar_dynamic = Hook::forge('Foolz\Foolframe\Controller\Admin.before.sidebar.add')
+            ->setObject($this)
+            ->setParam('sidebar', [])
+            ->execute()
+            ->getParam('sidebar');
 
         // merge if there were sidebar elements added dynamically
-        if (!empty(self::$sidebar_dynamic)) {
-            self::$sidebar = self::merge_sidebars(self::$sidebar, self::$sidebar_dynamic);
+        if (!empty($sidebar_dynamic)) {
+            $sidebar = $this->mergeSidebars($sidebar, $sidebar_dynamic);
         }
 
         $this->builder->createPartial('navbar', 'navbar');
         $this->builder->createPartial('sidebar', 'sidebar')
             ->getParamManager()
-            ->setParams(array('sidebar' => $this->get_sidebar($request, self::$sidebar)));
+            ->setParams(['sidebar' => $this->getSidebar($request, $sidebar)]);
     }
 
     public function redirect($url, $status = 302)
@@ -139,9 +141,9 @@ class Admin extends Common
      * Non-dynamic sidebar array.
      * Permissions are set inside
      *
-     * @return sidebar array
+     * @return array sidebar array
      */
-    private function get_sidebar_values()
+    private function getSidebarValues()
     {
         $sidebar = [];
 
@@ -157,29 +159,14 @@ class Admin extends Common
     }
 
     /**
-     * Sets new sidebar elements, the array must match the defaults' structure.
-     * It can override the methods.
-     *
-     * @param array $array
-     */
-    public static function add_sidebar_element($array)
-    {
-        if (is_null(static::$sidebar_dynamic)) {
-            static::$sidebar_dynamic = [];
-        }
-
-        static::$sidebar_dynamic[] = $array;
-    }
-
-    /**
-     * Merges without destroying twi sidebars, where $array2 overwrites values of
+     * Merges two sidebars, where $array2 overwrites values of
      * $array1.
      *
      * @param array $array1 sidebar array to be merged into
      * @param array $array2 sidebar array with elements to merge
      * @return array resulting sidebar
      */
-    public static function merge_sidebars($array1, $array2)
+    public function mergeSidebars($array1, $array2)
     {
         // there's a numbered index on the outside!
         foreach ($array2 as $key_top => $item_top) {
@@ -209,9 +196,9 @@ class Admin extends Common
                     // adding or overriding the inner elements
                     if (isset($item['content'])) {
                         if (isset($array1[$key]['content'])) {
-                            $array1[$key]['content'] = self::merge_sidebars($array1[$key]['content'], $item);
+                            $array1[$key]['content'] = $this->mergeSidebars($array1[$key]['content'], $item);
                         } else {
-                            $array1[$key]['content'] = self::merge_sidebars([], $item);
+                            $array1[$key]['content'] = $this->mergeSidebars([], $item);
                         }
                     }
                 } else {
@@ -259,10 +246,8 @@ class Admin extends Common
 
     /**
      * Returns the sidebar array
-     *
-     * @todo comment this
      */
-    public function get_sidebar(Request $request, $array)
+    public function getSidebar(Request $request, $array)
     {
         $segments = explode('/', $request->getPathInfo());
 

@@ -18,6 +18,8 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
         $context = $result->getParam('context');
         /** @var Autoloader $autoloader */
         $autoloader = $context->getService('autoloader');
+        /** @var Auth $auth */
+        $auth = $context->getService('auth');
 
         $autoloader->addClassMap([
             'Foolz\Foolframe\Plugins\SslTools\Model\SslTools' => __DIR__.'/classes/model/ssl_tools.php',
@@ -25,9 +27,7 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
         ]);
 
         Event::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
-            ->setCall(function($result) use ($context) {
-                /** @var Auth $auth */
-                $auth = $context->getService('auth');
+            ->setCall(function($result) use ($context, $auth) {
                 // don't add the admin panels if the user is not an admin
                 if ($auth->hasAccess('maccess.admin')) {
                     $context->getRouteCollection()->add(
@@ -43,9 +43,14 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
                         )
                     );
 
-                    \Plugins::registerSidebarElement('admin', 'plugins', array(
-                        'content' => array('ssl_tools/manage' => array('level' => 'admin', 'name' => _i('SSL Tools'), 'icon' => 'icon-lock'))
-                    ));
+                    Event::forge('Foolz\Foolframe\Controller\Admin.before.sidebar.add')
+                        ->setCall(function($result) {
+                            $sidebar = $result->getParam('sidebar');
+                            $sidebar[]['plugins'] = [
+                                'content' => array('ssl_tools/manage' => array('level' => 'admin', 'name' => _i('SSL Tools'), 'icon' => 'icon-lock'))
+                            ];
+                            $result->setParam('sidebar', $sidebar);
+                        });
                 }
             });
 

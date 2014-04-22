@@ -37,18 +37,6 @@ class Plugins extends Model
      */
     protected $dc;
 
-    /**
-     * The modules in FuelPHP
-     *
-     * @var  array
-     */
-    protected static $modules = [];
-
-    /**
-     * @var array
-     */
-    protected static $_admin_sidebars = [];
-
     public function __construct(Context $context)
     {
         parent::__construct($context);
@@ -153,7 +141,8 @@ class Plugins extends Model
 
         // if the plugin isn't installed yet, we will run install.php and NOT enable.php
         if (!$count) {
-            return $this->install($slug);
+            $this->install($slug);
+            return;
         }
 
         $this->dc->qb()
@@ -215,30 +204,5 @@ class Plugins extends Model
         $sm->commit();
 
         $this->clearCache();
-    }
-
-    public static function getSidebarElements($type)
-    {
-        if (!isset(static::$_admin_sidebars[$type])) {
-            return [];
-        }
-
-        return static::$_admin_sidebars[$type];
-    }
-
-    public static function registerSidebarElement($type, $section, $array = null)
-    {
-        // the user can also send an array with the index inseted in $section
-        if(!is_null($array)) {
-            $array2 = [];
-            $array2[$section] = $array;
-            $array = $array2;
-        } else {
-            $array = $section;
-        }
-
-        static::$_admin_sidebars[$type][] = $array;
-
-        \Foolz\Foolframe\Controller\Admin::add_sidebar_element($array);
     }
 }

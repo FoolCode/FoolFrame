@@ -39,19 +39,22 @@ Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
                         )
                     );
 
-                    \Plugins::registerSidebarElement('admin', 'articles', array(
-                            'name' => _i('Articles'),
-                            'default' => 'manage',
-                            'position' => array(
-                                'beforeafter' => 'before',
-                                'element' => 'account'
-                            ),
-                            'level' => 'admin',
-                            'content' => array(
-                                'manage' => array('level' => 'admin', 'name' => _i('Articles'), 'icon' => 'icon-font'),
-                            )
-                        )
-                    );
+                    Event::forge('Foolz\Foolframe\Controller\Admin.before.sidebar.add')
+                        ->setCall(function($result) {
+                            $sidebar = $result->getParam('sidebar');
+                            $sidebar[]['articles'] = [
+                                'name' => _i('Articles'),
+                                'default' => 'manage',
+                                'position' => [
+                                    'beforeafter' => 'before',
+                                    'element' => 'account'
+                                ],
+                                'level' => 'admin',
+                                'content' => [
+                                    'manage' => ['level' => 'admin', 'name' => _i('Articles'), 'icon' => 'icon-font'],
+                                ]                            ];
+                            $result->setParam('sidebar', $sidebar);
+                        });
                 }
 
                 $context->getRouteCollection()->add(
