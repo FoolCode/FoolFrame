@@ -26,7 +26,7 @@ class DoctrineLogger extends Model implements SQLLogger
 
     public function startQuery($sql, array $params = null, array $types = null)
     {
-        $this->profiler->logStart('Doctrine', [$sql]);
+        $this->profiler->logStart('Doctrine: '.$sql, [$sql]);
     }
 
     public function stopQuery()
