@@ -6,18 +6,19 @@ class DatabaseSetup extends \Foolz\Foolframe\View\View
 {
     public function toString()
     {
+        $form = $this->getForm();
         ?>
         <p class="description">
             <?= _i('Please enter the connection details to the MySQL database.') ?>
         </p>
 
         <div style="padding-top:20px;">
-            <?= \Form::open(array('class' => 'form-horizontal')) ?>
+            <?= $form->open(array('class' => 'form-horizontal')) ?>
                 <fieldset>
                     <div class="control-group">
                         <label class="control-label" for="hostname"><?= _i('Database Type') ?></label>
                         <div class="controls">
-                            <?= \Form::select('type', $this->getPost('type', 'pdo_mysql'), array('pdo_mysql' => 'MySQL', 'pdo_pgsql' => 'PostgreSQL')); ?>
+                            <?= $form->select('type', $this->getPost('type', 'pdo_mysql'), array('pdo_mysql' => 'MySQL', 'pdo_pgsql' => 'PostgreSQL')); ?>
                             <p class="help-block small-text"><?= _i('The database software you are using.') ?></p>
                         </div>
                     </div>
@@ -25,7 +26,7 @@ class DatabaseSetup extends \Foolz\Foolframe\View\View
                     <div class="control-group">
                         <label class="control-label" for="hostname"><?= _i('Database Hostname') ?></label>
                         <div class="controls">
-                            <?= \Form::input(array('id' => 'hostname', 'name' => 'hostname', 'value' => $this->getPost('hostname', 'localhost'))) ?>
+                            <?= $form->input(array('id' => 'hostname', 'name' => 'hostname', 'value' => $this->getPost('hostname', 'localhost'))) ?>
                             <p class="help-block small-text"><?= _i('Unless you are using a remote database server for this FoolFrame installation, leave it as `localhost`.') ?></p>
                         </div>
                     </div>
@@ -33,7 +34,7 @@ class DatabaseSetup extends \Foolz\Foolframe\View\View
                     <div class="control-group">
                         <label class="control-label" for="database"><?= _i('Database Name') ?></label>
                         <div class="controls">
-                            <?= \Form::input(array('id' => 'database', 'name' => 'database', 'value' => $this->getPost('database'))) ?>
+                            <?= $form->input(array('id' => 'database', 'name' => 'database', 'value' => $this->getPost('database'))) ?>
                             <p class="help-block small-text"><?= _i('This is the name of the database which will store your FoolFrame installation.') ?></p>
                         </div>
                     </div>
@@ -41,7 +42,7 @@ class DatabaseSetup extends \Foolz\Foolframe\View\View
                     <div class="control-group">
                         <label class="control-label" for="username"><?= _i('Username') ?></label>
                         <div class="controls">
-                            <?= \Form::input(array('id' => 'username', 'name' => 'username', 'value' => $this->getPost('username'))) ?>
+                            <?= $form->input(array('id' => 'username', 'name' => 'username', 'value' => $this->getPost('username'))) ?>
                             <p class="help-block small-text"><?= _i('This is the username of the account used to access the database server specified above.') ?></p>
                         </div>
                     </div>
@@ -49,7 +50,7 @@ class DatabaseSetup extends \Foolz\Foolframe\View\View
                     <div class="control-group">
                         <label class="control-label" for="password"><?= _i('Password') ?></label>
                         <div class="controls">
-                            <?= \Form::password(array('id' => 'password', 'name' => 'password', 'value' => $this->getPost('password'))) ?>
+                            <?= $form->password(array('id' => 'password', 'name' => 'password', 'value' => $this->getPost('password'))) ?>
                             <p class="help-block small-text"><?= _i('Enter the password for the account specified above.') ?></p>
                         </div>
                     </div>
@@ -57,16 +58,16 @@ class DatabaseSetup extends \Foolz\Foolframe\View\View
                     <div class="control-group">
                         <label class="control-label" for="prefix"><?= _i('Table Prefix') ?></label>
                         <div class="controls">
-                            <?= \Form::input(array('id' => 'prefix', 'name' => 'prefix', 'value' => $this->getPost('prefix', 'ff_'))) ?>
+                            <?= $form->input(array('id' => 'prefix', 'name' => 'prefix', 'value' => $this->getPost('prefix', 'ff_'))) ?>
                             <p class="help-block small-text"><?= _i('If you wish to run multiple FoolFrame installations in a single database, change this.') ?></p>
                         </div>
                     </div>
 
                     <hr>
 
-                    <?= \Form::submit(array('name' => 'submit', 'value' => _i('Next'), 'class' => 'btn btn-success pull-right')) ?>
+                    <?= $form->submit(array('name' => 'submit', 'value' => _i('Next'), 'class' => 'btn btn-success pull-right')) ?>
                 </fieldset>
-            <?= \Form::close() ?>
+            <?= $form->close() ?>
         </div>
         <?php
     }

@@ -5,8 +5,6 @@ namespace Foolz\Foolframe\Theme\Admin\Partial;
 /*
  * How to use: just as any view.
  *
- * $form = $this->load->view('admin/Form::creator', $data, TRUE);
- *
  * The $data must have the $data['form'] index. The keys in the array are the
  * name="" field.
  *

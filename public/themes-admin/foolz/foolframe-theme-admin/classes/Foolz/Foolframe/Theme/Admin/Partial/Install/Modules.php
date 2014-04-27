@@ -6,13 +6,14 @@ class Modules extends \Foolz\Foolframe\View\View
 {
     public function toString()
     {
+        $form = $this->getForm();
         $modules = $this->getParamManager()->getParam('modules');
         ?>
         <p class="description">
             <?= _i('Congratulations, you have completed the installation and setup of FoolFrame. Please choose the module(s) you wish to install below:') ?>
         </p>
 
-        <?= \Form::open() ?>
+        <?= $form->open() ?>
 
             <?php foreach ($modules as $module => $info) : ?>
                 <label class="checkbox">
@@ -28,8 +29,8 @@ class Modules extends \Foolz\Foolframe\View\View
 
             <hr>
 
-            <?= \Form::submit(array('name' => 'submit', 'value' => _i('Next'), 'class' => 'btn btn-success pull-right')) ?>
-        <?= \Form::close() ?>
+            <?= $form->submit(array('name' => 'submit', 'value' => _i('Next'), 'class' => 'btn btn-success pull-right')) ?>
+        <?= $form->close() ?>
         <?php
     }
 }
