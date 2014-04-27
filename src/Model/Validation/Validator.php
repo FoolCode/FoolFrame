@@ -225,6 +225,14 @@ class Validator
             $errors = [$validator->getViolations()->getText()];
             $errors += $validation_func_errors;
 
+            $errors = [];
+
+            if ($validator->getViolations()->count()) {
+                $errors[] = [$validator->getViolations()->getText()];
+            }
+
+            $errors = array_merge($errors, $validation_func_errors);
+
             return array('error' => implode("\n", $errors));
         } else {
             // get rid of all the uninteresting inputs and simplify
