@@ -4,6 +4,8 @@ namespace Foolz\Foolframe\Controller\Admin;
 
 use Foolz\Foolframe\Controller\Admin;
 use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
+use GeoIp2\Database\Reader;
+use MaxMind\Db\Reader\InvalidDatabaseException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -52,6 +54,38 @@ class Preferences extends Admin
             'validation' => [new Trim(), new Assert\Length(['max' => 32])],
             'help' => _i('Set the title displayed on the index page.')
         );
+
+        $form['foolfuuka.maxmind.geoip2_db_path'] = [
+            'type' => 'input',
+            'label' => _i('GeoIP database path'),
+            'help' => _i('Overrides the default path to GeoIP2 Country database (mmdb format)'),
+            'preferences' => true,
+            'validation' => [new Trim()],
+            'validation_func' => function($input, $form) {
+                    $path = trim($input['foolfuuka.maxmind.geoip2_db_path']);
+                    if (!$path) {
+                        return ['success' => true];
+                    }
+
+                    if(!is_readable($path)) {
+                        return [
+                            'error_code' => 'NO_SUCH_FILE',
+                            'error' => _i('Specified file does not exist or is not readable.')
+                        ];
+                    }
+
+                    try {
+                        new Reader($path);
+                    } catch(InvalidDatabaseException $e) {
+                        return [
+                            'warning_code' => 'INVALID_DATABASE',
+                            'warning' => _i('The specified path does not contain a valid GeoIP2 database.')
+                        ];
+                    }
+
+                    return ['success' => true];
+                }
+        ];
 
         $form['foolframe.lang.default'] = array(
             'type' => 'select',

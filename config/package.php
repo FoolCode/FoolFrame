@@ -70,6 +70,10 @@ return [
             'index_title' => 'FoolFrame',
         ],
 
+        'maxmind' => [
+            'geoip2_db_path' => VENDPATH.'foolz/foolframe/packages/maxmind/GeoLite2-Country.mmdb'
+        ],
+
         'lang' => [
             'default' => 'en_EN',
             'available' => [
