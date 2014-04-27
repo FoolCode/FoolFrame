@@ -123,6 +123,8 @@ class Form
         } else {
             if ($value) {
                 $args['value'] = $value;
+            } else {
+                $args['value'] = '';
             }
 
             if ($checked) {
