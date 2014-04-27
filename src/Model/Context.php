@@ -170,12 +170,13 @@ class Context implements ContextInterface
         // start up the caching system
         $caching_config = $this->config->get('foolz/foolframe', 'cache', '');
         switch ($caching_config['type']) {
-            case 'apc':
-                $apc_config = \Foolz\Cache\Config::forgeApc();
-                $apc_config->setFormat($caching_config['format']);
-                $apc_config->setPrefix($caching_config['prefix']);
-                $apc_config->setThrow(true);
-                Cache::instantiate($apc_config);
+            case 'redis':
+                $mem_config = \Foolz\Cache\Config::forgeRedis();
+                $mem_config->setFormat($caching_config['format']);
+                $mem_config->setPrefix($caching_config['prefix']);
+                $mem_config->setServers($caching_config['servers']);
+                $mem_config->setThrow(true);
+                Cache::instantiate($mem_config);
                 break;
 
             case 'memcached':
@@ -185,6 +186,14 @@ class Context implements ContextInterface
                 $mem_config->setServers($caching_config['servers']);
                 $mem_config->setThrow(true);
                 Cache::instantiate($mem_config);
+                break;
+
+            case 'apc':
+                $apc_config = \Foolz\Cache\Config::forgeApc();
+                $apc_config->setFormat($caching_config['format']);
+                $apc_config->setPrefix($caching_config['prefix']);
+                $apc_config->setThrow(true);
+                Cache::instantiate($apc_config);
                 break;
 
             case 'dummy':
