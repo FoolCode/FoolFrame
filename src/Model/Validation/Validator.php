@@ -222,9 +222,6 @@ class Validator
         }
 
         if ($validator->getViolations()->count() || count($validation_func_errors)) {
-            $errors = [$validator->getViolations()->getText()];
-            $errors += $validation_func_errors;
-
             $errors = [];
 
             if ($validator->getViolations()->count()) {
