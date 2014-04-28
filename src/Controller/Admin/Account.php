@@ -111,9 +111,9 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             $input = $this->getPost();
 
             $recaptcha = true;
-            if ($this->preferences->get('recaptcha.public_key', false)) {
+            if ($this->preferences->get('foolframe.auth.recaptcha_public', false)) {
 
-                $recaptcha_obj = ReCaptcha::create($this->preferences->get('recaptcha.public_key'), $this->preferences->get('recaptcha.private_key'));
+                $recaptcha_obj = ReCaptcha::create($this->preferences->get('foolframe.auth.recaptcha_public'), $this->preferences->get('foolframe.auth.recaptcha_private'));
                 $recaptcha_result = $recaptcha_obj->checkAnswer(
                     $this->getRequest()->getClientIp(),
                     $this->getPost('recaptcha_challenge_field'),
