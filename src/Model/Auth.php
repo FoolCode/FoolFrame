@@ -196,7 +196,10 @@ class Auth extends Model
             throw new WrongKeyException();
         }
 
-        if (!password_verify($remember_me['login_hash'], $user['login_hash'])) {
+
+        $hashed = hash('sha256', $remember_me['login_hash']);
+
+        if (!$hashed || $hashed !== $user['login_hash']) {
             throw new WrongKeyException();
         }
 
@@ -223,7 +226,7 @@ class Auth extends Model
                 ->execute();
         }
 
-        $login_hash_hashed = $this->passwordHash($login_hash);
+        $login_hash_hashed = hash('sha256', $login_hash);
 
         if (!$login_hash_hashed) {
             throw new HashingException();
