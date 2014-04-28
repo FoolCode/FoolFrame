@@ -280,13 +280,16 @@ class Context implements ContextInterface
                 $lang = $this->preferences->get('foolframe.lang.default');
             }
 
-            $locale = $lang.'.utf8';
-            putenv('LANG='.$locale);
-            putenv('LANGUAGE='.$locale);
-            setlocale(LC_ALL, $locale);
-            bindtextdomain($lang, DOCROOT."assets/locale");
-            bind_textdomain_codeset($lang, 'UTF-8');
-            textdomain($lang);
+            // HHVM can't handle gettext
+            if (function_exists('bindtextdomain')) {
+                $locale = $lang.'.utf8';
+                putenv('LANG='.$locale);
+                putenv('LANGUAGE='.$locale);
+                setlocale(LC_ALL, $locale);
+                bindtextdomain($lang, DOCROOT."assets/locale");
+                bind_textdomain_codeset($lang, 'UTF-8');
+                textdomain($lang);
+            }
 
             // load the routes from the child contextes first
             Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.route_collection')
