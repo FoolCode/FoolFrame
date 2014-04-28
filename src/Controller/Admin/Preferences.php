@@ -55,14 +55,14 @@ class Preferences extends Admin
             'help' => _i('Set the title displayed on the index page.')
         );
 
-        $form['foolfuuka.maxmind.geoip2_db_path'] = [
+        $form['foolframe.maxmind.geoip2_db_path'] = [
             'type' => 'input',
             'label' => _i('GeoIP database path'),
             'help' => _i('Overrides the default path to GeoIP2 Country database (mmdb format)'),
             'preferences' => true,
             'validation' => [new Trim()],
             'validation_func' => function($input, $form) {
-                    $path = trim($input['foolfuuka.maxmind.geoip2_db_path']);
+                    $path = trim($input['foolframe.maxmind.geoip2_db_path']);
                     if (!$path) {
                         return ['success' => true];
                     }
@@ -80,6 +80,29 @@ class Preferences extends Admin
                         return [
                             'warning_code' => 'INVALID_DATABASE',
                             'warning' => _i('The specified path does not contain a valid GeoIP2 database.')
+                        ];
+                    }
+
+                    return ['success' => true];
+                }
+        ];
+
+        $form['foolframe.imagick.convert_path'] = [
+            'type' => 'input',
+            'label' => _i('Imagemagick Convert'),
+            'help' => _i('Overrides the default path to the Imagemagick convert executable'),
+            'preferences' => true,
+            'validation' => [new Trim()],
+            'validation_func' => function($input, $form) {
+                    $path = trim($input['foolframe.gen.imagick_convert_path']);
+                    if (!$path) {
+                        return ['success' => true];
+                    }
+
+                    if(!file_exists($path)) {
+                        return [
+                            'error_code' => 'NO_SUCH_FILE',
+                            'error' => _i('The "convert" executable could not be found.')
                         ];
                     }
 

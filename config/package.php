@@ -74,6 +74,10 @@ return [
             'geoip2_db_path' => VENDPATH.'foolz/foolframe/packages/maxmind/GeoLite2-Country.mmdb'
         ],
 
+        'imagick' => [
+            'convert_path' => '/usr/local/bin/convert'
+        ],
+
         'lang' => [
             'default' => 'en_EN',
             'available' => [
