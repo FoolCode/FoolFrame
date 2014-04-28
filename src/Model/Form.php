@@ -69,13 +69,13 @@ class Form
         return $this->generic('text', $args);
     }
 
-    public function hidden($field, $value, $args = [])
+    public function hidden($field, $value = null, $args = [])
     {
         $s = '<input type="hidden"';
 
         $args['name'] = $field;
 
-        if ($value) {
+        if ($value !== null) {
             $args['value'] = $value;
         }
 

@@ -219,9 +219,11 @@ class Context implements ContextInterface
             }
         }
 
+        $this->profiler->log('Start Plugin instantiation');
         if (count($this->child_contextes)) {
             $this->getService('plugins')->instantiate();
         }
+        $this->profiler->log('Stop Plugin instantiation');
     }
 
     /**
@@ -245,9 +247,11 @@ class Context implements ContextInterface
             ->addArgument($this)
             ->addArgument($request);
 
+        $this->profiler->log('Start Session');
         if (!$request->hasPreviousSession()) {
             $request->setSession(new Session());
         }
+        $this->profiler->log('Stop Session');
 
         $remember_me = $request->cookies->get(
             $this->config->get('foolz/foolframe', 'config', 'config.cookie_prefix').'rememberme',
@@ -258,6 +262,7 @@ class Context implements ContextInterface
             // no app installed, we need to go to the install
             $this->loadInstallRoutes($this->route_collection);
         } else {
+            $this->profiler->log('Start Auth rememberme');
             /** @var Auth $auth */
             $auth = $this->getService('auth');
             if ($remember_me) {
@@ -266,13 +271,18 @@ class Context implements ContextInterface
                 } catch (WrongKeyException $e) {
                 }
             }
+            $this->profiler->log('Stop Auth rememberme');
 
             Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
                 ->setObject($this)
                 ->setParam('route_collection', $this->route_collection)
                 ->execute();
 
+            $this->profiler->log('Start Plugins handleWeb');
             $this->getService('plugins')->handleWeb();
+            $this->profiler->log('Stop Plugins handleWeb');
+
+            $this->profiler->log('Start language setup');
             $available_langs = $this->config->get('foolz/foolframe', 'package', 'preferences.lang.available');
             $lang = $request->cookies->get('language');
 
@@ -290,7 +300,9 @@ class Context implements ContextInterface
                 bind_textdomain_codeset($lang, 'UTF-8');
                 textdomain($lang);
             }
+            $this->profiler->log('Stop language setup');
 
+            $this->profiler->log('Start routes setup');
             // load the routes from the child contextes first
             Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.route_collection')
                 ->setObject($this)
@@ -301,8 +313,11 @@ class Context implements ContextInterface
                 $context->handleWeb($request);
                 $context->loadRoutes($this->route_collection);
             }
+            $this->profiler->log('Stop routes setup');
 
+            $this->profiler->log('Start routes load');
             $this->loadRoutes($this->route_collection);
+            $this->profiler->log('Stop routes setup');
         }
 
         // load the framework routes
@@ -322,6 +337,8 @@ class Context implements ContextInterface
             ->addArgument($this)
             ->addArgument($request->getSession());
 
+        $this->profiler->log('Start HttpKernel loading');
+
         $request_context = new RequestContext();
         $request_context->fromRequest($request);
         $matcher = new UrlMatcher($this->route_collection, $request_context);
@@ -331,7 +348,7 @@ class Context implements ContextInterface
         $dispatcher->addSubscriber(new ResponseListener('UTF-8'));
         $this->http_kernel = new HttpKernel($dispatcher, $resolver);
 
-
+        $this->profiler->log('End HttpKernel loading');
 
         // if this hook is used, it can override the entirety of the request handling
         $response = Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.override_response')
