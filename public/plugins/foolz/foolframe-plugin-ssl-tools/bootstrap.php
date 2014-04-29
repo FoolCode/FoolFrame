@@ -5,6 +5,7 @@ use Foolz\Foolframe\Model\Autoloader;
 use Foolz\Foolframe\Model\Context;
 use Foolz\Foolframe\Model\Preferences;
 use Foolz\Plugin\Event;
+use Foolz\Plugin\Result;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -86,9 +87,9 @@ class HHVM_SslTools
                     });
 
                 Event::forge('Foolz\Foolframe\Model\Context.handleWeb.override_response')
-                    ->setCall(function($result) use ($auth) {
+                    ->setCall(function(Result $result) use ($auth) {
                         /** @var Request $request */
-                        $obj = $request->getObject();
+                        $obj = $result->getObject();
                         /** @var Request $request */
                         $request = $result->getParam('request');
                         /** @var Preferences $preferences */
