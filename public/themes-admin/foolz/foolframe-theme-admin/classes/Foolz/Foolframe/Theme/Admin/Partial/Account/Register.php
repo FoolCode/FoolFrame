@@ -45,10 +45,10 @@ class Register extends \Foolz\Foolframe\View\View
         <?php if ($this->getPreferences()->get('foolframe.auth.recaptcha_public', false)) : ?>
 
         <script type="text/javascript"
-                src="https://www.google.com/recaptcha/api/challenge?k=<?= $this->getPreferences()->get('foolframe.auth.recaptcha_public') ?>">
+                src="//www.google.com/recaptcha/api/challenge?k=<?= $this->getPreferences()->get('foolframe.auth.recaptcha_public') ?>">
         </script>
         <noscript>
-            <iframe src="https://www.google.com/recaptcha/api/noscript?k=<?= $this->getPreferences()->get('foolframe.auth.recaptcha_public') ?>"
+            <iframe src="//www.google.com/recaptcha/api/noscript?k=<?= $this->getPreferences()->get('foolframe.auth.recaptcha_public') ?>"
                     height="300" width="500" frameborder="0"></iframe><br>
             <textarea name="recaptcha_challenge_field" rows="3" cols="40">
             </textarea>
