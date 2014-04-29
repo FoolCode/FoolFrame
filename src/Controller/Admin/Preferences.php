@@ -94,7 +94,7 @@ class Preferences extends Admin
             'preferences' => true,
             'validation' => [new Trim()],
             'validation_func' => function($input, $form) {
-                    $path = trim($input['foolframe.gen.imagick_convert_path']);
+                    $path = trim($input['foolframe.imagick.convert_path']);
                     if (!$path) {
                         return ['success' => true];
                     }
