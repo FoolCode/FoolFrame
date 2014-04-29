@@ -13,7 +13,7 @@ class Logger extends Model implements LoggerInterface
 
     public function addLogger(LoggerInterface $logger)
     {
-        $loggers[] = $logger;
+        $this->loggers[] = $logger;
     }
 
     public function emergency($message, array $context = array())
