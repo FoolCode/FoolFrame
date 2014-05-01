@@ -25,10 +25,8 @@ class Form
     public function open($args = false, $hidden = [])
     {
         if ($args === false) {
-            $args = $this->request->getUri();
-        }
-
-        if (!is_array($args)) {
+            $args = ['action' =>  $this->request->getUri()];
+        } else if (is_string($args)) {
             $args = '/' . ltrim($args, '/');
             $args = ['action' => $this->request->getUriForPath($args)];
         }
