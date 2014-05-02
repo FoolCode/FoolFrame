@@ -21,7 +21,6 @@ use Foolz\Foolframe\Model\Auth\WrongEmailException;
 use Foolz\Foolframe\Model\Auth\WrongKeyException;
 use Foolz\Foolframe\Model\Auth\WrongPasswordException;
 use Foolz\Foolframe\Model\Auth\WrongUsernameOrPasswordException;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 
 class Auth extends Model
 {
@@ -247,7 +246,7 @@ class Auth extends Model
 
     public function hasAccess($area) {
         if (!isset($this->groups[$this->getUser()->getGroupId()])) {
-            throw new RuntimeException('Group not found');
+            throw new \RuntimeException('Group not found');
         }
 
         $group = $this->groups[$this->getUser()->getGroupId()];

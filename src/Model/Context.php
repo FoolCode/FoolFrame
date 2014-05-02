@@ -254,8 +254,7 @@ class Context implements ContextInterface
         $this->profiler->log('Stop Session');
 
         $remember_me = $request->cookies->get(
-            $this->config->get('foolz/foolframe', 'config', 'config.cookie_prefix').'rememberme',
-            $request->getSession()->get('rememberme')
+            $this->config->get('foolz/foolframe', 'config', 'config.cookie_prefix').'rememberme'
         );
 
         if (!count($this->child_contextes)) {
