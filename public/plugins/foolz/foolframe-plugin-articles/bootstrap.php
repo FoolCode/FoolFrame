@@ -7,7 +7,7 @@ use Foolz\Plugin\Event;
 
 class HHVM_Articles
 {
-    public static function run()
+    public function run()
     {
         Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
             ->setCall(function ($result) {
@@ -130,4 +130,4 @@ class HHVM_Articles
 }
 
 
-HHVM_Articles::run();
+(new HHVM_Articles())->run();

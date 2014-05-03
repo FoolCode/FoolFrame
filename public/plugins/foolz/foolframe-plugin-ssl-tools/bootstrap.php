@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class HHVM_SslTools
 {
-    public static function run()
+    public function run()
     {
         Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-ssl-tools')
             ->setCall(function($result) {
@@ -111,4 +111,4 @@ class HHVM_SslTools
     }
 }
 
-HHVM_SslTools::run();
+(new HHVM_SslTools())->run();
