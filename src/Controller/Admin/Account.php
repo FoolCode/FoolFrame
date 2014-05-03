@@ -59,7 +59,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                 );
 
                 $response = new RedirectResponse($this->uri->create('admin'));
-                $this->getRequest()->getSession()->set('rememberme', $rememberme_token);
+                //$this->getRequest()->getSession()->set('rememberme', $rememberme_token);
                 if ($this->getPost('remember')) {
                     $response->headers->setCookie(new Cookie($this->getContext(), 'rememberme', $rememberme_token, 365 * 24 * 60 * 60));
                 }
