@@ -2,6 +2,7 @@
 
 namespace Foolz\Foolframe\Model;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class Notices extends Model
@@ -17,19 +18,19 @@ class Notices extends Model
     public $flash_notices = [];
 
     /**
-     * @var \Symfony\Component\HttpFoundation\Session\Session
+     * @var Request
      */
-    protected $session;
+    protected $request;
 
     /**
      * @param Context $context
-     * @param Session $session
+     * @param Request $request
      */
-    public function __construct(Context $context, Session $session)
+    public function __construct(Context $context, Request $request)
     {
         parent::__construct($context);
 
-        $this->session = $session;
+        $this->request = $request;
     }
 
     public function get()
@@ -53,7 +54,11 @@ class Notices extends Model
      */
     public function getFlash()
     {
-        return $this->session->getFlashBag()->get('notice', []);
+        if ($this->request->hasPreviousSession()) {
+            return $this->request->getSession()->getFlashBag()->get('notice', []);
+        }
+
+        return [];
     }
 
     /**
@@ -64,7 +69,11 @@ class Notices extends Model
      */
     public function setFlash($level, $message)
     {
+        if (!$this->request->hasSession()) {
+            $this->request->setSession(new Session());
+        }
+
         $this->flash_notices[] = ['level' => $level, 'message' => $message];
-        $this->session->getFlashBag()->set('notice', $this->flash_notices);
+        $this->request->getSession()->getFlashBag()->set('notice', $this->flash_notices);
     }
 }

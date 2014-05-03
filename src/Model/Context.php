@@ -247,12 +247,6 @@ class Context implements ContextInterface
             ->addArgument($this)
             ->addArgument($request);
 
-        $this->profiler->log('Start Session');
-        if (!$request->hasPreviousSession()) {
-            $request->setSession(new Session());
-        }
-        $this->profiler->log('Stop Session');
-
         $remember_me = $request->cookies->get(
             $this->config->get('foolz/foolframe', 'config', 'config.cookie_prefix').'rememberme'
         );
