@@ -52,7 +52,6 @@ class Account extends \Foolz\Foolframe\Controller\Admin
                     $this->getPost('password', '')
                 );
 
-
                 $rememberme_token = $this->getAuth()->createAutologinHash(
                     Inet::ptod($this->getRequest()->getClientIp()),
                     $this->getRequest()->headers->get('User-Agent')
@@ -89,7 +88,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
 
         $response = new RedirectResponse($this->uri->create('admin/account/login'));
         $response->headers->clearCookie($this->config->get('foolz/foolframe', 'config', 'config.cookie_prefix').'rememberme');
-        $this->getRequest()->getSession()->clear();
+        //$this->getRequest()->getSession()->clear();
 
         return $response;
     }
