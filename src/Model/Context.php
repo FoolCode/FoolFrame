@@ -328,7 +328,7 @@ class Context implements ContextInterface
 
         $this->container->register('notices', 'Foolz\Foolframe\Model\Notices')
             ->addArgument($this)
-            ->addArgument($request->getSession());
+            ->addArgument($request);
 
         $this->profiler->log('Start HttpKernel loading');
 
