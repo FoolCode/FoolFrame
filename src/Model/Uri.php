@@ -45,7 +45,7 @@ class Uri extends Model {
     public static function uri_to_assoc($uri, $index = 0, $allowed = null)
     {
         if (is_string($uri)) {
-            $uri = explode('/', trim(trim($uri), '/'));
+            $uri = explode('/', rtrim($uri, '/'));
         }
 
         for ($i = 0; $i < $index; $i++) {
