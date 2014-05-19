@@ -225,7 +225,7 @@ class Validator
             $errors = [];
 
             if ($validator->getViolations()->count()) {
-                $errors[] = [$validator->getViolations()->getText()];
+                $errors[] = $validator->getViolations()->getText();
             }
 
             $errors = array_merge($errors, $validation_func_errors);
