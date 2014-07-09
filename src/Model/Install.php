@@ -92,7 +92,7 @@ class Install extends Model
             'foolstatus' => array(
                 'title' => _i('FoolStatus'),
                 'description' => _i('FoolStatus is an open-source status dashboard that allows content providers to alert users of network interruptions.'),
-                'disabled' => false
+                'disabled' => true
             )
         );
 
