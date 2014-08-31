@@ -230,16 +230,6 @@ class Install extends Common
                 \Foolz\Foolfuuka\Model\Schema::load($this->getContext(), $sm);
             }
 
-            if ($this->getPost('foolslide')) {
-                $modules['foolslide'] = 'foolz/foolslide';
-            }
-
-            if ($this->getPost('foolstatus')) {
-                $modules['foolstatus'] = 'foolz/foolstatus';
-
-                \Foolz\Foolstatus\Model\Schema::load($this->getContext(), $sm);
-            }
-
             $sm->commit();
 
             if (count($modules) > 1) {
