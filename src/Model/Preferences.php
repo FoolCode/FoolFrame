@@ -92,6 +92,12 @@ class Preferences extends Model
             Cache::item('foolframe.model.preferences.settings')->set($this->preferences, 3600);
         }
 
+        $this->preferences = \Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Preferences::load.result.public')
+            ->setObject($this)
+            ->setParam('preferences', $this->preferences)
+            ->execute()
+            ->get($this->preferences);
+
         $this->profiler->logMem('Preferences $preferences', $this->preferences);
         $this->profiler->log('Preferences::load End');
 
