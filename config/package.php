@@ -57,8 +57,8 @@ return [
      * Locations of the data out of the module folder
      */
     'directories' => [
-        'themes' => 'public/themes/',
-        'plugins' => 'public/plugins/'
+        'themes' => VENDPATH.'foolz/foolframe/public/themes/',
+        'plugins' => VENDPATH.'foolz/foolframe/public/plugins/'
     ],
 
     /**

@@ -128,7 +128,7 @@ class Preferences extends Admin
             }
 
             $theme_loader = new \Foolz\Theme\Loader();
-            $theme_loader->addDir(VENDPATH.$module.'/'.$this->config->get($module, 'package', 'directories.themes'));
+            $theme_loader->addDir($this->config->get($module, 'package', 'directories.themes'));
             $themes = $theme_loader->getAll();
 
             $module_name = $this->config->get($module, 'package', 'main.name');
