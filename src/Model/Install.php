@@ -80,7 +80,10 @@ class Install extends Model
         $class_name = $this->config->get('unknown', 'package', 'main.class_name');
         $name_lowercase = strtolower($class_name);
 
-        $modules = [$name_lowercase => 'foolz/'.$name_lowercase];
+        $modules = [
+            'foolframe' => 'foolz/foolframe',
+            $name_lowercase => 'foolz/'.$name_lowercase
+        ];
 
         $dc = new DoctrineConnection($this->getContext(), $this->config);
         $sm = SchemaManager::forge($dc->getConnection(), $dc->getPrefix());
