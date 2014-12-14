@@ -74,16 +74,25 @@ class Install extends Model
         $this->config->save('foolz/foolframe', 'cache');
     }
 
-    public function modules()
+    public function install_modules()
     {
-        $modules = array(
-            'foolfuuka' => array(
-                'title' => 'FoolFuuka Imageboard',
-                'description' => _i('FoolFuuka is one of the most advanced imageboard software written.'),
-                'disabled' => false,
-            )
-        );
+        $this->config->addPackage('unknown', ASSETSPATH);
+        $class_name = $this->config->get('unknown', 'package', 'main.class_name');
+        $name_lowercase = strtolower($class_name);
 
-        return $modules;
+        $modules = [$name_lowercase => 'foolz/'.$name_lowercase];
+
+        $dc = new DoctrineConnection($this->getContext(), $this->config);
+        $sm = SchemaManager::forge($dc->getConnection(), $dc->getPrefix());
+        Schema::load($this->getContext(), $sm);
+
+        $schema_class = '\\Foolz\\'.$class_name.'\\Model\\Schema';
+        $schema_class::load($this->getContext(), $sm);
+
+        $sm->commit();
+
+        $this->config->set('foolz/foolframe', 'config', 'modules.installed', $modules);
+        $this->config->set('foolz/foolframe', 'config', 'install.installed', true);
+        $this->config->save('foolz/foolframe', 'config');
     }
 }

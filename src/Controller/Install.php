@@ -90,7 +90,6 @@ class Install extends Common
             'system_check' => _i('System Check'),
             'database_setup' => _i('Database Setup'),
             'create_admin' => _i('Admin Account'),
-            'modules' => _i('Install Modules'),
             'complete' => _i('Congratulations'),
         ];
 
@@ -200,7 +199,10 @@ class Install extends Common
                 $user = $auth->getUser();
                 $user->save(['group_id' => 100]);
 
-                return new RedirectResponse($this->uri->create('install/modules'));
+                // leave the module installation later in case we must do something with users
+                $this->install->install_modules();
+
+                return new RedirectResponse($this->uri->create('install/complete'));
             } else {
                 $this->notices->set('warning', $validator->getViolations()->getText());
             }
@@ -213,45 +215,12 @@ class Install extends Common
         return new Response($this->builder->build());
     }
 
-    public function action_modules()
+    public function action_complete()
     {
-        $data = ['modules' => $this->install->modules()];
+        $this->process('complete');
+        $this->param_manager->setParam('method_title', _i('Congratulations'));
 
-        if ($this->getPost()) {
-            $modules = ['foolframe' => 'foolz/foolframe'];
-
-            $dc = new DoctrineConnection($this->getContext(), $this->config);
-            $sm = SchemaManager::forge($dc->getConnection(), $dc->getPrefix());
-            Schema::load($this->getContext(), $sm);
-
-            if ($this->getPost('foolfuuka')) {
-                $modules['foolfuuka'] = 'foolz/foolfuuka';
-
-                \Foolz\Foolfuuka\Model\Schema::load($this->getContext(), $sm);
-            }
-
-            $sm->commit();
-
-            if (count($modules) > 1) {
-                $this->config->set('foolz/foolframe', 'config', 'modules.installed', $modules);
-                $this->config->set('foolz/foolframe', 'config', 'install.installed', true);
-                $this->config->save('foolz/foolframe', 'config');
-
-                $this->process('complete');
-                $this->param_manager->setParam('method_title', _i('Congratulations'));
-
-                $this->builder->createPartial('body', 'install/complete');
-                return new Response($this->builder->build());
-            } else {
-                $this->notices->set('warning', _i('Please select at least one module.'));
-            }
-        }
-
-        $this->process('modules');
-        $this->param_manager->setParam('method_title', _i('Install Modules'));
-
-        $this->builder->createPartial('body', 'install/modules')
-            ->getParamManager()->setParams($data);
+        $this->builder->createPartial('body', 'install/complete');
         return new Response($this->builder->build());
     }
 }
