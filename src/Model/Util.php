@@ -2,12 +2,11 @@
 
 namespace Foolz\Foolframe\Model;
 
-
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class Util {
-
+class Util
+{
     /**
      * Checks if an array is associative
      * From http://stackoverflow.com/a/4254008/644504
@@ -45,7 +44,7 @@ class Util {
      * @param string $path The path to the file/directory to delete
      * @return void
      */
-    public static function delete_recursive($path)
+    public static function delete($path)
     {
         if (is_dir($path)) {
             $iterator = new RecursiveIteratorIterator(
@@ -56,15 +55,13 @@ class Util {
             foreach ($iterator as $file) {
                 if ($file->isDir()) {
                     rmdir($file->getPathname());
-                }
-                else {
+                } else {
                     unlink($file->getPathname());
                 }
             }
 
             rmdir($path);
-        }
-        else {
+        } else {
             unlink($path);
         }
     }
@@ -78,7 +75,7 @@ class Util {
      * @param string $dest The path to the destination directory
      * @return void
      */
-    public static function copy_recursive($source, $dest)
+    public static function copy($source, $dest)
     {
         if (is_dir($source)) {
             $iterator = new RecursiveIteratorIterator(
@@ -94,8 +91,7 @@ class Util {
                     copy($file, $dest.DIRECTORY_SEPARATOR.$iterator->getSubPathName());
                 }
             }
-        }
-        else {
+        } else {
             copy($source, $dest);
         }
     }
@@ -111,7 +107,7 @@ class Util {
      * @param string $path The path to the file/directory to calculate the size of
      * @return int
      */
-    public static function size_recursive($path)
+    public static function getSize($path)
     {
         $size = 0;
         if (is_dir($path)) {
@@ -120,8 +116,7 @@ class Util {
             foreach ($iterator as $file) {
                 $size += $file->getSize();
             }
-        }
-        else {
+        } else {
             $size = filesize($path);
         }
 
