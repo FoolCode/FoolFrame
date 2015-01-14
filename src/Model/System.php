@@ -6,7 +6,7 @@ use Foolz\Plugin\Hook;
 
 class System
 {
-    public static function environment(Context $context)
+    public static function getEnvironment(Context $context)
     {
         $environment = [];
 
@@ -205,7 +205,7 @@ class System
             ]
         ];
 
-        $environment = Hook::forge('Foolfuuka\Model\System::getEnvironment#var.environment')
+        $environment = Hook::forge('Foolz\Foolframe\Model\System::getEnvironment#var.environment')
             ->setParam('environment', $environment)
             ->execute()
             ->get($environment);

@@ -23,7 +23,7 @@ class System extends \Foolz\Foolframe\Controller\Admin
 
     public function action_information()
     {
-        $data = ['info' => S::environment($this->getContext())];
+        $data = ['info' => S::getEnvironment($this->getContext())];
 
         $this->param_manager->setParam('method_title', _i('Information'));
         $this->builder->createPartial('body', 'system/information')
