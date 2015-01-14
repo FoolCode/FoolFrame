@@ -4,6 +4,7 @@ namespace Foolz\Foolframe\Model;
 
 use Foolz\Cache\Cache;
 use Foolz\Foolframe\Model\Validation\Validator;
+use Foolz\Plugin\Hook;
 use Symfony\Component\HttpFoundation\Request;
 
 class Preferences extends Model
@@ -92,7 +93,7 @@ class Preferences extends Model
             Cache::item('foolframe.model.preferences.settings')->set($this->preferences, 3600);
         }
 
-        $this->preferences = \Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Preferences::load.result.public')
+        $this->preferences = Hook::forge('Foolframe\Model\Preferences::load#var.preferences')
             ->setObject($this)
             ->setParam('preferences', $this->preferences)
             ->execute()

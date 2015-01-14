@@ -3,8 +3,9 @@
 namespace Foolz\Foolframe\Model;
 
 use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
-use \Foolz\Cache\Cache;
-use \Foolz\Plugin\Loader;
+use Foolz\Cache\Cache;
+use Foolz\Plugin\Hook;
+use Foolz\Plugin\Loader;
 
 class PluginException extends \Exception {}
 
@@ -64,9 +65,8 @@ class Plugins extends Model
                 $plugin = $this->loader->get($enabled['slug']);
                 $plugin->bootstrap();
                 // we could use execute() but we want to inject more in the call
-                \Foolz\Plugin\Hook::forge('Foolz\Plugin\Plugin::execute.'.$plugin->getConfig('name'))
+                \Foolz\Plugin\Hook::forge('Foolz\Plugin\Plugin::execute#'.$plugin->getConfig('name'))
                     ->setObject($plugin)
-                    ->setParam('framework', $this->getContext())
                     ->setParam('context', $this->getContext())
                     ->execute();
 
@@ -192,7 +192,7 @@ class Plugins extends Model
                     $plug->bootstrap();
                 }
 
-                \Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.'.$plug->getConfig('name'))
+                \Foolz\Plugin\Hook::forge('Foolframe\Model\Plugin::install#'.$plug->getConfig('name'))
                     ->setParam('context', $this->getContext())
                     ->setParam('schema', $sm->getCodedSchema())
                     ->execute();

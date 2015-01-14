@@ -89,8 +89,7 @@ class Admin extends Common
 
         // returns the hardcoded sidebar array (can't use functions when declaring a class variable)
         $sidebar = $this->getSidebarValues();
-
-        $sidebar_dynamic = Hook::forge('Foolz\Foolframe\Controller\Admin.before.sidebar.add')
+        $sidebar_dynamic = Hook::forge('Foolframe\Controller\Admin::before#var.sidebar')
             ->setObject($this)
             ->setParam('sidebar', [])
             ->execute()

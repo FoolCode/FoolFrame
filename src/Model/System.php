@@ -2,6 +2,8 @@
 
 namespace Foolz\Foolframe\Model;
 
+use Foolz\Plugin\Hook;
+
 class System
 {
     public static function environment(Context $context)
@@ -203,7 +205,7 @@ class System
             ]
         ];
 
-        $environment = \Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\System::environment.result')
+        $environment = Hook::forge('Foolfuuka\Model\System::getEnvironment#var.environment')
             ->setParam('environment', $environment)
             ->execute()
             ->get($environment);

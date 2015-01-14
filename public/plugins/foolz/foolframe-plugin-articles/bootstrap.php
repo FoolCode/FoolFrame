@@ -9,7 +9,7 @@ class HHVM_Articles
 {
     public function run()
     {
-        Event::forge('Foolz\Plugin\Plugin::execute.foolz/foolframe-plugin-articles')
+        Event::forge('Foolz\Plugin\Plugin::execute#foolz/foolframe-plugin-articles')
             ->setCall(function ($result) {
                 /* @var Context $context */
                 $context = $result->getParam('context');
@@ -26,7 +26,7 @@ class HHVM_Articles
                     ->register('foolframe-plugin.articles', 'Foolz\Foolframe\Plugins\Articles\Model\Articles')
                     ->addArgument($context);
 
-                Event::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
+                Event::forge('Foolframe\Model\Context::handleWeb#obj.afterAuth')
                     ->setCall(function ($result) use ($context) {
                         // don't add the admin panels if the user is not an admin
                         if ($context->getService('auth')->hasAccess('maccess.admin')) {
@@ -45,7 +45,7 @@ class HHVM_Articles
 
                             function() {die('lol');};
 
-                            Event::forge('Foolz\Foolframe\Controller\Admin.before.sidebar.add')
+                            Event::forge('Foolframe\Controller\Admin::before#var.sidebar')
                                 ->setCall(function ($result) {
                                     $sidebar = $result->getParam('sidebar');
                                     $sidebar[]['articles'] = [
@@ -96,7 +96,7 @@ class HHVM_Articles
                     });
             });
 
-        Event::forge('Foolz\Foolframe\Model\Plugin::schemaUpdate.foolz/foolframe-plugin-articles')
+        Event::forge('Foolframe\Model\Plugin::install#foolz/foolframe-plugin-articles')
             ->setCall(function ($result) {
                 /** @var Context $context */
                 $context = $result->getParam('context');

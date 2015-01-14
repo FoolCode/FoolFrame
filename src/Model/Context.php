@@ -266,7 +266,7 @@ class Context implements ContextInterface
             }
             $this->profiler->log('Stop Auth rememberme');
 
-            Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.has_auth')
+            Hook::forge('Foolframe\Model\Context::handleWeb#obj.afterAuth')
                 ->setObject($this)
                 ->setParam('route_collection', $this->route_collection)
                 ->execute();
@@ -297,7 +297,7 @@ class Context implements ContextInterface
 
             $this->profiler->log('Start routes setup');
             // load the routes from the child contextes first
-            Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.route_collection')
+            Hook::forge('Foolframe\Model\Context::handleWeb#obj.routing')
                 ->setObject($this)
                 ->setParam('route_collection', $this->route_collection)
                 ->execute();
@@ -314,14 +314,13 @@ class Context implements ContextInterface
         }
 
         // load the framework routes
-
-        Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.contextes_handled')
+        Hook::forge('Foolframe\Model\Context::handleWeb#obj.context')
             ->setObject($this)
             ->execute();
 
         // this is the first time we know we have a request for sure
         // hooks that need the request to function must run here
-        Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.has_request')
+        Hook::forge('Foolframe\Model\Context::handleWeb#obj.request')
             ->setObject($this)
             ->setParam('request', $request)
             ->execute();
@@ -344,7 +343,7 @@ class Context implements ContextInterface
         $this->profiler->log('End HttpKernel loading');
 
         // if this hook is used, it can override the entirety of the request handling
-        $response = Hook::forge('Foolz\Foolframe\Model\Context.handleWeb.override_response')
+        $response = Hook::forge('Foolframe\Model\Context::handleWeb#obj.response')
             ->setObject($this)
             ->setParam('request', $request)
             ->execute()
@@ -381,9 +380,9 @@ class Context implements ContextInterface
     {
         $application = new Application();
 
-        Hook::forge('Foolz\Foolframe\Model\Context::handleConsole.add')
-            ->setParam('application', $application)
+        Hook::forge('Foolframe\Model\Context::handleConsole#obj.app')
             ->setObject($this)
+            ->setParam('application', $application)
             ->execute();
 
         //$application->add(new \Your\Class\Command\Console()); // that extends Command
