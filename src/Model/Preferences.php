@@ -93,7 +93,7 @@ class Preferences extends Model
             Cache::item('foolframe.model.preferences.settings')->set($this->preferences, 3600);
         }
 
-        $this->preferences = Hook::forge('Foolframe\Model\Preferences::load#var.preferences')
+        $this->preferences = Hook::forge('Foolz\Foolframe\Model\Preferences::load#var.preferences')
             ->setObject($this)
             ->setParam('preferences', $this->preferences)
             ->execute()
