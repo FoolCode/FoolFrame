@@ -57,8 +57,8 @@ return [
      * Locations of the data out of the module folder
      */
     'directories' => [
-        'themes' => VENDPATH.'foolz/foolframe/public/themes/',
-        'plugins' => VENDPATH.'foolz/foolframe/public/plugins/'
+        'themes' => VENDPATH.'foolz/foolframe/assets/themes/',
+        'plugins' => VENDPATH.'foolz/foolframe/assets/plugins/'
     ],
 
     /**
@@ -71,7 +71,7 @@ return [
         ],
 
         'maxmind' => [
-            'geoip2_db_path' => VENDPATH.'foolz/foolframe/packages/maxmind/GeoLite2-Country.mmdb'
+            'geoip2_db_path' => VENDPATH.'foolz/foolframe/assets/packages/maxmind/GeoLite2-Country.mmdb'
         ],
 
         'imagick' => [

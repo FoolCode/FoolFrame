@@ -68,7 +68,7 @@ class Admin extends Common
         $this->security = $this->getContext()->getService('security');
 
         $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
-        $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin/');
+        $theme_instance->addDir(VENDPATH.'foolz/foolframe/assets/themes-admin/');
         $theme_instance->addDir(VAPPPATH.'foolz/foolframe/themes-admin/');
         $theme_instance->setBaseUrl($this->uri->base().'foolframe/');
         $theme_instance->setPublicDir(DOCROOT.'foolframe/');

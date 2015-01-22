@@ -64,7 +64,7 @@ class Install extends Common
         $this->install = new \Foolz\Foolframe\Model\Install($this->getContext());
 
         $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
-        $theme_instance->addDir(VENDPATH.'foolz/foolframe/public/themes-admin/');
+        $theme_instance->addDir(VENDPATH.'foolz/foolframe/assets/themes-admin/');
         $theme_instance->setBaseUrl($this->uri->base().'foolframe/');
         $theme_instance->setPublicDir(DOCROOT.'foolframe/');
         $this->theme = $theme_instance->get('foolz/foolframe-theme-admin');
