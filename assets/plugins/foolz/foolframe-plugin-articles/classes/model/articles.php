@@ -188,7 +188,8 @@ class Articles extends Model
 
             foreach ($data as $k => $i) {
                 if ($k !== 'id') {
-                    $query->set($k, $this->dc->getConnection()->quote($i));
+                    $query->set($k, ':'.$k);
+                    $query->setParameter(':'.$k, $i);
                 }
             }
 
