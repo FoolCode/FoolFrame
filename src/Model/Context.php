@@ -209,7 +209,7 @@ class Context implements ContextInterface
         foreach($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
             if ($module['namespace'] !== 'foolz/foolframe') {
                 $context = $module['context'];
-                $this->child_contextes[$module] = new $context($this);
+                $this->child_contextes[$module['namespace']] = new $context($this);
             }
         }
 
