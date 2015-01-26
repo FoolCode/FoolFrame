@@ -205,7 +205,7 @@ class System
             ]
         ];
 
-        $environment = Hook::forge('Foolz\Foolframe\Model\System::getEnvironment#var.environment')
+        $environment = Hook::forge('Foolz\FoolFrame\Model\System::getEnvironment#var.environment')
             ->setParam('environment', $environment)
             ->execute()
             ->get($environment);

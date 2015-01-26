@@ -62,7 +62,7 @@ class SchemaManager
         }
 
         // get more prefixes ignored
-        $prefixes_ignored = Hook::forge('Foolz\Foolframe\Model\SchemaManager::forge#var.ignorePrefix')
+        $prefixes_ignored = Hook::forge('Foolz\FoolFrame\Model\SchemaManager::forge#var.ignorePrefix')
             ->setObject($new)
             ->setParam('prefixes_ignored', $prefixes_ignored)
             ->execute()
@@ -80,7 +80,7 @@ class SchemaManager
         }
 
         // get more tables ignored
-        $tables = Hook::forge('Foolz\Foolframe\Model\SchemaManager::forge#var.tables')
+        $tables = Hook::forge('Foolz\FoolFrame\Model\SchemaManager::forge#var.tables')
             ->setObject($new)
             ->setParam('tables', $tables)
             ->execute()

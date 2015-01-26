@@ -192,7 +192,7 @@ class Plugins extends Model
                     $plug->bootstrap();
                 }
 
-                \Foolz\Plugin\Hook::forge('Foolz\Foolframe\Model\Plugin::install#'.$plug->getConfig('name'))
+                \Foolz\Plugin\Hook::forge('Foolz\FoolFrame\Model\Plugin::install#'.$plug->getConfig('name'))
                     ->setParam('context', $this->getContext())
                     ->setParam('schema', $sm->getCodedSchema())
                     ->execute();
