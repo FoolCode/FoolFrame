@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model\Validation\Constraint;
+namespace Foolz\FoolFrame\Model\Validation\Constraint;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;

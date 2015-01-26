@@ -10,7 +10,7 @@
     "require": {
 
     },
-	"autoload": {
-		"psr-4": {"Foolz\\Foolframe\\": "src/"}
-	}
+    "autoload": {
+        "psr-4": {"Foolz\\FoolFrame\\": "src/"}
+    }
 }

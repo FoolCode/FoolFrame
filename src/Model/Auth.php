@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model\Auth;
+namespace Foolz\FoolFrame\Model\Auth;
 
 class HashingException extends \Exception {}
 class WrongUsernameOrPasswordException extends \Exception {}
@@ -11,16 +11,16 @@ class WrongKeyException extends \Exception {}
 class EmailExistsException extends \Exception {}
 class UpdateException extends \Exception {}
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
-use Foolz\Foolframe\Model\Auth\EmailExistsException;
-use Foolz\Foolframe\Model\Auth\HashingException;
-use Foolz\Foolframe\Model\Auth\LimitExceededException;
-use Foolz\Foolframe\Model\Auth\UpdateException;
-use Foolz\Foolframe\Model\Auth\WrongEmailException;
-use Foolz\Foolframe\Model\Auth\WrongKeyException;
-use Foolz\Foolframe\Model\Auth\WrongPasswordException;
-use Foolz\Foolframe\Model\Auth\WrongUsernameOrPasswordException;
+use Foolz\FoolFrame\Model\Auth\EmailExistsException;
+use Foolz\FoolFrame\Model\Auth\HashingException;
+use Foolz\FoolFrame\Model\Auth\LimitExceededException;
+use Foolz\FoolFrame\Model\Auth\UpdateException;
+use Foolz\FoolFrame\Model\Auth\WrongEmailException;
+use Foolz\FoolFrame\Model\Auth\WrongKeyException;
+use Foolz\FoolFrame\Model\Auth\WrongPasswordException;
+use Foolz\FoolFrame\Model\Auth\WrongUsernameOrPasswordException;
 
 class Auth extends Model
 {

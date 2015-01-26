@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

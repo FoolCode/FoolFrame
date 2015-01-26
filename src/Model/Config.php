@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
 
 class Config extends Model
@@ -107,7 +107,7 @@ class Config extends Model
      *
      * @param  string $package_name  The name of the package (use vendor/package format)
      *
-     * @return  \Foolz\Foolframe\Model\Config  The current object
+     * @return  \Foolz\FoolFrame\Model\Config  The current object
      */
     public function removePackage($package_name)
     {

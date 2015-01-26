@@ -1,10 +1,10 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Partial\Plugins;
+namespace Foolz\FoolFrame\Theme\Admin\Partial\Plugins;
 
-use Foolz\Foolframe\Model\Legacy\Config;
+use Foolz\FoolFrame\Model\Legacy\Config;
 
-class Manage extends \Foolz\Foolframe\View\View
+class Manage extends \Foolz\FoolFrame\View\View
 {
     public function toString()
     {

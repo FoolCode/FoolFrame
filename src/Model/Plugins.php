@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
-use Foolz\Foolframe\Model\Legacy\DoctrineConnection as DC;
+use Foolz\FoolFrame\Model\Legacy\DoctrineConnection as DC;
 use Foolz\Cache\Cache;
 use Foolz\Plugin\Hook;
 use Foolz\Plugin\Loader;
@@ -182,7 +182,7 @@ class Plugins extends Model
         $this->clearCache();
 
         // run the schema update
-        $sm = \Foolz\Foolframe\Model\SchemaManager::forge($this->dc->getConnection(), $this->dc->getPrefix().'plugin_');
+        $sm = \Foolz\FoolFrame\Model\SchemaManager::forge($this->dc->getConnection(), $this->dc->getPrefix().'plugin_');
 
         foreach ($this->getInstalled() as $enabled) {
             try {

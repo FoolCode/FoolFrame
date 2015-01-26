@@ -1,16 +1,16 @@
 <?php
 
-namespace Foolz\Foolframe\View;
+namespace Foolz\FoolFrame\View;
 
-use Foolz\Foolframe\Model\Auth;
-use Foolz\Foolframe\Model\Config;
-use Foolz\Foolframe\Model\Context;
-use Foolz\Foolframe\Model\Form;
-use Foolz\Foolframe\Model\Logger;
-use Foolz\Foolframe\Model\Notices;
-use Foolz\Foolframe\Model\Preferences;
-use Foolz\Foolframe\Model\Security;
-use Foolz\Foolframe\Model\Uri;
+use Foolz\FoolFrame\Model\Auth;
+use Foolz\FoolFrame\Model\Config;
+use Foolz\FoolFrame\Model\Context;
+use Foolz\FoolFrame\Model\Form;
+use Foolz\FoolFrame\Model\Logger;
+use Foolz\FoolFrame\Model\Notices;
+use Foolz\FoolFrame\Model\Preferences;
+use Foolz\FoolFrame\Model\Security;
+use Foolz\FoolFrame\Model\Uri;
 use Foolz\Profiler\Profiler;
 use Symfony\Component\HttpFoundation\Request;
 

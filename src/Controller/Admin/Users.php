@@ -1,15 +1,15 @@
 <?php
 
-namespace Foolz\Foolframe\Controller\Admin;
+namespace Foolz\FoolFrame\Controller\Admin;
 
-use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
-use Foolz\Foolframe\Model\Validation\Validator;
+use Foolz\FoolFrame\Model\Validation\ActiveConstraint\Trim;
+use Foolz\FoolFrame\Model\Validation\Validator;
 use forxer\Gravatar\Gravatar;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Users extends \Foolz\Foolframe\Controller\Admin
+class Users extends \Foolz\FoolFrame\Controller\Admin
 {
     public function before()
     {
@@ -30,7 +30,7 @@ class Users extends \Foolz\Foolframe\Controller\Admin
         }
 
         $data = [];
-        /** @var \Foolz\Foolframe\Model\Users $users */
+        /** @var \Foolz\FoolFrame\Model\Users $users */
         $users = $this->getContext()->getService('users');
         $users_data = $users->getAll($page, 40);
         $data['users'] = $users_data['result'];
@@ -50,11 +50,11 @@ class Users extends \Foolz\Foolframe\Controller\Admin
         }
 
         try {
-            /** @var \Foolz\Foolframe\Model\Users $users */
+            /** @var \Foolz\FoolFrame\Model\Users $users */
             $users = $this->getContext()->getService('users');
             $data['object'] = $users->getUserBy('id', $id);
             $data['object']->password = '';
-        } catch (\Foolz\Foolframe\Model\UsersWrongIdException $e) {
+        } catch (\Foolz\FoolFrame\Model\UsersWrongIdException $e) {
             throw new NotFoundHttpException;
         }
 

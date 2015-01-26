@@ -1,12 +1,12 @@
 <?php
 
-namespace Foolz\Foolframe\Controller\Admin;
+namespace Foolz\FoolFrame\Controller\Admin;
 
-use Foolz\Foolframe\Model\System as S;
+use Foolz\FoolFrame\Model\System as S;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class System extends \Foolz\Foolframe\Controller\Admin
+class System extends \Foolz\FoolFrame\Controller\Admin
 {
     public function before()
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
+namespace Foolz\FoolFrame\Theme\Admin\Partial\Account;
 
-class ForgotPassword extends \Foolz\Foolframe\View\View
+class ForgotPassword extends \Foolz\FoolFrame\View\View
 {
     public function toString()
     {

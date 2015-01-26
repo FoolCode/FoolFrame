@@ -1,5 +1,5 @@
 <?php
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
 use Psr\Log\LoggerInterface;
 

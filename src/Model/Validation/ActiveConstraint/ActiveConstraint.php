@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model\Validation\ActiveConstraint;
+namespace Foolz\FoolFrame\Model\Validation\ActiveConstraint;
 
 
 interface ActiveConstraint {

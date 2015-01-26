@@ -1,9 +1,9 @@
 <?php
 
-namespace Foolz\Foolframe\Controller\Admin;
+namespace Foolz\FoolFrame\Controller\Admin;
 
-use Foolz\Foolframe\Controller\Admin;
-use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
+use Foolz\FoolFrame\Controller\Admin;
+use Foolz\FoolFrame\Model\Validation\ActiveConstraint\Trim;
 use GeoIp2\Database\Reader;
 use MaxMind\Db\Reader\InvalidDatabaseException;
 use Symfony\Component\HttpFoundation\Response;

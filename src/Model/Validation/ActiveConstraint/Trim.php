@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Model\Validation\ActiveConstraint;
+namespace Foolz\FoolFrame\Model\Validation\ActiveConstraint;
 
-use Foolz\Foolframe\Model\Validation\ActiveConstraint\ActiveConstraint;
+use Foolz\FoolFrame\Model\Validation\ActiveConstraint\ActiveConstraint;
 
 class Trim implements ActiveConstraint {
 

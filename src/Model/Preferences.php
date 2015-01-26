@@ -1,9 +1,9 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
 use Foolz\Cache\Cache;
-use Foolz\Foolframe\Model\Validation\Validator;
+use Foolz\FoolFrame\Model\Validation\Validator;
 use Foolz\Plugin\Hook;
 use Symfony\Component\HttpFoundation\Request;
 

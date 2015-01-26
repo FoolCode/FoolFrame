@@ -1,10 +1,10 @@
 <?php
 
-namespace Foolz\Foolframe\Model\Validation;
+namespace Foolz\FoolFrame\Model\Validation;
 
-use Foolz\Foolframe\Model\Validation\ActiveConstraint\ActiveConstraint;
-use Foolz\Foolframe\Model\Validation\Violation;
-use Foolz\Foolframe\Model\Validation\ViolationCollection;
+use Foolz\FoolFrame\Model\Validation\ActiveConstraint\ActiveConstraint;
+use Foolz\FoolFrame\Model\Validation\Violation;
+use Foolz\FoolFrame\Model\Validation\ViolationCollection;
 use Symfony\Component\Validator\Validation as SymfonyValidation;
 use Symfony\Component\Validator\Constraints as Assert;
 

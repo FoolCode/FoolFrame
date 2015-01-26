@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
+namespace Foolz\FoolFrame\Theme\Admin\Partial\Account;
 
-class Login extends \Foolz\Foolframe\View\View
+class Login extends \Foolz\FoolFrame\View\View
 {
     public function toString()
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Layout;
+namespace Foolz\FoolFrame\Theme\Admin\Layout;
 
-class Email extends \Foolz\Foolframe\View\View
+class Email extends \Foolz\FoolFrame\View\View
 {
 
     public function toString()

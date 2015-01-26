@@ -1,5 +1,5 @@
 <?php
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
 use Michelf\Markdown as M;
 use Foolz\Cache\Cache;

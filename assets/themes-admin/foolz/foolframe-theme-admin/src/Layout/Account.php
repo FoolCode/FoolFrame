@@ -1,11 +1,11 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Layout;
+namespace Foolz\FoolFrame\Theme\Admin\Layout;
 
-use Foolz\Foolframe\Model\Legacy\Preferences;
-use Foolz\Foolframe\Model\Notices;
+use Foolz\FoolFrame\Model\Legacy\Preferences;
+use Foolz\FoolFrame\Model\Notices;
 
-class Account extends \Foolz\Foolframe\View\View
+class Account extends \Foolz\FoolFrame\View\View
 {
     public function toString()
     { ?>

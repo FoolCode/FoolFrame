@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
 use Foolz\Plugin\Hook;
 
@@ -41,7 +41,7 @@ class SchemaManager
      * @param  string                     $prefix            The prefix used for the database (will ignore any other prefix)
      * @param  array                      $prefixes_ignored  Prefix in the database that should be ignored between the ones with the selected $prefix. Do not prepend $prefix.
      *
-     * @return  \Foolz\Foolframe\Model\SchemaManager  A new SchemaManager
+     * @return  \Foolz\FoolFrame\Model\SchemaManager  A new SchemaManager
      */
     public static function forge(\Doctrine\DBAL\Connection $connection, $prefix = '', $prefixes_ignored = [])
     {

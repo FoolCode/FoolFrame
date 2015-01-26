@@ -1,14 +1,14 @@
 <?php
 
-namespace Foolz\Foolframe\Controller\Admin;
+namespace Foolz\FoolFrame\Controller\Admin;
 
-use Foolz\Foolframe\Model\PluginException;
-use Foolz\Foolframe\Model\Plugins as PluginsModel;
+use Foolz\FoolFrame\Model\PluginException;
+use Foolz\FoolFrame\Model\Plugins as PluginsModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class Plugins extends \Foolz\Foolframe\Controller\Admin
+class Plugins extends \Foolz\FoolFrame\Controller\Admin
 {
     /**
      * @var PluginsModel

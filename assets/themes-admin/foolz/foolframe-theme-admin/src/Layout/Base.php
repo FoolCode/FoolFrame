@@ -1,10 +1,10 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Layout;
+namespace Foolz\FoolFrame\Theme\Admin\Layout;
 
-use Foolz\Foolframe\Model\Notices;
+use Foolz\FoolFrame\Model\Notices;
 
-class Base extends \Foolz\Foolframe\View\View
+class Base extends \Foolz\FoolFrame\View\View
 {
 
     public function toString()

@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Partial;
+namespace Foolz\FoolFrame\Theme\Admin\Partial;
 
 /*
  * How to use: just as any view.
@@ -47,7 +47,7 @@ namespace Foolz\Foolframe\Theme\Admin\Partial;
  *
  */
 
-class FormCreator extends \Foolz\Foolframe\View\View
+class FormCreator extends \Foolz\FoolFrame\View\View
 {
 
 public function toString()

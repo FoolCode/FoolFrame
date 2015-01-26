@@ -1,13 +1,13 @@
 <?php
 
-namespace Foolz\Foolframe\Controller\Admin;
+namespace Foolz\FoolFrame\Controller\Admin;
 
-use Foolz\Foolframe\Model\Auth;
-use Foolz\Foolframe\Model\Auth\WrongUsernameOrPasswordException;
-use Foolz\Foolframe\Model\Cookie;
-use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
-use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
-use Foolz\Foolframe\Model\Validation\Validator;
+use Foolz\FoolFrame\Model\Auth;
+use Foolz\FoolFrame\Model\Auth\WrongUsernameOrPasswordException;
+use Foolz\FoolFrame\Model\Cookie;
+use Foolz\FoolFrame\Model\Validation\ActiveConstraint\Trim;
+use Foolz\FoolFrame\Model\Validation\Constraint\EqualsField;
+use Foolz\FoolFrame\Model\Validation\Validator;
 use Foolz\Inet\Inet;
 use forxer\Gravatar\Gravatar;
 use Neutron\ReCaptcha\ReCaptcha;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Account extends \Foolz\Foolframe\Controller\Admin
+class Account extends \Foolz\FoolFrame\Controller\Admin
 {
     /**
      * @var Auth
@@ -475,7 +475,7 @@ class Account extends \Foolz\Foolframe\Controller\Admin
             return $this->redirect('admin/account/forgotten_password');
         }
 
-        /** @var \Foolz\Foolframe\Model\Users $users */
+        /** @var \Foolz\FoolFrame\Model\Users $users */
         $users = $this->getContext()->getService('users');
         $user = $users->getUserBy('email', $email);
 

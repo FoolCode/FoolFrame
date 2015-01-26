@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
+namespace Foolz\FoolFrame\Theme\Admin\Partial\Account;
 
-class RequestChangeEmail extends \Foolz\Foolframe\View\View
+class RequestChangeEmail extends \Foolz\FoolFrame\View\View
 {
     public function toString()
     {

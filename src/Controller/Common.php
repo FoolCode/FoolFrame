@@ -1,9 +1,9 @@
 <?php
 
-namespace Foolz\Foolframe\Controller;
+namespace Foolz\FoolFrame\Controller;
 
-use Foolz\Foolframe\Model\Auth;
-use Foolz\Foolframe\Model\Context;
+use Foolz\FoolFrame\Model\Auth;
+use Foolz\FoolFrame\Model\Context;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

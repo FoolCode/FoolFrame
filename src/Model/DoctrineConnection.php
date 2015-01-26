@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;

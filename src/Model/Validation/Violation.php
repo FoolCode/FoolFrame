@@ -1,6 +1,6 @@
 <?php
 
-namespace Foolz\Foolframe\Model\Validation;
+namespace Foolz\FoolFrame\Model\Validation;
 
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;

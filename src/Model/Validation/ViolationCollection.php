@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Model\Validation;
+namespace Foolz\FoolFrame\Model\Validation;
 
-use Foolz\Foolframe\Model\Validation\Violation;
+use Foolz\FoolFrame\Model\Validation\Violation;
 
 class ViolationCollection {
 

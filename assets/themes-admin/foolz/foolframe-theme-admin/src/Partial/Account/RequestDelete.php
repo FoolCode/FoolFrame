@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Partial\Account;
+namespace Foolz\FoolFrame\Theme\Admin\Partial\Account;
 
-class RequestDelete extends \Foolz\Foolframe\View\View
+class RequestDelete extends \Foolz\FoolFrame\View\View
 {
     public function toString()
     {

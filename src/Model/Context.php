@@ -1,9 +1,9 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
 use Foolz\Cache\Cache;
-use Foolz\Foolframe\Model\Auth\WrongKeyException;
+use Foolz\FoolFrame\Model\Auth\WrongKeyException;
 use Foolz\Plugin\Hook;
 use Foolz\Profiler\Profiler;
 use Monolog\Handler\RotatingFileHandler;
@@ -103,11 +103,11 @@ class Context implements ContextInterface
 
         $this->profiler = $this->container->get('profiler');
 
-        class_alias('Foolz\Foolframe\Model\Plugins', 'Plugins');
-        class_alias('Foolz\Foolframe\Model\SchemaManager', 'SchemaManager');
-        class_alias('Foolz\Foolframe\Model\System', 'System');
-        class_alias('Foolz\Foolframe\Model\User', 'User');
-        class_alias('Foolz\Foolframe\Model\Users', 'Users');
+        class_alias('Foolz\FoolFrame\Model\Plugins', 'Plugins');
+        class_alias('Foolz\FoolFrame\Model\SchemaManager', 'SchemaManager');
+        class_alias('Foolz\FoolFrame\Model\System', 'System');
+        class_alias('Foolz\FoolFrame\Model\User', 'User');
+        class_alias('Foolz\FoolFrame\Model\Users', 'Users');
 
         $this->route_collection = new RouteCollection();
 
@@ -133,35 +133,35 @@ class Context implements ContextInterface
             ini_set('display_errors', 1);
         }
 
-        $this->container->register('autoloader', 'Foolz\Foolframe\Model\Autoloader')
+        $this->container->register('autoloader', 'Foolz\FoolFrame\Model\Autoloader')
             ->addArgument($this)
             ->addMethodCall('register');
 
-        $this->container->register('logger', 'Foolz\Foolframe\Model\Logger')
+        $this->container->register('logger', 'Foolz\FoolFrame\Model\Logger')
             ->addArgument($this)
             ->addMethodCall('addLogger', [$this->logger])
             ->addMethodCall('addLogger', [$this->logger_trace]);
 
-        $this->container->register('config', 'Foolz\Foolframe\Model\Config')
+        $this->container->register('config', 'Foolz\FoolFrame\Model\Config')
             ->addArgument($this);
 
-        $this->container->register('doctrine', 'Foolz\Foolframe\Model\DoctrineConnection')
+        $this->container->register('doctrine', 'Foolz\FoolFrame\Model\DoctrineConnection')
             ->addArgument($this)
             ->addArgument(new Reference('config'));
 
-        $this->container->register('preferences', 'Foolz\Foolframe\Model\Preferences')
+        $this->container->register('preferences', 'Foolz\FoolFrame\Model\Preferences')
             ->addArgument($this);
 
-        $this->container->register('plugins', 'Foolz\Foolframe\Model\Plugins')
+        $this->container->register('plugins', 'Foolz\FoolFrame\Model\Plugins')
             ->addArgument($this);
 
-        $this->container->register('users', 'Foolz\Foolframe\Model\Users')
+        $this->container->register('users', 'Foolz\FoolFrame\Model\Users')
             ->addArgument($this);
 
-        $this->container->register('auth', 'Foolz\Foolframe\Model\Auth')
+        $this->container->register('auth', 'Foolz\FoolFrame\Model\Auth')
             ->addArgument($this);
 
-        $this->container->register('security', 'Foolz\Foolframe\Model\Security')
+        $this->container->register('security', 'Foolz\FoolFrame\Model\Security')
             ->addArgument($this);
 
         $this->config = $this->getService('config');
@@ -237,7 +237,7 @@ class Context implements ContextInterface
         }
 
         $this->container
-            ->register('uri', '\Foolz\Foolframe\Model\Uri')
+            ->register('uri', '\Foolz\FoolFrame\Model\Uri')
             ->addArgument($this)
             ->addArgument($request);
 
@@ -319,7 +319,7 @@ class Context implements ContextInterface
             ->setParam('request', $request)
             ->execute();
 
-        $this->container->register('notices', 'Foolz\Foolframe\Model\Notices')
+        $this->container->register('notices', 'Foolz\FoolFrame\Model\Notices')
             ->addArgument($this)
             ->addArgument($request);
 
@@ -408,7 +408,7 @@ class Context implements ContextInterface
                 '/install/{_suffix}',
                 [
                     '_suffix' => '',
-                    '_controller' => '\Foolz\Foolframe\Controller\Install::*'
+                    '_controller' => '\Foolz\FoolFrame\Controller\Install::*'
                 ],
                 [
                     '_suffix' => '.*',
@@ -418,12 +418,12 @@ class Context implements ContextInterface
 
         $route_collection->add('foolframe.install.index', new Route(
             '/',
-            ['_controller' => '\Foolz\Foolframe\Controller\Install::index']
+            ['_controller' => '\Foolz\FoolFrame\Controller\Install::index']
         ));
 
         $route_collection->add('404', new Route(
             '',
-            ['_controller' => '\Foolz\Foolframe\Controller\Install::404']
+            ['_controller' => '\Foolz\FoolFrame\Controller\Install::404']
         ));
     }
 
@@ -435,7 +435,7 @@ class Context implements ContextInterface
                     '/admin/'.$location.'/{_suffix}',
                     [
                         '_suffix' => '',
-                        '_controller' => '\Foolz\Foolframe\Controller\Admin\\'.ucfirst($location).'::*',
+                        '_controller' => '\Foolz\FoolFrame\Controller\Admin\\'.ucfirst($location).'::*',
                     ],
                     [
                         '_suffix' => '.*',
@@ -449,7 +449,7 @@ class Context implements ContextInterface
                 '/admin/{_suffix}',
                 [
                     '_suffix' => '',
-                    '_controller' => '\Foolz\Foolframe\Controller\Admin::*'
+                    '_controller' => '\Foolz\FoolFrame\Controller\Admin::*'
                 ],
                 [
                     '_suffix' => '.*',

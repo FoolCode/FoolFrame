@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
-use Foolz\Foolframe\Model\Config;
+use Foolz\FoolFrame\Model\Config;
 
 class Install extends Model
 {

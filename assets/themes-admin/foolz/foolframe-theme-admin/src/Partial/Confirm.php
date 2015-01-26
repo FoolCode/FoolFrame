@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Partial;
+namespace Foolz\FoolFrame\Theme\Admin\Partial;
 
-class Confirm extends \Foolz\Foolframe\View\View
+class Confirm extends \Foolz\FoolFrame\View\View
 {
     public function toString()
     {

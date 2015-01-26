@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
-use Foolz\Foolframe\Controller\ControllerInterface;
+use Foolz\FoolFrame\Controller\ControllerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Theme\Admin\Partial\Account\Email;
+namespace Foolz\FoolFrame\Theme\Admin\Partial\Account\Email;
 
-class DeleteAccount extends \Foolz\Foolframe\View\View
+class DeleteAccount extends \Foolz\FoolFrame\View\View
 {
     public function toString()
     { ?>

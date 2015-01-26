@@ -1,8 +1,8 @@
 <?php
 
-namespace Foolz\Foolframe\Model;
+namespace Foolz\FoolFrame\Model;
 
-use Foolz\Foolframe\Model\Context;
+use Foolz\FoolFrame\Model\Context;
 
 interface ModelInterface
 {

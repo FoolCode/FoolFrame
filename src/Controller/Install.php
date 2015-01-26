@@ -1,19 +1,19 @@
 <?php
 
-namespace Foolz\Foolframe\Controller;
+namespace Foolz\FoolFrame\Controller;
 
-use Foolz\Foolframe\Model\Auth;
-use Foolz\Foolframe\Model\Config;
-use Foolz\Foolframe\Model\DoctrineConnection;
-use Foolz\Foolframe\Model\Notices;
-use Foolz\Foolframe\Model\Schema;
-use Foolz\Foolframe\Model\SchemaManager;
-use Foolz\Foolframe\Model\System;
-use Foolz\Foolframe\Model\Uri;
-use Foolz\Foolframe\Model\Users;
-use Foolz\Foolframe\Model\Validation\ActiveConstraint\Trim;
-use Foolz\Foolframe\Model\Validation\Constraint\EqualsField;
-use Foolz\Foolframe\Model\Validation\Validator;
+use Foolz\FoolFrame\Model\Auth;
+use Foolz\FoolFrame\Model\Config;
+use Foolz\FoolFrame\Model\DoctrineConnection;
+use Foolz\FoolFrame\Model\Notices;
+use Foolz\FoolFrame\Model\Schema;
+use Foolz\FoolFrame\Model\SchemaManager;
+use Foolz\FoolFrame\Model\System;
+use Foolz\FoolFrame\Model\Uri;
+use Foolz\FoolFrame\Model\Users;
+use Foolz\FoolFrame\Model\Validation\ActiveConstraint\Trim;
+use Foolz\FoolFrame\Model\Validation\Constraint\EqualsField;
+use Foolz\FoolFrame\Model\Validation\Validator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,7 +52,7 @@ class Install extends Common
     protected $config;
 
     /**
-     * @var \Foolz\Foolframe\Model\Install
+     * @var \Foolz\FoolFrame\Model\Install
      */
     protected $install;
 
@@ -61,7 +61,7 @@ class Install extends Common
         $this->notices = $this->getContext()->getService('notices');
         $this->uri = $this->getContext()->getService('uri');
         $this->config = $this->getContext()->getService('config');
-        $this->install = new \Foolz\Foolframe\Model\Install($this->getContext());
+        $this->install = new \Foolz\FoolFrame\Model\Install($this->getContext());
 
         $theme_instance = \Foolz\Theme\Loader::forge('foolframe_admin');
         $theme_instance->addDir(VENDPATH.'foolz/foolframe/assets/themes-admin/');

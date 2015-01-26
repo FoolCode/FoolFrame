@@ -1,13 +1,13 @@
 <?php
 
-namespace Foolz\Foolframe\Controller;
+namespace Foolz\FoolFrame\Controller;
 
-use Foolz\Foolframe\Model\Config;
-use Foolz\Foolframe\Model\Notices;
-use Foolz\Foolframe\Model\Plugins;
-use Foolz\Foolframe\Model\Preferences;
-use Foolz\Foolframe\Model\Security;
-use Foolz\Foolframe\Model\Uri;
+use Foolz\FoolFrame\Model\Config;
+use Foolz\FoolFrame\Model\Notices;
+use Foolz\FoolFrame\Model\Plugins;
+use Foolz\FoolFrame\Model\Preferences;
+use Foolz\FoolFrame\Model\Security;
+use Foolz\FoolFrame\Model\Uri;
 use Foolz\Plugin\Hook;
 use Foolz\Theme\Loader;
 use Symfony\Component\HttpFoundation\RedirectResponse;
