@@ -21,7 +21,7 @@ return [
         /**
          * The name that can be used in classes names
          */
-        'class_name' => 'Foolframe',
+        'class_name' => 'FoolFrame',
 
         /**
          *  URL to download a newer version

@@ -26,7 +26,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Foolz\\Foolframe\\Theme\\Admin\\": "src/"
+      "Foolz\\FoolFrame\\Theme\\Admin\\": "src/"
     }
   },
   "extra": {
