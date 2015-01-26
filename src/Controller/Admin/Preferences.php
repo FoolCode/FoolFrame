@@ -123,15 +123,15 @@ class Preferences extends Admin
         );
 
         foreach ($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            if ($module === 'foolz/foolframe') {
+            if ($module['namespace'] === 'foolz/foolframe') {
                 continue;
             }
 
             $theme_loader = new \Foolz\Theme\Loader();
-            $theme_loader->addDir($this->config->get($module, 'package', 'directories.themes'));
+            $theme_loader->addDir($this->config->get($module['namespace'], 'package', 'directories.themes'));
             $themes = $theme_loader->getAll();
 
-            $module_name = $this->config->get($module, 'package', 'main.name');
+            $module_name = $this->config->get($module['namespace'], 'package', 'main.name');
 
             $theme_checkboxes = [];
 

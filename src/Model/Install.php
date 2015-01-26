@@ -81,8 +81,14 @@ class Install extends Model
         $name_lowercase = strtolower($class_name);
 
         $modules = [
-            'foolframe' => 'foolz/foolframe',
-            $name_lowercase => 'foolz/'.$name_lowercase
+            'foolframe' => [
+                'context' => '\\Foolz\\FoolFrame\\Model\\Context',
+                'namespace' => 'foolz/foolframe'
+            ],
+            $name_lowercase => [
+                'context' => $this->config->get('unknown', 'package', 'main.class_context'),
+                'namespace' => 'foolz/'.$name_lowercase
+            ]
         ];
 
         $dc = new DoctrineConnection($this->getContext(), $this->config);

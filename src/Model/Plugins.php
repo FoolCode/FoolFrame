@@ -51,9 +51,9 @@ class Plugins extends Model
 
         // store all the relevant data from the modules
         foreach ($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            $dir = $this->config->get($module, 'package', 'directories.plugins');
+            $dir = $this->config->get($module['namespace'], 'package', 'directories.plugins');
             $this->loader->addDir($dir);
-            $dir = VAPPPATH.$module.'/plugins';
+            $dir = VAPPPATH.$module['namespace'].'/plugins';
             $this->loader->addDir($dir);
         }
 

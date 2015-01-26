@@ -207,15 +207,9 @@ class Context implements ContextInterface
 
         // run the Framework class for each module
         foreach($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            if ($module !== 'foolz/foolframe') {
-                $class_arr = explode('/', $module);
-                $class = '\\';
-                foreach ($class_arr as $str) {
-                    $class .= ucfirst($str).'\\';
-                }
-
-                $class .= 'Model\Context';
-                $this->child_contextes[$module] = new $class($this);
+            if ($module['namespace'] !== 'foolz/foolframe') {
+                $context = $module['context'];
+                $this->child_contextes[$module] = new $context($this);
             }
         }
 

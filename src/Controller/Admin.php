@@ -148,7 +148,7 @@ class Admin extends Common
 
         // load sidebars from modules and leave FoolFrame sidebar on bottom
         foreach($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            $module_sidebar = $this->config->get($module, 'sidebar');
+            $module_sidebar = $this->config->get($module['namespace'], 'sidebar');
             if(is_array($module_sidebar)) {
                 $sidebar = array_merge($module_sidebar['sidebar'], $sidebar);
             }

@@ -71,7 +71,7 @@ class Auth extends Model
         $this->groups = $this->config->get('foolz/foolframe', 'foolauth', 'groups');
 
         foreach ($this->config->get('foolz/foolframe', 'config', 'modules.installed') as $module) {
-            foreach ($this->config->get($module, 'foolauth', 'roles') as $key => $item) {
+            foreach ($this->config->get($module['namespace'], 'foolauth', 'roles') as $key => $item) {
                 if (!isset($this->roles[$key])) {
                     $this->roles[$key] = $item;
                 } else {

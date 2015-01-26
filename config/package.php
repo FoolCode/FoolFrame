@@ -16,6 +16,8 @@ return [
          */
         'name' => 'FoolFrame',
 
+        'class_context' => '\\Foolz\\FoolFrame\\Model\\Context',
+
         /**
          * The name that can be used in classes names
          */

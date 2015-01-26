@@ -125,7 +125,7 @@ class Preferences extends Model
         $identifier = array_shift($segments);
         $query = implode('.', $segments);
 
-        return $this->config->get($this->modules[$identifier], 'package', 'preferences.'.$query);
+        return $this->config->get($this->modules[$identifier]['namespace'], 'package', 'preferences.'.$query);
     }
 
     public function set($setting, $value, $reload = true)
