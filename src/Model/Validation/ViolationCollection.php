@@ -27,6 +27,16 @@ class ViolationCollection {
         return $this->violations;
     }
 
+    public function getString()
+    {
+        $array = [];
+        foreach ($this->violations as $violation) {
+            $array[] = $violation->getLabel().': '.$violation->getViolationsString();
+        }
+
+        return $array;
+    }
+
     /**
      * @return int
      */
@@ -40,12 +50,7 @@ class ViolationCollection {
      */
     public function getHtml()
     {
-        $array = [];
-        foreach ($this->violations as $violation) {
-            $array[] = $violation->getLabel().': '.$violation->getViolationsString();
-        }
-
-        return implode('<br>', $array);
+        return implode('<br>', $this->getString());
     }
 
     /**
@@ -53,11 +58,6 @@ class ViolationCollection {
      */
     public function getText()
     {
-        $array = [];
-        foreach ($this->violations as $violation) {
-            $array[] = $violation->getLabel().': '.$violation->getViolationsString();
-        }
-
-        return implode("\n", $array);
+        return implode("\n", $this->getString());
     }
 }
