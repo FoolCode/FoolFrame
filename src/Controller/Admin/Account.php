@@ -11,9 +11,6 @@ use Foolz\FoolFrame\Model\Validation\Validator;
 use Foolz\Inet\Inet;
 use forxer\Gravatar\Gravatar;
 use Neutron\ReCaptcha\ReCaptcha;
-use Swift_SendmailTransport;
-use Swift_Mailer;
-use Swift_Message;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -161,16 +158,13 @@ class Account extends \Foolz\FoolFrame\Controller\Admin
                                 'link' => $this->uri->create('admin/account/activate/'.$id.'/'.$activation_key)
                             ]);
 
-                        $message = Swift_Message::newInstance()
+                        $message = $this->mailer->create()
                             ->setFrom([$from => $this->preferences->get('foolframe.gen.website_title')])
                             ->setTo($input['email'])
                             ->setSubject($title)
                             ->setBody($this->builder->build(), 'text/html');
 
-                        $mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
-                        $result = $mailer->send($message);
-
-                        if ($result != 1) {
+                        if ($this->mailer->send($message) !== 1) {
                             // the email driver was unable to send the email. the account will be activated automatically.
                             $this->getAuth()->activateUser($id, $activation_key);
                             $this->notices->setFlash('success', _i('Congratulations! You have successfully registered.'));
@@ -350,16 +344,13 @@ class Account extends \Foolz\FoolFrame\Controller\Admin
                             'link' => $this->uri->create('admin/account/change_email/'.$user->id.'/'.$change_email_key)
                         ]);
 
-                    $message = Swift_Message::newInstance()
+                    $message = $this->mailer->create()
                         ->setFrom([$from => $this->preferences->get('foolframe.gen.website_title')])
                         ->setTo($user->email)
                         ->setSubject($title)
                         ->setBody($this->builder->build(), 'text/html');
 
-                    $mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
-                    $result = $mailer->send($message);
-
-                    if ($result == 1) {
+                    if ($this->mailer->send($message) === 1) {
                         $this->notices->setFlash('success', _i('An email has been sent to verify your new email address. The activation link will only be valid for 24 hours.'));
                     } else {
                         // the email driver was unable to send the email. the account's email address will not be changed.
@@ -437,16 +428,13 @@ class Account extends \Foolz\FoolFrame\Controller\Admin
                             'link' => $this->uri->create('admin/account/delete/'.$user->id.'/'.$account_deletion_key)
                         ]);
 
-                    $message = Swift_Message::newInstance()
+                    $message = $this->mailer->create()
                         ->setFrom([$from => $this->preferences->get('foolframe.gen.website_title')])
                         ->setTo($user->email)
                         ->setSubject($title)
                         ->setBody($this->builder->build(), 'text/html');
 
-                    $mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
-                    $result = $mailer->send($message);
-
-                    if ($result == 1) {
+                    if ($this->mailer->send($message) === 1) {
                         $this->notices->setFlash('success', _i('An email has been sent to verify the deletion of your account. The verification link will only work for 15 minutes.'));
                     } else {
                         // the email driver was unable to send the email. the account will not be deleted.
@@ -493,16 +481,13 @@ class Account extends \Foolz\FoolFrame\Controller\Admin
                 'link' => $this->uri->create('admin/account/change_password/'.$user->id.'/'.$password_key)
             ]);
 
-        $message = Swift_Message::newInstance()
+        $message = $this->mailer->create()
             ->setFrom([$from => $this->preferences->get('foolframe.gen.website_title')])
             ->setTo($email)
             ->setSubject($title)
             ->setBody($this->builder->build(), 'text/html');
 
-        $mailer = Swift_Mailer::newInstance(Swift_SendmailTransport::newInstance());
-        $result = $mailer->send($message);
-
-        if ($result == 1) {
+        if ($this->mailer->send($message) === 1) {
             $this->notices->setFlash('success', _i('An email has been sent to verify that you wish to change your password. The verification link included will only work for the next 15 minutes.'));
         } else {
             // the email driver was unable to send the email. the account's password will not be changed..

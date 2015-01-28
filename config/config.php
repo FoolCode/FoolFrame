@@ -17,7 +17,10 @@ return [
     'modules' => [
         // list of modules installed
         'installed' => [
-            'foolframe' => 'foolz/foolframe'
+            'foolframe' => [
+                'context' => '\\Foolz\\FoolFrame\\Model\\Context',
+                'namespace' => 'foolz/foolframe'
+            ]
         ]
     ]
 ];

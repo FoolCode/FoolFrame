@@ -39,6 +39,11 @@ class Admin extends Common
     protected $uri;
 
     /**
+     * @var Mailer
+     */
+    protected $mailer;
+
+    /**
      * @var Notices
      */
     protected $notices;
@@ -62,6 +67,7 @@ class Admin extends Common
     {
         $request = $this->getRequest();
         $this->uri = $this->getContext()->getService('uri');
+        $this->mailer = $this->getContext()->getService('mailer');
         $this->notices = $this->getContext()->getService('notices');
         $this->preferences = $this->getContext()->getService('preferences');
         $this->config = $this->getContext()->getService('config');

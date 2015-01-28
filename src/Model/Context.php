@@ -149,6 +149,9 @@ class Context implements ContextInterface
             ->addArgument($this)
             ->addArgument(new Reference('config'));
 
+        $this->container->register('mailer', 'Foolz\FoolFrame\Model\Mailer')
+            ->addArgument($this);
+
         $this->container->register('preferences', 'Foolz\FoolFrame\Model\Preferences')
             ->addArgument($this);
 
