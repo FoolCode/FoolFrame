@@ -49,6 +49,9 @@ class Users extends \Foolz\FoolFrame\Controller\Admin
             throw new NotFoundHttpException;
         }
 
+        $data = [];
+        $form = [];
+
         try {
             /** @var \Foolz\FoolFrame\Model\Users $users */
             $users = $this->getContext()->getService('users');
@@ -57,8 +60,6 @@ class Users extends \Foolz\FoolFrame\Controller\Admin
         } catch (\Foolz\FoolFrame\Model\UsersWrongIdException $e) {
             throw new NotFoundHttpException;
         }
-
-        $form = [];
 
         $form['open'] = array(
             'type' => 'open'

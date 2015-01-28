@@ -244,7 +244,8 @@ class Auth extends Model
         return serialize(['user_id' => $this->user->getId(), 'login_id' => $login_id, 'login_hash' => $login_hash]);
     }
 
-    public function hasAccess($area) {
+    public function hasAccess($area)
+    {
         if (!isset($this->groups[$this->getUser()->getGroupId()])) {
             throw new \RuntimeException('Group not found');
         }
@@ -318,7 +319,7 @@ class Auth extends Model
         $password = trim($password);
         $email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
 
-        if (empty($username) or empty($password) or empty($email)) {
+        if (empty($username) || empty($password) || empty($email)) {
             throw new UpdateException('Username, password and email address can\'t be empty.', 1);
         }
 

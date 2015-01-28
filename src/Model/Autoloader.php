@@ -2,7 +2,6 @@
 
 namespace Foolz\FoolFrame\Model;
 
-
 class Autoloader extends Model
 {
     /**
@@ -64,5 +63,4 @@ class Autoloader extends Model
             $this->addClass($class, $path);
         }
     }
-
 }

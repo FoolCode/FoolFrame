@@ -7,7 +7,8 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class EqualsFieldValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint) {
+    public function validate($value, Constraint $constraint)
+    {
         if (!$this->compareValues($value, $constraint->value, $constraint)) {
             $this->context->addViolation($constraint->message, [
                 '{{ field }}' => $constraint->field

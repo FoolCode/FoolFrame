@@ -14,7 +14,8 @@ class Util
      * @param $array
      * @return bool
      */
-    public static function isAssoc($array) {
+    public static function isAssoc($array)
+    {
         return (bool) count(array_filter(array_keys($array), 'is_string'));
     }
 
@@ -25,7 +26,8 @@ class Util
      * @param int $length
      * @return string
      */
-    public static function randomString($length = 10) {
+    public static function randomString($length = 10)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {

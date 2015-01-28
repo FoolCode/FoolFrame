@@ -2,8 +2,8 @@
 
 namespace Foolz\FoolFrame\Model;
 
-class Cookie extends \Symfony\Component\HttpFoundation\Cookie {
-
+class Cookie extends \Symfony\Component\HttpFoundation\Cookie
+{
     public function __construct(Context $context, $name, $value = null, $expire = 0, $path = '/', $domain = null, $secure = false, $httpOnly = false)
     {
         $config = $context->getService('config');
@@ -17,5 +17,4 @@ class Cookie extends \Symfony\Component\HttpFoundation\Cookie {
             $httpOnly
         );
     }
-
 }

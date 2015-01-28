@@ -114,6 +114,7 @@ class Install extends Common
 
     public function action_system_check()
     {
+        $data = [];
         $data['system'] = System::getEnvironment($this->getContext());
 
         $this->process('system_check');

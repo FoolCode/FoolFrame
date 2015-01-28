@@ -77,7 +77,8 @@ class Plugins extends Model
         }
     }
 
-    public function handleWeb() {
+    public function handleWeb()
+    {
         $this->uri = $this->getContext()->getService('uri');
         $this->loader->setPublicDir(DOCROOT.'foolframe/');
         $this->loader->setBaseUrl($this->uri->base().'foolframe/');
@@ -129,8 +130,6 @@ class Plugins extends Model
 
     public function enable($slug)
     {
-        $plugin = $this->loader->get($slug);
-
         $count = $this->dc->qb()
             ->select('COUNT(*) as count')
             ->from($this->dc->p('plugins'), 'p')
@@ -160,8 +159,6 @@ class Plugins extends Model
      */
     public function disable($slug)
     {
-        $plugin = $this->loader->get($slug);
-
         $this->dc->qb()
             ->update($this->dc->p('plugins'))
             ->set('enabled', ':enabled')

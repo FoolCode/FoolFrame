@@ -504,6 +504,7 @@ class Account extends \Foolz\FoolFrame\Controller\Admin
             return $this->redirectToLogin();
         }
 
+        $data = [];
         $form = [];
 
         $form['open'] = array(

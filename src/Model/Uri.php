@@ -4,8 +4,8 @@ namespace Foolz\FoolFrame\Model;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class Uri extends Model {
-
+class Uri extends Model
+{
     /**
      * @var Request
      */
@@ -76,5 +76,4 @@ class Uri extends Model {
 
         return $result;
     }
-
 }

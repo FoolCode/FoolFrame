@@ -280,13 +280,13 @@ class Context implements ContextInterface
                 $lang = $this->preferences->get('foolframe.lang.default');
             }
 
-            // HHVM can't handle gettext
+            // HHVM does not support gettext
             if (function_exists('bindtextdomain')) {
                 $locale = $lang.'.utf8';
                 putenv('LANG='.$locale);
                 putenv('LANGUAGE='.$locale);
                 setlocale(LC_ALL, $locale);
-                bindtextdomain($lang, DOCROOT."assets/locale");
+                bindtextdomain($lang, DOCROOT.'assets/locale');
                 bind_textdomain_codeset($lang, 'UTF-8');
                 textdomain($lang);
             }

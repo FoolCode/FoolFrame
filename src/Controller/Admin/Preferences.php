@@ -29,6 +29,7 @@ class Preferences extends Admin
     {
         $this->param_manager->setParam('method_title', _i('General'));
 
+        $data = [];
         $form = [];
 
         $form['open'] = array(
@@ -180,7 +181,7 @@ class Preferences extends Admin
             'label' => _i('Google Analytics code'),
             'placeholder' => 'UX-XXXXXXX-X',
             'preferences' => true,
-            'help' => _i("Insert your Google Analytics code."),
+            'help' => _i('Insert your Google Analytics code.'),
             'class' => 'span2'
         );
 
@@ -192,7 +193,7 @@ class Preferences extends Admin
             'type' => 'textarea',
             'label' => _i('Header Text ("alerts/notices")'),
             'preferences' => true,
-            'help' => _i("Inserts text above in the header site wide, below the navigation links. <br> Most <a href='http://getbootstrap.com/2.3.2/base-css.html' target='blank'>Bootstrap CSS</a> formatting can be used here."),
+            'help' => _i('Inserts text above in the header site wide, below the navigation links. <br> Most <a href="http://getbootstrap.com/2.3.2/base-css.html" target="blank">Bootstrap CSS</a> formatting can be used here.'),
             'class' => 'span5'
         );
 
@@ -200,7 +201,7 @@ class Preferences extends Admin
             'type' => 'textarea',
             'label' => _i('Header Code'),
             'preferences' => true,
-            'help' => _i("This will insert the HTML code inside the &lt;HEAD&gt;."),
+            'help' => _i('This will insert the HTML code inside the &lt;HEAD&gt;.'),
             'class' => 'span5'
         );
 
@@ -208,7 +209,7 @@ class Preferences extends Admin
             'type' => 'textarea',
             'label' => _i('Footer Text'),
             'preferences' => true,
-            'help' => _i("Inserts text in the footer site wide, such as credits and similar.<br> Most <a href='http://getbootstrap.com/2.3.2/base-css.html' target='blank'>Bootstrap CSS</a> formatting can be used here."),
+            'help' => _i('Inserts text in the footer site wide, such as credits and similar.<br> Most <a href="http://getbootstrap.com/2.3.2/base-css.html" target="blank">Bootstrap CSS</a> formatting can be used here.'),
             'class' => 'span5'
         );
 
@@ -248,6 +249,7 @@ class Preferences extends Admin
     {
         $this->param_manager->setParam('method_title', _i('Advertising'));
 
+        $data = [];
         $form = [];
 
         $form['open'] = array(
@@ -312,6 +314,7 @@ class Preferences extends Admin
     {
         $this->param_manager->setParam('method_title', _i('Registration'));
 
+        $data = [];
         $form = [];
 
         $form['open'] = array(

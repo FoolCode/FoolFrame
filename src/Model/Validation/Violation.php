@@ -5,8 +5,8 @@ namespace Foolz\FoolFrame\Model\Validation;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 
-class Violation {
-
+class Violation
+{
     /**
      * @var ConstraintViolationList
      */
@@ -27,7 +27,8 @@ class Violation {
      * @param string $field_name
      * @param string $label
      */
-    public function __construct(ConstraintViolationList $violations, $field_name, $label) {
+    public function __construct(ConstraintViolationList $violations, $field_name, $label)
+    {
         $this->violations = $violations;
         $this->field_name = $field_name;
         $this->label = $label;
@@ -36,14 +37,16 @@ class Violation {
     /**
      * @return ConstraintViolationList
      */
-    public function getViolations() {
+    public function getViolations()
+    {
         return $this->violations;
     }
 
     /**
      * @return string
      */
-    public function getViolationsString() {
+    public function getViolationsString()
+    {
         $array = [];
         foreach ($this->violations as $violation) {
             /** @var $violation ConstraintViolation */
@@ -56,14 +59,16 @@ class Violation {
     /**
      * @return string
      */
-    public function getFieldName() {
+    public function getFieldName()
+    {
         return $this->field_name;
     }
 
     /**
      * @return string
      */
-    public function getLabel() {
+    public function getLabel()
+    {
         return $this->label;
     }
 }

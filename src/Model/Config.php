@@ -2,7 +2,6 @@
 
 namespace Foolz\FoolFrame\Model;
 
-
 class Config extends Model
 {
     /**
@@ -56,7 +55,7 @@ class Config extends Model
             while (count($keys) > 1) {
                 $key = array_shift($keys);
 
-                if (!isset($array[$key]) or !is_array($array[$key])) {
+                if (!isset($array[$key]) || !is_array($array[$key])) {
                     $array[$key] = array();
                 }
 
@@ -96,8 +95,7 @@ class Config extends Model
      */
     public static function saveArrayToFile($path, $array)
     {
-        $content = "<?php \n" .
-            "return " . var_export($array, true) . ';';
+        $content = "<?php \n".'return '.var_export($array, true).';';
 
         file_put_contents($path, $content);
     }

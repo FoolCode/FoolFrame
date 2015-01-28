@@ -79,7 +79,12 @@ class ControllerResolver extends \Symfony\Component\HttpKernel\Controller\Contro
         $this->parameters = array();
         if ($suffix = $request->attributes->get('_suffix')) {
             $parameters_temp = explode('/', $suffix);
-            $parameters_temp = array_filter($parameters_temp, function ($el) { return $el !== ''; });
+            $parameters_temp = array_filter(
+                $parameters_temp,
+                function ($el) {
+                    return $el !== '';
+                }
+            );
 
             foreach ($parameters_temp as $p) {
                 $this->parameters[] = $p;

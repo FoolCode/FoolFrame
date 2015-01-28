@@ -11,7 +11,8 @@ class Model
      */
     protected $context;
 
-    public function __construct(Context $context) {
+    public function __construct(Context $context)
+    {
         $this->context = $context;
     }
 

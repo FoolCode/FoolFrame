@@ -2,7 +2,6 @@
 
 namespace Foolz\FoolFrame\Model;
 
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

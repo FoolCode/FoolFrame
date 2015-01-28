@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 interface ControllerInterface
 {
-
     public function setContext(Context $context);
 
     public function getContext();
@@ -15,5 +14,4 @@ interface ControllerInterface
     public function setRequest(Request $request);
 
     public function getRequest();
-
 }

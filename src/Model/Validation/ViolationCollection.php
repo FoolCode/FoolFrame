@@ -14,28 +14,32 @@ class ViolationCollection {
     /**
      * @param Violation[] $violations
      */
-    public function __construct($violations) {
+    public function __construct($violations)
+    {
         $this->violations = $violations;
     }
 
     /**
      * @return Violation[]
      */
-    public function getArray() {
+    public function getArray()
+    {
         return $this->violations;
     }
 
     /**
      * @return int
      */
-    public function count() {
+    public function count()
+    {
         return count($this->violations);
     }
 
     /**
      * @return string
      */
-    public function getHtml() {
+    public function getHtml()
+    {
         $array = [];
         foreach ($this->violations as $violation) {
             $array[] = $violation->getLabel().': '.$violation->getViolationsString();
@@ -47,7 +51,8 @@ class ViolationCollection {
     /**
      * @return string
      */
-    public function getText() {
+    public function getText()
+    {
         $array = [];
         foreach ($this->violations as $violation) {
             $array[] = $violation->getLabel().': '.$violation->getViolationsString();

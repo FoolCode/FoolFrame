@@ -41,7 +41,8 @@ class Validator
      * @param \Symfony\Component\Validator\Constraints[]|\Symfony\Component\Validator\Constraints[] $constraints
      * @return $this
      */
-    public function add($field_name, $label, $constraints) {
+    public function add($field_name, $label, $constraints)
+    {
         $this->labels[$field_name] = $label;
         $this->constraints[$field_name] = $constraints;
 
@@ -53,7 +54,8 @@ class Validator
      *
      * @param array $data
      */
-    public function validate(Array $data) {
+    public function validate(Array $data)
+    {
         $this->original_values = $data;
         $this->final_values = $data;
 
@@ -99,7 +101,8 @@ class Validator
      *
      * @return array
      */
-    public function getOriginalValues() {
+    public function getOriginalValues()
+    {
         return $this->original_values;
     }
 
@@ -107,7 +110,8 @@ class Validator
      * Gets the array of values after they were treated by the validation
      * @return array
      */
-    public function getFinalValues() {
+    public function getFinalValues()
+    {
         return $this->final_values;
     }
 
@@ -116,7 +120,8 @@ class Validator
      *
      * @return ViolationCollection
      */
-    public function getViolations() {
+    public function getViolations()
+    {
         return $this->violations;
     }
 
@@ -238,8 +243,8 @@ class Validator
             foreach ($form as $name => $item) {
                 // not interested in data that is not related to database
                 if ($item['type'] != 'checkbox_array' &&
-                    (!isset($item['database']) || $item['database'] !== TRUE) &&
-                    (!isset($item['preferences']) || $item['preferences'] === FALSE)
+                    (!isset($item['database']) || $item['database'] !== true) &&
+                    (!isset($item['preferences']) || $item['preferences'] === true)
                 ) {
                     continue;
                 }
@@ -259,7 +264,7 @@ class Validator
                         $result[$name] = 0;
                     }
                 } else {
-                    if (isset($input[$name]) && $input[$name] !== FALSE) {
+                    if (isset($input[$name]) && $input[$name] !== false) {
                         $result[$name] = $input[$name];
                     }
                 }

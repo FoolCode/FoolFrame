@@ -20,32 +20,34 @@ class Install extends Model
 
     public static function check_database($array)
     {
-        switch ($array['type']) {
-            case 'pdo_mysql':
-                try {
+        try {
+            switch ($array['type']) {
+                case 'pdo_mysql':
                     new \PDO(
                         'mysql:dbname='.$array['database'].';host='.$array['hostname'],
                         $array['username'],
                         $array['password']
                     );
 
-                    return true;
-                } catch (\PDOException $e) {
-                    return false;
-                }
-            case 'pdo_pgsql':
-                try {
+                    break;
+
+                case 'pdo_pgsql':
                     new \PDO(
                         'pgsql:dbname='.$array['database'].';host='.$array['hostname'],
                         $array['username'],
                         $array['password']
                     );
 
-                    return true;
-                } catch (\PDOException $e) {
+                    break;
+
+                default:
                     return false;
-                }
+            }
+        } catch (\PDOException $e) {
+            return false;
         }
+
+        return true;
     }
 
     public function setup_database($array)

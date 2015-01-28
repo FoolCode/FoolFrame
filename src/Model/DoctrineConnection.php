@@ -58,7 +58,8 @@ class DoctrineConnection extends Model
      *
      * @return array
      */
-    public function __sleep() {
+    public function __sleep()
+    {
         return [];
     }
 
