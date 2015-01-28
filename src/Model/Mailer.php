@@ -33,7 +33,8 @@ class Mailer extends Model
                     ->setPort($config['port'])
                     ->setUsername($config['username'])
                     ->setPassword($config['password'])
-                    ->setEncryption($config['encryption']);
+                    ->setEncryption($config['encryption'])
+                    ->setAuthMode('login');
                 break;
 
             default:
