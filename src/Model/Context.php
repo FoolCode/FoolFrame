@@ -7,7 +7,7 @@ use Foolz\FoolFrame\Model\Auth\WrongKeyException;
 use Foolz\Plugin\Hook;
 use Foolz\Profiler\Profiler;
 use Monolog\Handler\RotatingFileHandler;
-use Monolog\Logger;
+use Monolog\Logger as MonoLogger;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 use Symfony\Component\Console\Application;
@@ -111,14 +111,14 @@ class Context implements ContextInterface
 
         $this->route_collection = new RouteCollection();
 
-        $this->logger = new Logger('foolframe');
-        $this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, Logger::WARNING));
+        $this->logger = new MonoLogger('foolframe');
+        $this->logger->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe.log', 7, MonoLogger::WARNING));
         $this->logger->pushProcessor(new IntrospectionProcessor());
         $this->logger->pushProcessor(new WebProcessor());
 
         // special logger that saves stack traces from the exception handler
-        $this->logger_trace = new Logger('foolframe_trace');
-        $this->logger_trace->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe_trace.log', 7, Logger::WARNING));
+        $this->logger_trace = new MonoLogger('foolframe_trace');
+        $this->logger_trace->pushHandler(new RotatingFileHandler(VAPPPATH.'foolz/foolframe/logs/foolframe_trace.log', 7, MonoLogger::WARNING));
         $this->logger_trace->pushProcessor(new IntrospectionProcessor());
         $this->logger_trace->pushProcessor(new WebProcessor());
 
