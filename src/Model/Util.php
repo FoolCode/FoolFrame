@@ -88,8 +88,7 @@ class Util
             foreach ($iterator as $file) {
                 if ($file->isDir()) {
                     mkdir($dest.DIRECTORY_SEPARATOR.$iterator->getSubPathName());
-                }
-                else {
+                } else {
                     copy($file, $dest.DIRECTORY_SEPARATOR.$iterator->getSubPathName());
                 }
             }

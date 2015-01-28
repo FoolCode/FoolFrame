@@ -57,9 +57,15 @@ class ExceptionHandler extends \Symfony\Component\Debug\ExceptionHandler
             $string = $exception->getMessage()."\r\n";
             foreach ($exception->getTrace() as $trace) {
                 $string .= '    ';
-                if (isset($trace['file'])) $string .= 'at '.$trace['file'].'('.$trace['line'].') ';
-                if (isset($trace['class'])) $string .= 'in '. $trace['class'].$trace['type'];
-                if (isset($trace['function'])) $string .= $trace['function'].'('.$this->stringify($trace['args']).')';
+                if (isset($trace['file'])) {
+                    $string .= 'at '.$trace['file'].'('.$trace['line'].') ';
+                }
+                if (isset($trace['class'])) {
+                    $string .= 'in '. $trace['class'].$trace['type'];
+                }
+                if (isset($trace['function'])) {
+                    $string .= $trace['function'].'('.$this->stringify($trace['args']).')';
+                }
                 $string .= "\r\n";
             }
             $this->logger_trace->error($string);
