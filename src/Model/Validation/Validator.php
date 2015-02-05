@@ -244,7 +244,7 @@ class Validator
                 // not interested in data that is not related to database
                 if ($item['type'] != 'checkbox_array' &&
                     (!isset($item['database']) || $item['database'] !== true) &&
-                    (!isset($item['preferences']) || $item['preferences'] === true)
+                    (!isset($item['preferences']) || $item['preferences'] === false)
                 ) {
                     continue;
                 }
