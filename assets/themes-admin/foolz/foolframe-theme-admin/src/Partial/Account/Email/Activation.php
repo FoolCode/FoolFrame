@@ -17,7 +17,7 @@ If this mail was sent to you by mistake, you can just ignore it. Sorry for bothe
 <br/><br/>
 Otherwise, you can activate your account by following <strong><a href="<?= $this->getParamManager()->getParam('link') ?>">this link</a></strong>.  ( ゜∀゜)アハハ八八ノヽノヽノヽノ ＼ ／ ＼／ ＼
 <br/><br/>
-If the link does not work, copy and paste the following address into your browser's address bar: <?= $link ?>
+If the link does not work, copy and paste the following address into your browser's address bar: <?= $this->getParamManager()->getParam('link') ?>
 <br/><br/><br/>
 Thanks for joining us! ｷﾀ━━━━(ﾟ∀ﾟ)━━━━ !!!!! Your registration was VIP quality.
 <hr/>
