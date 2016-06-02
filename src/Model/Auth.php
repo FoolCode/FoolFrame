@@ -10,6 +10,7 @@ class WrongEmailException extends \Exception {}
 class WrongKeyException extends \Exception {}
 class EmailExistsException extends \Exception {}
 class UpdateException extends \Exception {}
+class AccountNotVerifiedException extends \Exception {}
 
 namespace Foolz\FoolFrame\Model;
 
@@ -21,6 +22,7 @@ use Foolz\FoolFrame\Model\Auth\WrongEmailException;
 use Foolz\FoolFrame\Model\Auth\WrongKeyException;
 use Foolz\FoolFrame\Model\Auth\WrongPasswordException;
 use Foolz\FoolFrame\Model\Auth\WrongUsernameOrPasswordException;
+use Foolz\FoolFrame\Model\Auth\AccountNotVerifiedException;
 
 class Auth extends Model
 {
@@ -152,6 +154,10 @@ class Auth extends Model
             ]);
 
             throw new WrongUsernameOrPasswordException();
+        }
+
+        if (!$user['activated'] && !$this->preferences->get('foolframe.auth.disable_registration_email')) {
+            throw new AccountNotVerifiedException();
         }
 
         $this->resetAttempts($username);

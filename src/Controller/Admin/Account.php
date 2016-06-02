@@ -4,6 +4,7 @@ namespace Foolz\FoolFrame\Controller\Admin;
 
 use Foolz\FoolFrame\Model\Auth;
 use Foolz\FoolFrame\Model\Auth\WrongUsernameOrPasswordException;
+use Foolz\FoolFrame\Model\Auth\AccountNotVerifiedException;
 use Foolz\FoolFrame\Model\Cookie;
 use Foolz\FoolFrame\Model\Validation\ActiveConstraint\Trim;
 use Foolz\FoolFrame\Model\Validation\Constraint\EqualsField;
@@ -63,6 +64,8 @@ class Account extends \Foolz\FoolFrame\Controller\Admin
                 return $response;
             } catch (WrongUsernameOrPasswordException $e) {
                 $this->notices->set('error', _i('You have entered an invalid username and/or password. Please try again.'));
+            } catch (AccountNotVerifiedException $e) {
+                $this->notices->set('error', _i('Your account has not been activated yet, please check your email.'));
             }
         }
 
